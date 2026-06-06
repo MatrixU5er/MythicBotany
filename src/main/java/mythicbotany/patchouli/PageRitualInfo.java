@@ -65,7 +65,7 @@ public class PageRitualInfo extends PageRuneRitualBase {
         this.renderOutputs(graphics, mouseX, mouseY, partialTicks);
         this.renderManaBar(graphics, mouseX, mouseY, partialTicks);
         if (this.desc != null) {
-            this.desc.render(graphics, mouseX, mouseY);
+            this.desc.render(graphics, mouseX, mouseY, partialTicks);
         }
     }
 
@@ -102,7 +102,7 @@ public class PageRitualInfo extends PageRuneRitualBase {
     private void renderManaBar(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
         if (this.recipe != null && this.recipe.getMana() > 0) {
             this.manaComponent.mana = IVariable.wrap(this.recipe.getMana());
-            this.manaComponent.onVariablesAvailable(v -> v);
+            this.manaComponent.onVariablesAvailable(v -> v, this.registries);
             this.manaComponent.render(graphics, this.parent, partialTicks, mouseX, mouseY);
         }
     }

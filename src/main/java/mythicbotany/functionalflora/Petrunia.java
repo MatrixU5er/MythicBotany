@@ -4,6 +4,7 @@ import mythicbotany.functionalflora.base.FunctionalFlowerBase;
 import mythicbotany.register.ModBlocks;
 import mythicbotany.rune.TileCentralRuneHolder;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -69,15 +70,15 @@ public class Petrunia extends FunctionalFlowerBase {
     }
 
     @Override
-    public void load(@Nonnull CompoundTag nbt) {
-        super.load(nbt);
+    protected void loadAdditional(@Nonnull CompoundTag nbt, HolderLookup.Provider registries) {
+        super.loadAdditional(nbt, registries);
         this.storedMana = nbt.getInt("StoredMana");
-        this.currentPos = NbtUtils.readBlockPos(nbt.getCompound("CurrentRuneTargetPos"));
+        this.currentPos = nbt.contains("CurrentRuneTargetPos") ? NbtUtils.readBlockPos(nbt, "CurrentRuneTargetPos").orElse(null) : null;
     }
 
     @Override
-    public void saveAdditional(@Nonnull CompoundTag nbt) {
-        super.saveAdditional(nbt);
+    protected void saveAdditional(@Nonnull CompoundTag nbt, HolderLookup.Provider registries) {
+        super.saveAdditional(nbt, registries);
         nbt.putInt("StoredMana", this.storedMana);
         if (this.currentPos != null) nbt.put("CurrentRuneTargetPos", NbtUtils.writeBlockPos(this.currentPos));
     }

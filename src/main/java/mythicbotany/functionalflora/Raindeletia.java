@@ -22,7 +22,7 @@ public class Raindeletia extends FunctionalFlowerBase {
             if (this.level.isRainingAt(this.worldPosition)) {
                 multiplier = this.level.isThundering() ? MythicConfig.flowers.raindeletia.thunder : MythicConfig.flowers.raindeletia.rain;
             }
-            if (this.level.getBlockState(this.worldPosition.below()).getBlock() == BotaniaBlocks.enchantedSoil) {
+            if (this.level.getBlockState(this.worldPosition.below()).getBlock() == BotaniaBlocks.infusedGrass) {
                 multiplier = multiplier * MythicConfig.flowers.raindeletia.enchanted_soil;
             } else if (this.level.getBlockState(this.worldPosition.below()).getBlock() == BotaniaBlocks.vividGrass) {
                 multiplier = multiplier * MythicConfig.flowers.raindeletia.vivid_grass;

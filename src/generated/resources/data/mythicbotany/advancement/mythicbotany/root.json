@@ -1,0 +1,40 @@
+{
+  "criteria": {
+    "inventory_changed": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#c:ingots/terrasteel"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "background": "mythicbotany:textures/block/alfsteel_block.png",
+    "description": {
+      "translate": "advancements.mythicbotany.mythicbotany.root.description"
+    },
+    "icon": {
+      "components": {
+        "minecraft:custom_data": {
+          "color1": 4,
+          "color2": 3
+        }
+      },
+      "count": 1,
+      "id": "botania:dreamwood_wand"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancements.mythicbotany.mythicbotany.root.title"
+    }
+  },
+  "requirements": [
+    [
+      "inventory_changed"
+    ]
+  ]
+}

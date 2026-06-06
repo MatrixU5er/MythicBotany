@@ -4,7 +4,7 @@ import mythicbotany.MythicBotany;
 import mythicbotany.register.ModRecipes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -36,7 +36,7 @@ public class BlockManaInfuser extends BlockBE<TileManaInfuser> {
     }
 
     @SuppressWarnings("deprecation")
-    public boolean isPathfindable(@Nonnull BlockState state, @Nonnull BlockGetter level, @Nonnull BlockPos pos, @Nonnull PathComputationType type) {
+    protected boolean isPathfindable(@Nonnull BlockState state, @Nonnull PathComputationType type) {
         return false;
     }
 
@@ -47,7 +47,9 @@ public class BlockManaInfuser extends BlockBE<TileManaInfuser> {
 
     @SuppressWarnings("deprecation")
     public int getAnalogOutputSignal(@Nonnull BlockState blockState, @Nonnull Level level, @Nonnull BlockPos pos) {
-        TileManaInfuser te = this.getBlockEntity(level, pos);
+        if (!(level.getBlockEntity(pos) instanceof TileManaInfuser te)) {
+            return 0;
+        }
         double progress = te.getProgress();
         if (progress < 0) {
             return 0;
@@ -59,9 +61,8 @@ public class BlockManaInfuser extends BlockBE<TileManaInfuser> {
     @SuppressWarnings("deprecation")
     @Nonnull
     @Override
-    public InteractionResult use(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull BlockHitResult hit) {
+    protected ItemInteractionResult useItemOn(@Nonnull ItemStack stack, @Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull BlockHitResult hit) {
         if (!level.isClientSide) {
-            ItemStack stack = player.getItemInHand(hand);
             if (!stack.isEmpty() && RecipeHelper.isItemValidInput(level.getRecipeManager(), ModRecipes.infuser, stack)) {
                 ItemStack copy = stack.copy();
                 stack.shrink(1);
@@ -69,16 +70,16 @@ public class BlockManaInfuser extends BlockBE<TileManaInfuser> {
                 copy.setCount(1);
                 ItemEntity entity = new ItemEntity(level, pos.getX() + 0.5, pos.getY() + 0.4, pos.getZ() + 0.5, copy);
                 entity.setDeltaMovement(0, 0, 0);
-                entity.setThrower(player.getUUID());
+                entity.setThrower(player);
                 entity.setPickUpDelay(40);
                 level.addFreshEntity(entity);
                 MythicBotany.getNetwork().setItemMagnetImmune(entity);
-                return InteractionResult.SUCCESS;
+                return ItemInteractionResult.SUCCESS;
             } else {
-                return super.use(state, level, pos, player, hand, hit);
+                return super.useItemOn(stack, state, level, pos, player, hand, hit);
             }
         } else {
-            return super.use(state, level, pos, player, hand, hit);
+            return super.useItemOn(stack, state, level, pos, player, hand, hit);
         }
     }
 }

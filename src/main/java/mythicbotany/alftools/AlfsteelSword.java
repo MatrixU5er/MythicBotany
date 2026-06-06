@@ -1,53 +1,55 @@
 package mythicbotany.alftools;
 
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Multimap;
 import mythicbotany.MythicBotany;
 import mythicbotany.config.MythicConfig;
-import mythicbotany.network.AlfSwordLeftClickMessage;
 import mythicbotany.pylon.PylonRepairable;
 import mythicbotany.register.ModItems;
+import mythicbotany.register.tags.ModItemTags;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import vazkii.botania.api.internal.ManaBurst;
 import vazkii.botania.common.entity.ManaBurstEntity;
 import vazkii.botania.common.handler.BotaniaSounds;
 import vazkii.botania.common.item.equipment.tool.terrasteel.TerraBladeItem;
-import vazkii.botania.common.lib.BotaniaTags;
 
 import javax.annotation.Nonnull;
 import java.util.List;
 
 public class AlfsteelSword extends TerraBladeItem implements PylonRepairable {
 
-    private final Multimap<Attribute, AttributeModifier> attributeModifiers;
+    private static final ResourceLocation DAMAGE_MODIFIER_ID = ResourceLocation.fromNamespaceAndPath("mythicbotany", "alfsteel_sword_damage");
+    private static final ResourceLocation SPEED_MODIFIER_ID = ResourceLocation.fromNamespaceAndPath("mythicbotany", "alfsteel_sword_speed");
+    private final ItemAttributeModifiers attributeModifiers;
 
     public AlfsteelSword(Properties props) {
         super(props.durability(MythicConfig.alftools.durability.sword.max_durability()));
-        MinecraftForge.EVENT_BUS.addListener(this::onLeftClick);
-        ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
-        builder.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Weapon modifier", this.getDamage(), AttributeModifier.Operation.ADDITION));
-        builder.put(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_UUID, "Weapon modifier", MythicConfig.alftools.tool_values.sword_speed, AttributeModifier.Operation.ADDITION));
-        this.attributeModifiers = builder.build();
+        NeoForge.EVENT_BUS.addListener(this::onLeftClick);
+        this.attributeModifiers = ItemAttributeModifiers.builder()
+                .add(Attributes.ATTACK_DAMAGE, new AttributeModifier(DAMAGE_MODIFIER_ID, this.getDamage(), AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
+                .add(Attributes.ATTACK_SPEED, new AttributeModifier(SPEED_MODIFIER_ID, MythicConfig.alftools.tool_values.sword_speed, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
+                .build();
     }
 
     private void onLeftClick(PlayerInteractEvent.LeftClickEmpty evt) {
         if (!evt.getItemStack().isEmpty() && evt.getItemStack().getItem() == this) {
-            MythicBotany.getNetwork().channel.sendToServer(new AlfSwordLeftClickMessage());
+            MythicBotany.getNetwork().sendAlfSwordLeftClick();
         }
     }
 
@@ -56,20 +58,19 @@ public class AlfsteelSword extends TerraBladeItem implements PylonRepairable {
         return 2 * super.getManaPerDamage();
     }
 
-    @Override
     public float getDamage() {
         return (float) MythicConfig.alftools.tool_values.sword_damage;
     }
 
     @Nonnull
     @Override
-    public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(@Nonnull EquipmentSlot equipmentSlot) {
-        return equipmentSlot == EquipmentSlot.MAINHAND ? this.attributeModifiers : super.getDefaultAttributeModifiers(equipmentSlot);
+    public ItemAttributeModifiers getDefaultAttributeModifiers() {
+        return this.attributeModifiers;
     }
 
     @Override
     public boolean isValidRepairItem(@Nonnull ItemStack toRepair, @Nonnull ItemStack repair) {
-        return repair.getItem() == ModItems.alfsteelIngot || (!Ingredient.of(BotaniaTags.Items.INGOTS_TERRASTEEL).test(repair) && super.isValidRepairItem(toRepair, repair));
+        return repair.getItem() == ModItems.alfsteelIngot || (!Ingredient.of(ModItemTags.INGOTS_TERRASTEEL).test(repair) && super.isValidRepairItem(toRepair, repair));
     }
 
     @Override
@@ -97,7 +98,7 @@ public class AlfsteelSword extends TerraBladeItem implements PylonRepairable {
         if ((player.getItemBySlot(EquipmentSlot.MAINHAND).getItem() == ModItems.alfsteelSword) && player.getAttackStrengthScale(0) == 1) {
             ManaBurstEntity burst = this.getAlfBurst(player, player.getMainHandItem());
             player.level().addFreshEntity(burst);
-            player.getMainHandItem().hurtAndBreak(1, player, (p) -> p.broadcastBreakEvent(InteractionHand.MAIN_HAND));
+            player.getMainHandItem().hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
             player.level().playSound(null, player.getX(), player.getY(), player.getZ(), BotaniaSounds.terraBlade, SoundSource.PLAYERS, 1, 1);
         }
     }

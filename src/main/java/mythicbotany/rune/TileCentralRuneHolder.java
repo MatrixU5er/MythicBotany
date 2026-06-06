@@ -7,6 +7,7 @@ import mythicbotany.register.ModItems;
 import mythicbotany.register.ModRecipes;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -24,13 +25,14 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.tuple.MutableTriple;
-import org.apache.commons.lang3.tuple.Pair;
 import org.moddingx.libx.base.tile.TickingBlock;
 import org.moddingx.libx.util.Misc;
 import org.moddingx.libx.util.data.NbtX;
@@ -81,6 +83,9 @@ public class TileCentralRuneHolder extends TileRuneHolder implements TickingBloc
     private List<ItemStack> consumedStacks = new ArrayList<>();
     private CompoundTag specialNbt = new CompoundTag();
 
+    private record MatchedRitual(ResourceLocation id, RuneRitualRecipe recipe, int transform) {
+    }
+
     public TileCentralRuneHolder(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
     }
@@ -91,11 +96,10 @@ public class TileCentralRuneHolder extends TileRuneHolder implements TickingBloc
             return;
         }
         if (this.recipeId != null) {
-            if (this.recipe == null || !this.recipeId.equals(this.recipe.getId())) {
-                Recipe<?> foundRecipe = this.level.getRecipeManager().byKey(this.recipeId).orElse(null);
+            if (this.recipe == null) {
+                Recipe<?> foundRecipe = this.level.getRecipeManager().byKey(this.recipeId).map(RecipeHolder::value).orElse(null);
                 if (foundRecipe instanceof RuneRitualRecipe) {
                     this.recipe = (RuneRitualRecipe) foundRecipe;
-                    this.recipeId = this.recipe.getId();
                     this.setChanged();
                     this.setDispatchable();
                 } else {
@@ -123,9 +127,8 @@ public class TileCentralRuneHolder extends TileRuneHolder implements TickingBloc
 
                         for (RuneRitualRecipe.RunePosition rune : this.recipe.getRunes()) {
                             BlockPos runePos = this.worldPosition.offset(rune.getX(this.transformId), 0, rune.getZ(this.transformId));
-                            BlockState state = Objects.requireNonNull(this.level).getBlockState(runePos);
-                            if (state.getBlock() == ModBlocks.runeHolder) {
-                                TileRuneHolder tile = ModBlocks.runeHolder.getBlockEntity(this.level, runePos);
+                            TileRuneHolder tile = this.getRuneHolder(runePos);
+                            if (tile != null) {
                                 tile.setTarget(null, 0, true);
                                 ItemStack runeStack = tile.getInventory().getStackInSlot(0);
                                 tile.getInventory().setStackInSlot(0, ItemStack.EMPTY);
@@ -207,17 +210,17 @@ public class TileCentralRuneHolder extends TileRuneHolder implements TickingBloc
         if (this.recipe != null) {
             messages.accept(Component.translatable("message.mythicbotany.ritual_running").withStyle(ChatFormatting.GRAY));
         } else {
-            Pair<RuneRitualRecipe, Integer> recipe = this.findRecipe();
-            if (recipe == null) {
+            MatchedRitual match = this.findRecipe();
+            if (match == null) {
                 messages.accept(Component.translatable("message.mythicbotany.ritual_wrong_shape").withStyle(ChatFormatting.GRAY));
             } else {
-                this.tryStart(recipe.getLeft(), recipe.getRight(), messages, manaBest, manaRequest);
+                this.tryStart(match, messages, manaBest, manaRequest);
             }
         }
     }
 
     @Nullable
-    private Pair<RuneRitualRecipe, Integer> findRecipe() {
+    private MatchedRitual findRecipe() {
         if (this.level == null) {
             return null;
         }
@@ -226,7 +229,8 @@ public class TileCentralRuneHolder extends TileRuneHolder implements TickingBloc
                 .findFirst().orElse(null);
     }
 
-    private Stream<Pair<RuneRitualRecipe, Integer>> recipeMatches(RuneRitualRecipe recipe) {
+    private Stream<MatchedRitual> recipeMatches(RecipeHolder<RuneRitualRecipe> holder) {
+        RuneRitualRecipe recipe = holder.value();
         if (!recipe.getCenterRune().test(this.getInventory().getStackInSlot(0))) {
             return Stream.empty();
         }
@@ -241,10 +245,15 @@ public class TileCentralRuneHolder extends TileRuneHolder implements TickingBloc
             return Stream.empty();
         }
 
-        return Stream.of(Pair.of(recipe, transformId));
+        return Stream.of(new MatchedRitual(holder.id(), recipe, transformId));
     }
     
-    private void tryStart(RuneRitualRecipe recipe, int transform, Consumer<Component> messages, Function<Integer, Boolean> manaBest, Consumer<Integer> manaRequest) {
+    private void tryStart(MatchedRitual match, Consumer<Component> messages, Function<Integer, Boolean> manaBest, Consumer<Integer> manaRequest) {
+        Level level = this.level;
+        if (level == null) {
+            return;
+        }
+        RuneRitualRecipe recipe = match.recipe();
         if (recipe.getMana() > 0) {
             // We need to give a stack here or the request will always fail. The stack may not be empty.
             // So we just pass a piece of cobblestone.
@@ -255,7 +264,7 @@ public class TileCentralRuneHolder extends TileRuneHolder implements TickingBloc
         }
         Vec3 center = new Vec3(this.worldPosition.getX() + 0.5, this.worldPosition.getY(), this.worldPosition.getZ() + 0.5);
         AABB aabb = new AABB(center, center).inflate(2);
-        List<ItemEntity> inputs = Objects.requireNonNull(this.level).getEntities(EntityType.ITEM, aabb, e -> true);
+        List<ItemEntity> inputs = level.getEntities(EntityType.ITEM, aabb, e -> true);
         List<MutableTriple<ItemEntity, ItemStack, Integer>> stacks = inputs.stream()
                 .map(e -> MutableTriple.of(e, e.getItem(), e.getItem().getCount()))
                 .filter(t -> !t.getMiddle().isEmpty()).toList();
@@ -277,7 +286,7 @@ public class TileCentralRuneHolder extends TileRuneHolder implements TickingBloc
 
         // Special input must be the last as check and apply is in one method here. After this we apply everything
         if (recipe.getSpecialInput() != null) {
-            Either<MutableComponent, CompoundTag> result = recipe.getSpecialInput().apply(this.level, this.worldPosition, recipe);
+            Either<MutableComponent, CompoundTag> result = recipe.getSpecialInput().apply(level, this.worldPosition, recipe);
             Optional<MutableComponent> tc = result.left();
             if (tc.isPresent()) {
                 messages.accept(tc.get().withStyle(ChatFormatting.GRAY));
@@ -294,22 +303,34 @@ public class TileCentralRuneHolder extends TileRuneHolder implements TickingBloc
         }
 
         this.recipe = recipe;
+        this.recipeId = match.id();
         this.progress = 0;
-        this.transformId = transform;
+        this.transformId = match.transform();
         this.consumedStacks = consumedStacks;
 
         this.setChanged();
         this.setDispatchable();
     }
 
+    @Nullable
+    private TileRuneHolder getRuneHolder(BlockPos runePos) {
+        Level level = this.level;
+        if (level == null) {
+            return null;
+        }
+        BlockState state = level.getBlockState(runePos);
+        if (state.getBlock() != ModBlocks.runeHolder) {
+            return null;
+        }
+        BlockEntity blockEntity = level.getBlockEntity(runePos);
+        return blockEntity instanceof TileRuneHolder tile ? tile : null;
+    }
+
     private boolean runePatternMatches(RuneRitualRecipe recipe, int idx) {
         for (RuneRitualRecipe.RunePosition rune : recipe.getRunes()) {
             BlockPos runePos = this.worldPosition.offset(rune.getX(idx), 0, rune.getZ(idx));
-            BlockState state = Objects.requireNonNull(this.level).getBlockState(runePos);
-            if (state.getBlock() != ModBlocks.runeHolder) {
-                return false;
-            }
-            TileRuneHolder tile = ModBlocks.runeHolder.getBlockEntity(this.level, runePos);
+            TileRuneHolder tile = this.getRuneHolder(runePos);
+            if (tile == null) return false;
             if (!rune.getRune().test(tile.getInventory().getStackInSlot(0))) {
                 return false;
             }
@@ -322,9 +343,8 @@ public class TileCentralRuneHolder extends TileRuneHolder implements TickingBloc
         this.setTarget(this.worldPosition, 0, sync);
         for (RuneRitualRecipe.RunePosition rune : recipe.getRunes()) {
             BlockPos runePos = this.worldPosition.offset(rune.getX(transformId), 0, rune.getZ(transformId));
-            BlockState state = Objects.requireNonNull(this.level).getBlockState(runePos);
-            if (state.getBlock() == ModBlocks.runeHolder) {
-                TileRuneHolder tile = ModBlocks.runeHolder.getBlockEntity(this.level, runePos);
+            TileRuneHolder tile = this.getRuneHolder(runePos);
+            if (tile != null) {
                 tile.setTarget(progress == 0 ? null : this.worldPosition, progress, sync);
             }
         }
@@ -358,11 +378,8 @@ public class TileCentralRuneHolder extends TileRuneHolder implements TickingBloc
         if (transformId < 0 || transformId >= 8) transformId = 0;
         for (RuneRitualRecipe.RunePosition rune : recipe.getRunes()) {
             BlockPos runePos = this.worldPosition.offset(rune.getX(transformId), 0, rune.getZ(transformId));
-            BlockState state = Objects.requireNonNull(this.level).getBlockState(runePos);
-            if (state.getBlock() != ModBlocks.runeHolder) {
-                return false;
-            }
-            TileRuneHolder tile = ModBlocks.runeHolder.getBlockEntity(this.level, runePos);
+            TileRuneHolder tile = this.getRuneHolder(runePos);
+            if (tile == null) return false;
             if (!rune.getRune().test(tile.getInventory().getStackInSlot(0))) {
                 return false;
             }
@@ -371,8 +388,8 @@ public class TileCentralRuneHolder extends TileRuneHolder implements TickingBloc
     }
 
     @Override
-    public void load(@Nonnull CompoundTag nbt) {
-        super.load(nbt);
+    protected void loadAdditional(@Nonnull CompoundTag nbt, HolderLookup.Provider registries) {
+        super.loadAdditional(nbt, registries);
         ResourceLocation id = NbtX.getResource(nbt, "recipe", Misc.MISSINGNO);
         this.recipeId = id == Misc.MISSINGNO ? null : id;
         this.progress = nbt.getInt("progress");
@@ -381,7 +398,7 @@ public class TileCentralRuneHolder extends TileRuneHolder implements TickingBloc
             ListTag consumed = nbt.getList("Consumed", Tag.TAG_COMPOUND);
             this.consumedStacks = new ArrayList<>();
             for (int i = 0; i < consumed.size(); i++) {
-                ItemStack stack = ItemStack.of(consumed.getCompound(i));
+                ItemStack stack = ItemStack.parseOptional(registries, consumed.getCompound(i));
                 if (!stack.isEmpty()) {
                     this.consumedStacks.add(stack);
                 }
@@ -393,14 +410,14 @@ public class TileCentralRuneHolder extends TileRuneHolder implements TickingBloc
     }
 
     @Override
-    public void saveAdditional(@Nonnull CompoundTag nbt) {
-        super.saveAdditional(nbt);
-        NbtX.putResource(nbt, "recipe", this.recipe == null ? Misc.MISSINGNO : this.recipe.getId());
+    protected void saveAdditional(@Nonnull CompoundTag nbt, HolderLookup.Provider registries) {
+        super.saveAdditional(nbt, registries);
+        NbtX.putResource(nbt, "recipe", this.recipeId == null ? Misc.MISSINGNO : this.recipeId);
         nbt.putInt("progress", this.progress);
         nbt.putInt("transform", this.transformId);
         ListTag consumed = new ListTag();
         for (ItemStack stack : this.consumedStacks) {
-            consumed.add(stack.serializeNBT());
+            consumed.add(stack.save(registries));
         }
         nbt.put("Consumed", consumed);
         nbt.put("SpecialInputData", this.specialNbt.copy());
@@ -408,11 +425,11 @@ public class TileCentralRuneHolder extends TileRuneHolder implements TickingBloc
 
     @Nonnull
     @Override
-    public CompoundTag getUpdateTag() {
-        CompoundTag nbt = super.getUpdateTag();
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        CompoundTag nbt = super.getUpdateTag(registries);
         //noinspection ConstantConditions
         if (!this.level.isClientSide) {
-            NbtX.putResource(nbt, "recipe", this.recipe == null ? Misc.MISSINGNO : this.recipe.getId());
+            NbtX.putResource(nbt, "recipe", this.recipeId == null ? Misc.MISSINGNO : this.recipeId);
             nbt.putInt("progress", this.progress);
             nbt.putInt("transform", this.transformId);
         }
@@ -420,8 +437,8 @@ public class TileCentralRuneHolder extends TileRuneHolder implements TickingBloc
     }
 
     @Override
-    public void handleUpdateTag(CompoundTag nbt) {
-        super.handleUpdateTag(nbt);
+    public void handleUpdateTag(CompoundTag nbt, HolderLookup.Provider registries) {
+        super.handleUpdateTag(nbt, registries);
         //noinspection ConstantConditions
         if (this.level.isClientSide) {
             ResourceLocation id = NbtX.getResource(nbt, "recipe", Misc.MISSINGNO);

@@ -13,16 +13,25 @@ import vazkii.patchouli.api.IVariableProvider;
 public class InfusionProcessor extends PetalApothecaryProcessor {
 
     protected Recipe<?> recipe;
+    protected ResourceLocation recipeId;
 
     public InfusionProcessor() {
 
     }
 
     public void setup(IVariableProvider variables) {
-        ResourceLocation id = new ResourceLocation(variables.get("recipe").asString());
+        Level level = Minecraft.getInstance().level;
+        if (level == null) {
+            MythicBotany.logger.warn("Can't load mythicbotany infusion recipe for Patchouli without a client level.");
+            this.recipeId = null;
+            this.recipe = null;
+            return;
+        }
+        var registries = level.registryAccess();
+        ResourceLocation id = ResourceLocation.parse(variables.get("recipe", registries).asString());
+        this.recipeId = id;
         this.recipe = null;
-        //noinspection ConstantConditions
-        Minecraft.getInstance().level.getRecipeManager().byKey(id).ifPresent(recipe -> this.recipe = recipe);
+        level.getRecipeManager().byKey(id).ifPresent(recipe -> this.recipe = recipe.value());
         if (this.recipe == null) {
             MythicBotany.logger.warn("Missing mythicbotany infusion recipe: " + id);
         } else if (!(this.recipe instanceof InfuserRecipe)) {
@@ -37,9 +46,9 @@ public class InfusionProcessor extends PetalApothecaryProcessor {
             return null;
         } else {
             return switch (key) {
-                case "output" -> IVariable.from(this.recipe.getResultItem(level.registryAccess()));
-                case "recipe" -> IVariable.wrap(this.recipe.getId().toString());
-                case "heading" -> IVariable.from(this.recipe.getResultItem(level.registryAccess()).getHoverName());
+                case "output" -> IVariable.from(this.recipe.getResultItem(level.registryAccess()), level.registryAccess());
+                case "recipe" -> IVariable.wrap(this.recipeId.toString());
+                case "heading" -> IVariable.from(this.recipe.getResultItem(level.registryAccess()).getHoverName(), level.registryAccess());
                 case "mana" -> IVariable.wrap(((InfuserRecipe) this.recipe).getManaUsage());
                 default -> null;
             };

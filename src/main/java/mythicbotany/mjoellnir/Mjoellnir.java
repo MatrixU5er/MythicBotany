@@ -3,11 +3,10 @@ package mythicbotany.mjoellnir;
 import mythicbotany.EventListener;
 import mythicbotany.advancement.ModCriteria;
 import mythicbotany.config.MythicConfig;
+import mythicbotany.register.ModEnchantments;
 import mythicbotany.register.ModBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -22,10 +21,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.portal.PortalInfo;
 import net.minecraft.world.phys.*;
-import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.network.NetworkHooks;
+import net.neoforged.neoforge.event.EventHooks;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -54,15 +51,9 @@ public class Mjoellnir extends Projectile {
     }
 
     @Override
-    protected void defineSynchedData() {
-        this.entityData.define(RETURNING, false);
-        this.entityData.define(STACK, ItemStack.EMPTY);
-    }
-
-    @Nonnull
-    @Override
-    public Packet<ClientGamePacketListener> getAddEntityPacket() {
-        return NetworkHooks.getEntitySpawningPacket(this);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        builder.define(RETURNING, false);
+        builder.define(STACK, ItemStack.EMPTY);
     }
 
     @Override
@@ -167,10 +158,9 @@ public class Mjoellnir extends Projectile {
         }
     }
 
-    @Nullable
     @Override
-    protected PortalInfo findDimensionEntryPoint(@Nonnull ServerLevel level) {
-        return null;
+    public boolean canUsePortal(boolean allowPassengers) {
+        return false;
     }
     
     @Nullable
@@ -191,7 +181,7 @@ public class Mjoellnir extends Projectile {
             Vec3 position = this.position();
             Vec3 returnVec = new Vec3(returnPoint.x - position.x, returnPoint.y - position.y, returnPoint.z - position.z).normalize().multiply(0.6, 0.6, 0.6);
             // clamp because some mods think, it's a good idea to over enchant stuff on any type of tool they don't know about
-            double loyalty = 1 + (0.07 * Mth.clamp(this.stack.getEnchantmentLevel(Enchantments.LOYALTY), 0, 3));
+            double loyalty = 1 + (0.07 * Mth.clamp(ModEnchantments.getLevel(this.stack, Enchantments.LOYALTY), 0, 3));
             Vec3 newMotion = new Vec3(((3 * motion.x) + returnVec.x) / 4, ((3 * motion.y) + returnVec.y) / 4, ((3 * motion.z) + returnVec.z) / 4).multiply(loyalty, loyalty, loyalty);
             this.setDeltaMovement(newMotion);
         }
@@ -246,20 +236,20 @@ public class Mjoellnir extends Projectile {
     @Nullable
     private LightningBolt attackEntity(LivingEntity target) {
         if (!this.level().isClientSide) {
-            if (this.stack.getEnchantmentLevel(Enchantments.FLAMING_ARROWS) >= 1) {
-                target.setSecondsOnFire(5);
+            if (ModEnchantments.getLevel(this.stack, Enchantments.FLAME) >= 1) {
+                target.igniteForSeconds(5);
             }
-            int knockback = this.stack.getEnchantmentLevel(Enchantments.PUNCH_ARROWS);
+            int knockback = ModEnchantments.getLevel(this.stack, Enchantments.PUNCH);
             if (knockback > 0) {
                 Vec3 vector3d = this.getDeltaMovement().multiply(1, 0, 1).normalize().scale(knockback * 0.6);
                 if (vector3d.lengthSqr() > 0) {
                     target.push(vector3d.x, 0.1D, vector3d.z);
                 }
             }
-            int power = this.stack.getEnchantmentLevel(Enchantments.POWER_ARROWS);
+            int power = ModEnchantments.getLevel(this.stack, Enchantments.POWER);
             float dmg = MythicConfig.mjoellnir.base_damage_ranged + 1;
             if (power > 0) {
-                dmg += (MythicConfig.mjoellnir.enchantment_multiplier * Enchantments.SHARPNESS.getDamageBonus(power, target.getMobType(), this.stack));
+                dmg += (MythicConfig.mjoellnir.enchantment_multiplier * (0.5f * power + 0.5f));
             }
             Player thrower = this.getThrower();
             if (thrower instanceof ServerPlayer) {
@@ -274,7 +264,7 @@ public class Mjoellnir extends Projectile {
             // When the entity is struck by lightning it'll take lightning damage and be set
             // on fire. We don't want that, so we disable the lightning damage for that time
             // and reset the fire to the old state afterwards
-            if (this.level() instanceof ServerLevel && !ForgeEventFactory.onEntityStruckByLightning(target, lightning)) {
+            if (this.level() instanceof ServerLevel && !EventHooks.onEntityStruckByLightning(target, lightning)) {
                 int fireTicks = target.getRemainingFireTicks();
                 LivingEntity oldImmune = EventListener.lightningImmuneEntity;
                 EventListener.lightningImmuneEntity = target;
@@ -289,13 +279,13 @@ public class Mjoellnir extends Projectile {
     }
 
     private void areaDamage(LivingEntity target, @Nullable LightningBolt lightning) {
-        if (this.stack.getEnchantmentLevel(Enchantments.FLAMING_ARROWS) >= 1) {
-            target.setSecondsOnFire(2);
+        if (ModEnchantments.getLevel(this.stack, Enchantments.FLAME) >= 1) {
+            target.igniteForSeconds(2);
         }
-        int power = this.stack.getEnchantmentLevel(Enchantments.POWER_ARROWS);
+        int power = ModEnchantments.getLevel(this.stack, Enchantments.POWER);
         float dmg = MythicConfig.mjoellnir.base_damage_ranged + 1;
         if (power > 0) {
-            dmg += (MythicConfig.mjoellnir.enchantment_multiplier * Enchantments.SHARPNESS.getDamageBonus(power, target.getMobType(), this.stack));
+            dmg += (MythicConfig.mjoellnir.enchantment_multiplier * (0.5f * power + 0.5f));
         }
         dmg *= MythicConfig.mjoellnir.secondary_target_multiplier;
         Player thrower = this.getThrower();
@@ -384,7 +374,7 @@ public class Mjoellnir extends Projectile {
     @Override
     protected void addAdditionalSaveData(@Nonnull CompoundTag compound) {
         super.addAdditionalSaveData(compound);
-        compound.put("Stack", this.stack.save(new CompoundTag()));
+        compound.put("Stack", this.stack.save(this.registryAccess(), new CompoundTag()));
         if (this.thrower != null) {
             compound.putBoolean("thrower", true);
             compound.putLong("throwerl", this.thrower.getLeastSignificantBits());
@@ -408,7 +398,7 @@ public class Mjoellnir extends Projectile {
     @Override
     protected void readAdditionalSaveData(@Nonnull CompoundTag compound) {
         super.readAdditionalSaveData(compound);
-        this.setStack(ItemStack.of(compound.getCompound("Stack")));
+        this.setStack(ItemStack.parseOptional(this.registryAccess(), compound.getCompound("Stack")));
         if (compound.getBoolean("thrower")) {
             this.setThrowerId(new UUID(compound.getLong("throwerm"), compound.getLong("throwerl")));
         } else {

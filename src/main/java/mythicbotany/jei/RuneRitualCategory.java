@@ -49,10 +49,14 @@ public class RuneRitualCategory implements IRecipeCategory<RuneRitualRecipe> {
         return this.localizedName;
     }
 
-    @Nonnull
     @Override
-    public IDrawable getBackground() {
-        return this.background;
+    public int getWidth() {
+        return this.background.getWidth();
+    }
+
+    @Override
+    public int getHeight() {
+        return this.background.getHeight();
     }
 
     @Nonnull
@@ -96,6 +100,7 @@ public class RuneRitualCategory implements IRecipeCategory<RuneRitualRecipe> {
 
     @Override
     public void draw(@Nonnull RuneRitualRecipe recipe, @Nonnull IRecipeSlotsView slots, @Nonnull GuiGraphics graphics, double mouseX, double mouseY) {
+        this.background.draw(graphics);
         if (recipe.getMana() > 0) {
             HUDHandler.renderManaBar(graphics, 17, 189, 0x0000FF, 0.75f, recipe.getMana(), 1000000);
         }

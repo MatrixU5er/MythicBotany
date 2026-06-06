@@ -35,7 +35,7 @@ public class AlfheimTeleporter {
             player.setPortalCooldown();
             return true;
         } else {
-            player.portalCooldown = 200;
+            player.setPortalCooldown(200);
             return false;
         }
     }

@@ -4,10 +4,12 @@ import mythicbotany.MythicBotany;
 import mythicbotany.config.MythicConfig;
 import mythicbotany.pylon.PylonRepairable;
 import mythicbotany.register.ModItems;
+import mythicbotany.register.tags.ModItemTags;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -15,12 +17,11 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.moddingx.libx.registration.Registerable;
 import org.moddingx.libx.registration.SetupContext;
 import vazkii.botania.common.item.equipment.tool.terrasteel.TerraTruncatorItem;
-import vazkii.botania.common.lib.BotaniaTags;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -33,7 +34,6 @@ public class AlfsteelAxe extends TerraTruncatorItem implements PylonRepairable, 
         super(props.durability(MythicConfig.alftools.durability.axe.max_durability()));
     }
 
-    @Override
     @OnlyIn(Dist.CLIENT)
     public void registerClient(SetupContext ctx) {
         ctx.enqueue(() -> ItemProperties.register(ModItems.alfsteelAxe, MythicBotany.getInstance().resource("active"), (stack, world, entity, seed) -> entity instanceof Player && !shouldBreak((Player) entity) ? 0 : 1));
@@ -64,7 +64,7 @@ public class AlfsteelAxe extends TerraTruncatorItem implements PylonRepairable, 
         double z = player.getZ();
         if (!level.isClientSide) {
             ItemStack stack = player.getItemInHand(hand);
-            stack.hurtAndBreak(1, player, _x -> {});
+            stack.hurtAndBreak(1, player, hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
             player.setItemInHand(hand, stack);
         }
         List<ItemEntity> items = level.getEntitiesOfClass(ItemEntity.class, new AABB(x - ITEM_COLLECT_RANGE, y - ITEM_COLLECT_RANGE, z - ITEM_COLLECT_RANGE, x + ITEM_COLLECT_RANGE, y + ITEM_COLLECT_RANGE, z + ITEM_COLLECT_RANGE));
@@ -76,7 +76,7 @@ public class AlfsteelAxe extends TerraTruncatorItem implements PylonRepairable, 
 
     @Override
     public boolean isValidRepairItem(@Nonnull ItemStack toRepair, @Nonnull ItemStack repair) {
-        return repair.getItem() == ModItems.alfsteelIngot || (!Ingredient.of(BotaniaTags.Items.INGOTS_TERRASTEEL).test(repair) && super.isValidRepairItem(toRepair, repair));
+        return repair.getItem() == ModItems.alfsteelIngot || (!Ingredient.of(ModItemTags.INGOTS_TERRASTEEL).test(repair) && super.isValidRepairItem(toRepair, repair));
     }
 
     @Override

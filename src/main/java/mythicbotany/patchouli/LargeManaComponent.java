@@ -6,6 +6,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.core.HolderLookup;
 import vazkii.botania.client.gui.HUDHandler;
 import vazkii.patchouli.api.IComponentRenderContext;
 import vazkii.patchouli.api.ICustomComponent;
@@ -45,10 +46,10 @@ public class LargeManaComponent implements ICustomComponent {
     }
 
     @Override
-    public void onVariablesAvailable(UnaryOperator<IVariable> lookup) {
+    public void onVariablesAvailable(UnaryOperator<IVariable> lookup, HolderLookup.Provider registries) {
         IVariable manaVariable = lookup.apply(this.mana);
         if (manaVariable.unwrap().isJsonArray()) {
-            this.manaValues = manaVariable.asStream().map(IVariable::asNumber).mapToInt(Number::intValue).toArray();
+            this.manaValues = manaVariable.asStream(registries).map(IVariable::asNumber).mapToInt(Number::intValue).toArray();
         } else {
             this.manaValues = new int[]{ manaVariable.asNumber(0).intValue() };
         }

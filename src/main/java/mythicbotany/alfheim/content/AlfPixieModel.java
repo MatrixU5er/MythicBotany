@@ -26,12 +26,13 @@ public class AlfPixieModel extends EntityModel<AlfPixie> {
         this.rightWingB = root.getChild("rightWingB");
     }
 
-    public void renderToBuffer(@Nonnull PoseStack poseStack, @Nonnull VertexConsumer buffer, int light, int overlay, float red, float green, float blue, float alpha) {
-        this.body.render(poseStack, buffer, light, overlay);
-        this.leftWingT.render(poseStack, buffer, light, overlay);
-        this.leftWingB.render(poseStack, buffer, light, overlay);
-        this.rightWingT.render(poseStack, buffer, light, overlay);
-        this.rightWingB.render(poseStack, buffer, light, overlay);
+    @Override
+    public void renderToBuffer(@Nonnull PoseStack poseStack, @Nonnull VertexConsumer buffer, int light, int overlay, int color) {
+        this.body.render(poseStack, buffer, light, overlay, color);
+        this.leftWingT.render(poseStack, buffer, light, overlay, color);
+        this.leftWingB.render(poseStack, buffer, light, overlay, color);
+        this.rightWingT.render(poseStack, buffer, light, overlay, color);
+        this.rightWingB.render(poseStack, buffer, light, overlay, color);
     }
 
     @Override

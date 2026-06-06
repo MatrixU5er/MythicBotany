@@ -1,23 +1,17 @@
 package mythicbotany.rune;
 
 import mythicbotany.register.tags.ModItemTags;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.IItemHandlerModifiable;
 import org.moddingx.libx.base.tile.BlockEntityBase;
-import org.moddingx.libx.capability.ItemCapabilities;
 import org.moddingx.libx.inventory.BaseItemStackHandler;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class TileRuneHolder extends BlockEntityBase {
@@ -31,8 +25,6 @@ public class TileRuneHolder extends BlockEntityBase {
             .defaultSlotLimit(1)
             .build();
             
-    private final LazyOptional<IItemHandlerModifiable> itemCap = ItemCapabilities.create(() -> this.inventory).cast();
-
     @Nullable
     private BlockPos target;
     private double floatProgress;
@@ -41,42 +33,34 @@ public class TileRuneHolder extends BlockEntityBase {
         super(type, pos, state);
     }
 
-    @Nonnull
-    @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        //noinspection unchecked
-        return cap == ForgeCapabilities.ITEM_HANDLER ? (LazyOptional<T>) this.itemCap : super.getCapability(cap, side);
-    }
-
     public BaseItemStackHandler getInventory() {
         return this.inventory;
     }
 
     @Override
-    public void load(@Nonnull CompoundTag nbt) {
-        super.load(nbt);
-        this.inventory.deserializeNBT(nbt.getCompound("Inventory"));
-        this.target = NbtUtils.readBlockPos(nbt.getCompound("TargetPos"));
+    protected void loadAdditional(CompoundTag nbt, HolderLookup.Provider registries) {
+        super.loadAdditional(nbt, registries);
+        this.inventory.deserializeNBT(registries, nbt.getCompound("Inventory"));
+        this.target = NbtUtils.readBlockPos(nbt, "TargetPos").orElse(null);
         this.floatProgress = nbt.getDouble("FloatProgress");
     }
 
     @Override
-    public void saveAdditional(@Nonnull CompoundTag nbt) {
-        super.saveAdditional(nbt);
-        nbt.put("Inventory", this.inventory.serializeNBT());
+    protected void saveAdditional(CompoundTag nbt, HolderLookup.Provider registries) {
+        super.saveAdditional(nbt, registries);
+        nbt.put("Inventory", this.inventory.serializeNBT(registries));
         if (this.target != null) {
             nbt.put("TargetPos", NbtUtils.writeBlockPos(this.target));
             nbt.putDouble("FloatProgress", this.floatProgress);
         }
     }
 
-    @Nonnull
     @Override
-    public CompoundTag getUpdateTag() {
-        CompoundTag nbt = super.getUpdateTag();
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        CompoundTag nbt = super.getUpdateTag(registries);
         //noinspection ConstantConditions
         if (!this.level.isClientSide) {
-            nbt.put("Inventory", this.inventory.serializeNBT());
+            nbt.put("Inventory", this.inventory.serializeNBT(registries));
             if (this.target != null) {
                 nbt.put("TargetPos", NbtUtils.writeBlockPos(this.target));
                 nbt.putDouble("FloatProgress", this.floatProgress);
@@ -86,12 +70,12 @@ public class TileRuneHolder extends BlockEntityBase {
     }
 
     @Override
-    public void handleUpdateTag(CompoundTag nbt) {
-        super.handleUpdateTag(nbt);
+    public void handleUpdateTag(CompoundTag nbt, HolderLookup.Provider registries) {
+        super.handleUpdateTag(nbt, registries);
         //noinspection ConstantConditions
         if (this.level.isClientSide) {
-            this.inventory.deserializeNBT(nbt.getCompound("Inventory"));
-            this.target = NbtUtils.readBlockPos(nbt.getCompound("TargetPos"));
+            this.inventory.deserializeNBT(registries, nbt.getCompound("Inventory"));
+            this.target = NbtUtils.readBlockPos(nbt, "TargetPos").orElse(null);
             this.floatProgress = nbt.getDouble("FloatProgress");
         }
     }
@@ -118,9 +102,8 @@ public class TileRuneHolder extends BlockEntityBase {
         }
     }
 
-    @Override
     public AABB getRenderBoundingBox() {
-        AABB aabb = super.getRenderBoundingBox();
+        AABB aabb = new AABB(this.worldPosition).inflate(1);
         if (this.target != null) {
             // If the rune is floating to a target, we need to expand the render
             // aabb to include that target or runes will sometimes not render.

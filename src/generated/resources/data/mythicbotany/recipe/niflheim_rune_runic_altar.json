@@ -1,0 +1,29 @@
+{
+  "type": "botania:runic_altar",
+  "catalysts": [],
+  "ingredients": [
+    {
+      "tag": "c:ingots/iron"
+    },
+    {
+      "item": "botania:rune_water"
+    },
+    {
+      "item": "botania:rune_winter"
+    },
+    {
+      "item": "botania:rune_wrath"
+    },
+    {
+      "item": "minecraft:blue_ice"
+    }
+  ],
+  "mana": 16000,
+  "output": {
+    "count": 1,
+    "id": "mythicbotany:niflheim_rune"
+  },
+  "reagent": {
+    "item": "botania:livingrock"
+  }
+}

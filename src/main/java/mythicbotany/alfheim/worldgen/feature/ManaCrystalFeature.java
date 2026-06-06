@@ -32,11 +32,6 @@ public class ManaCrystalFeature extends Feature<NoneFeatureConfiguration> {
             try {
                 BlockEntity te = context.level().getBlockEntity(context.origin());
                 if (te instanceof ManaPoolBlockEntity pool) {
-                    te.blockState = BotaniaBlocks.dilutedPool.defaultBlockState();
-                    CompoundTag nbt = new CompoundTag();
-                    nbt.putInt("manaCap", 10000);
-                    nbt.putInt("mana", 0);
-                    pool.readPacketNBT(nbt);
                     pool.receiveMana(10 + context.random().nextInt(490));
                 }
             } catch (Exception e) {

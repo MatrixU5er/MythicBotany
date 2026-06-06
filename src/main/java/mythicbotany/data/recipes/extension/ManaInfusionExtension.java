@@ -1,6 +1,5 @@
 package mythicbotany.data.recipes.extension;
 
-import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -8,7 +7,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 import org.moddingx.libx.datagen.provider.recipe.RecipeExtension;
-import vazkii.botania.data.recipes.ManaInfusionProvider;
+import vazkii.botania.common.block.BotaniaBlocks;
+import vazkii.botania.common.crafting.ManaInfusionRecipe;
+import vazkii.botania.common.crafting.StateIngredients;
 
 public interface ManaInfusionExtension extends RecipeExtension {
 
@@ -33,7 +34,8 @@ public interface ManaInfusionExtension extends RecipeExtension {
     }
     
     default void manaInfusion(Ingredient input, ItemStack result, int mana) {
-        this.consumer().accept(Wrapper.create(this.provider().loc(result.getItem(), "mana_infusion"), result, input, mana));
+        ResourceLocation id = this.provider().loc(result.getItem(), "mana_infusion");
+        this.output().accept(id, new ManaInfusionRecipe(result, input, mana, "", StateIngredients.NONE), null);
     }
 
     default void manaAlchemy(ItemLike input, ItemLike result, int mana) {
@@ -57,7 +59,8 @@ public interface ManaInfusionExtension extends RecipeExtension {
     }
 
     default void manaAlchemy(Ingredient input, ItemStack result, int mana) {
-        this.consumer().accept(Wrapper.alchemy(this.provider().loc(result.getItem(), "mana_alchemy"), result, input, mana));
+        ResourceLocation id = this.provider().loc(result.getItem(), "mana_alchemy");
+        this.output().accept(id, new ManaInfusionRecipe(result, input, mana, "", StateIngredients.of(BotaniaBlocks.alchemyCatalyst)), null);
     }
 
     default void manaConjuration(ItemLike input, ItemLike result, int mana) {
@@ -81,25 +84,7 @@ public interface ManaInfusionExtension extends RecipeExtension {
     }
 
     default void manaConjuration(Ingredient input, ItemStack result, int mana) {
-        this.consumer().accept(Wrapper.conjuration(this.provider().loc(result.getItem(), "mana_conjuration"), result, input, mana));
-    }
-    
-    class Wrapper extends ManaInfusionProvider {
-        
-        public Wrapper(PackOutput packOutput) {
-            super(packOutput);
-        }
-
-        private static FinishedRecipe create(ResourceLocation id, ItemStack output, Ingredient input, int mana) {
-            return new FinishedRecipe(id, output, input, mana);
-        }
-
-        private static FinishedRecipe alchemy(ResourceLocation id, ItemStack output, Ingredient input, int mana) {
-            return FinishedRecipe.alchemy(id, output, input, mana);
-        }
-
-        private static FinishedRecipe conjuration(ResourceLocation id, ItemStack output, Ingredient input, int mana) {
-            return FinishedRecipe.conjuration(id, output, input, mana);
-        }
+        ResourceLocation id = this.provider().loc(result.getItem(), "mana_conjuration");
+        this.output().accept(id, new ManaInfusionRecipe(result, input, mana, "", StateIngredients.of(BotaniaBlocks.conjurationCatalyst)), null);
     }
 }

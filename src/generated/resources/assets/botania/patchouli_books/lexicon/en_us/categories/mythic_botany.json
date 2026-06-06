@@ -1,6 +1,6 @@
 {
   "description": "lexicon.category.mythicbotany.botania.mythic_botany.description",
-  "icon": "mythicbotany:alfsteel_sword{Damage:0}",
+  "icon": "mythicbotany:alfsteel_sword",
   "name": "lexicon.category.mythicbotany.botania.mythic_botany.name",
   "sortnum": 7
 }

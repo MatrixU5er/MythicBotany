@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import mythicbotany.MythicBotany;
 import mythicbotany.rune.RuneRitualRecipe;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.resources.ResourceLocation;
@@ -38,7 +39,7 @@ public class PageRitualPattern extends PageRuneRitualBase {
             graphics.pose().translate(realX - 1, realY - 1, 0);
             graphics.pose().scale(12 / 16f, 12 / 16f, 12 / 16f);
             graphics.renderItem(stack, 0, 0);
-            graphics.renderItemDecorations(this.parent.font, stack, realX, realY);
+            graphics.renderItemDecorations(Minecraft.getInstance().font, stack, realX, realY);
             graphics.pose().popPose();
             if (this.parent.isMouseInRelativeRange(mouseX, mouseY, realX, realY, 10, 10)) {
                 this.parent.setTooltipStack(stack);
@@ -55,7 +56,7 @@ public class PageRitualPattern extends PageRuneRitualBase {
                 graphics.pose().translate(GuiBook.PAGE_WIDTH / 2, 126, 0);
                 graphics.pose().scale(0.7f, 0.7f, 0.7f);
                 this.parent.drawCenteredStringNoShadow(graphics, text1, 0, 0, color1);
-                this.parent.drawCenteredStringNoShadow(graphics, text2, 0, 2 + this.parent.font.lineHeight, color2);
+                this.parent.drawCenteredStringNoShadow(graphics, text2, 0, 2 + Minecraft.getInstance().font.lineHeight, color2);
                 graphics.pose().popPose();
             }
         }

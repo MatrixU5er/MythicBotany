@@ -3,7 +3,6 @@ package mythicbotany.pylon;
 import mythicbotany.MythicBotany;
 import mythicbotany.advancement.ModCriteria;
 import mythicbotany.base.BlockEntityMana;
-import mythicbotany.network.PylonMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -11,7 +10,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.network.PacketDistributor;
 import org.moddingx.libx.base.tile.TickingBlock;
 
 import java.util.List;
@@ -53,7 +51,7 @@ public class TileAlfsteelPylon extends BlockEntityMana implements TickingBlock {
                             MythicBotany.getNetwork().removeItemMagnetImmune(item);
                         }
                         this.setChanged();
-                        MythicBotany.getNetwork().channel.send(PacketDistributor.TRACKING_CHUNK.with(() -> this.level.getChunkAt(this.worldPosition)), new PylonMessage(this.worldPosition));
+                        MythicBotany.getNetwork().spawnPylonParticles(this.level, this.worldPosition);
                     }
                 }
             }
@@ -62,7 +60,7 @@ public class TileAlfsteelPylon extends BlockEntityMana implements TickingBlock {
 
     private List<ItemEntity> getItems() {
         //noinspection ConstantConditions
-        return this.level.getEntitiesOfClass(ItemEntity.class, new AABB(this.worldPosition.offset(0, 1, 0), this.worldPosition.offset(1, 2, 1)));
+        return this.level.getEntitiesOfClass(ItemEntity.class, AABB.encapsulatingFullBlocks(this.worldPosition.above(), this.worldPosition.above()));
     }
 
     @Override

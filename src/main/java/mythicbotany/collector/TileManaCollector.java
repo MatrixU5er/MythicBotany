@@ -4,7 +4,7 @@ import mythicbotany.base.BlockEntityMana;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.MinecraftForge;
+import net.neoforged.neoforge.common.NeoForge;
 import org.moddingx.libx.base.tile.TickingBlock;
 import vazkii.botania.api.internal.ManaBurst;
 import vazkii.botania.api.mana.ManaBlockType;
@@ -41,18 +41,18 @@ public class TileManaCollector extends BlockEntityMana implements ManaCollector,
 
     public void setRemoved() {
         super.setRemoved();
-        MinecraftForge.EVENT_BUS.post(new ManaNetworkEvent(this, ManaBlockType.COLLECTOR, ManaNetworkAction.REMOVE));
+        NeoForge.EVENT_BUS.post(new ManaNetworkEvent(this, ManaBlockType.COLLECTOR, ManaNetworkAction.REMOVE));
     }
 
     public void onChunkUnloaded() {
         super.onChunkUnloaded();
-        MinecraftForge.EVENT_BUS.post(new ManaNetworkEvent(this, ManaBlockType.COLLECTOR, ManaNetworkAction.REMOVE));
+        NeoForge.EVENT_BUS.post(new ManaNetworkEvent(this, ManaBlockType.COLLECTOR, ManaNetworkAction.REMOVE));
     }
 
     public void tick() {
         boolean inNetwork = ManaNetworkHandler.instance.isCollectorIn(this.level, this);
         if (!inNetwork && !this.isRemoved()) {
-            MinecraftForge.EVENT_BUS.post(new ManaNetworkEvent(this, ManaBlockType.COLLECTOR, ManaNetworkAction.ADD));
+            NeoForge.EVENT_BUS.post(new ManaNetworkEvent(this, ManaBlockType.COLLECTOR, ManaNetworkAction.ADD));
         }
     }
 }

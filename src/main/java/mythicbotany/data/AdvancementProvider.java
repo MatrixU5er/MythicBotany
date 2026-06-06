@@ -2,17 +2,24 @@ package mythicbotany.data;
 
 import mythicbotany.advancement.AlfRepairTrigger;
 import mythicbotany.advancement.MjoellnirTrigger;
+import mythicbotany.advancement.ModCriteria;
 import mythicbotany.alfheim.Alfheim;
 import mythicbotany.register.ModBlocks;
 import mythicbotany.register.ModEntities;
 import mythicbotany.register.ModItems;
+import mythicbotany.register.tags.ModItemTags;
+import net.minecraft.advancements.Criterion;
 import net.minecraft.advancements.critereon.ItemPredicate;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.enchantment.Enchantments;
 import org.moddingx.libx.datagen.DatagenContext;
 import org.moddingx.libx.datagen.provider.AdvancementProviderBase;
 import vazkii.botania.common.item.BotaniaItems;
-import vazkii.botania.common.lib.BotaniaTags;
+
+import java.util.Optional;
 
 public class AdvancementProvider extends AdvancementProviderBase {
 
@@ -24,7 +31,7 @@ public class AdvancementProvider extends AdvancementProviderBase {
     public void setup() {
         this.root().display(wandIcon())
                 .background(this.mod.resource("textures/block/alfsteel_block.png"))
-                .task(this.items(BotaniaTags.Items.INGOTS_TERRASTEEL));
+                .task(this.items(ModItemTags.INGOTS_TERRASTEEL));
 
         this.advancement("all_runes").display(ModItems.joetunheimRune)
                 .tasks(this.itemTasks(
@@ -62,19 +69,21 @@ public class AdvancementProvider extends AdvancementProviderBase {
                 .task(this.items(ModBlocks.mjoellnir));
 
         this.advancement("kill_pixie").parent("mjoellnir").display(ModItems.alfPixieSpawnEgg)
-                .task(new MjoellnirTrigger.Instance(ItemPredicate.ANY, this.entity(ModEntities.alfPixie)));
+                .task(new Criterion<>(ModCriteria.MJOELLNIR, new MjoellnirTrigger.Instance(Optional.empty(), Optional.empty(), Optional.of(this.entity(ModEntities.alfPixie)))));
 
         this.advancement("alfsteel").display(ModItems.alfsteelIngot)
                 .task(this.items(ModItems.alfsteelIngot));
 
         this.advancement("mending_repair").parent("alfsteel").display(ModBlocks.alfsteelPylon)
-                .task(new AlfRepairTrigger.Instance(this.stack(Enchantments.MENDING)));
+                .task(new Criterion<>(ModCriteria.ALF_REPAIR, new AlfRepairTrigger.Instance(this.stack(Enchantments.MENDING).build())));
     }
     
     private static ItemStack wandIcon() {
         ItemStack stack = new ItemStack(BotaniaItems.dreamwoodWand);
-        stack.getOrCreateTag().putInt("color1", 4);
-        stack.getOrCreateTag().putInt("color2", 3);
+        CompoundTag tag = new CompoundTag();
+        tag.putInt("color1", 4);
+        tag.putInt("color2", 3);
+        stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
         return stack;
     }
 }

@@ -1,44 +1,40 @@
 package mythicbotany.network;
 
-import mythicbotany.alfheim.teleporter.AlfheimPortalHandler;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
+import mythicbotany.MythicBotany;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.PacketFlow;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.moddingx.libx.network.PacketHandler;
-import org.moddingx.libx.network.PacketSerializer;
 
-import java.util.function.Supplier;
+public record UpdatePortalTimeMessage(int portalTime) implements CustomPacketPayload {
 
-public record UpdatePortalTimeMessage(int portalTime) {
+    public static final Type<UpdatePortalTimeMessage> TYPE = new Type<>(MythicBotany.getInstance().resource("update_portal_time"));
+    public static final StreamCodec<RegistryFriendlyByteBuf, UpdatePortalTimeMessage> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.VAR_INT, UpdatePortalTimeMessage::portalTime,
+            UpdatePortalTimeMessage::new
+    );
     
-    public static class Serializer implements PacketSerializer<UpdatePortalTimeMessage> {
-
-        @Override
-        public Class<UpdatePortalTimeMessage> messageClass() {
-            return UpdatePortalTimeMessage.class;
-        }
-
-        @Override
-        public void encode(UpdatePortalTimeMessage msg, FriendlyByteBuf buffer) {
-            buffer.writeVarInt(msg.portalTime());
-        }
-
-        @Override
-        public UpdatePortalTimeMessage decode(FriendlyByteBuf buffer) {
-            return new UpdatePortalTimeMessage(buffer.readVarInt());
-        }
+    @Override
+    public Type<UpdatePortalTimeMessage> type() {
+        return TYPE;
     }
     
-    public static class Handler implements PacketHandler<UpdatePortalTimeMessage> {
+    public static class Handler extends PacketHandler<UpdatePortalTimeMessage> {
 
-        @Override
-        public Target target() {
-            return Target.MAIN_THREAD;
+        public Handler() {
+            super(PacketFlow.CLIENTBOUND, STREAM_CODEC, TYPE);
         }
 
         @Override
-        public boolean handle(UpdatePortalTimeMessage msg, Supplier<NetworkEvent.Context> ctx) {
-            AlfheimPortalHandler.clientInPortalTime = msg.portalTime;
-            return true;
+        public void handle(UpdatePortalTimeMessage msg, IPayloadContext ctx) {
+            if (FMLEnvironment.dist == Dist.CLIENT) {
+                ClientNetworkHandlers.handlePortalTime(msg);
+            }
         }
     }
 }

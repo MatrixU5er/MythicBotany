@@ -33,7 +33,7 @@ public class Feysythia extends FunctionalFlowerBase {
     protected void tickFlower() {
         //noinspection ConstantConditions
         if (!this.level.isClientSide && this.mana <= 0) {
-            List<ItemEntity> items = this.level.getEntitiesOfClass(ItemEntity.class, new AABB(this.worldPosition.offset(-1, -1, -1), this.worldPosition.offset(2, 2, 2)));
+            List<ItemEntity> items = this.level.getEntitiesOfClass(ItemEntity.class, AABB.encapsulatingFullBlocks(this.worldPosition.offset(-1, -1, -1), this.worldPosition.offset(1, 1, 1)));
             for (ItemEntity ie : items) {
                 ItemStack stack = ie.getItem();
                 if (!stack.isEmpty()) {

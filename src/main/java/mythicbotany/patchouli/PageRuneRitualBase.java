@@ -5,6 +5,7 @@ import mythicbotany.rune.RuneRitualRecipe;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.resources.language.I18n;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.Level;
@@ -25,15 +26,17 @@ public abstract class PageRuneRitualBase extends BookPage {
     public ResourceLocation recipeId;
     
     protected transient RuneRitualRecipe recipe;
+    protected transient HolderLookup.Provider registries;
 
     @Override
 	public void build(Level level, BookEntry entry, BookContentsBuilder builder, int pageNum) {
         super.build(level, entry, builder, pageNum);
+        this.registries = level.registryAccess();
 
         if (this.recipeId == null) {
             this.recipe = null;
 		} else {
-            Recipe<?> foundRecipe = Minecraft.getInstance().level != null ? Minecraft.getInstance().level.getRecipeManager().byKey(this.recipeId).orElse(null) : null;
+            Recipe<?> foundRecipe = Minecraft.getInstance().level != null ? Minecraft.getInstance().level.getRecipeManager().byKey(this.recipeId).map(holder -> holder.value()).orElse(null) : null;
             if (foundRecipe instanceof RuneRitualRecipe) {
                 this.recipe = (RuneRitualRecipe) foundRecipe;
             } else {

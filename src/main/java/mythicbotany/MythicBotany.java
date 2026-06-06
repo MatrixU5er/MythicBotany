@@ -32,22 +32,22 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.OnDatapackSyncEvent;
-import net.minecraftforge.event.server.ServerStartingEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.InterModComms;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegisterEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.OnDatapackSyncEvent;
+import net.neoforged.neoforge.event.server.ServerStartingEvent;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.bus.api.EventPriority;
+import net.neoforged.fml.InterModComms;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.fml.event.lifecycle.InterModEnqueueEvent;
+import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
+import net.neoforged.neoforge.registries.RegisterEvent;
 import org.moddingx.libx.datagen.DatagenSystem;
 import org.moddingx.libx.datagen.PackTarget;
 import org.moddingx.libx.datapack.DynamicPacks;
@@ -70,28 +70,31 @@ public final class MythicBotany extends ModXRegistration {
     private static MythicNetwork network;
     private static MythicTab creativeTab;
 
-    public MythicBotany() {
+    public MythicBotany(IEventBus modBus, ModContainer modContainer) {
         instance = this;
         network = new MythicNetwork(this);
         creativeTab = new MythicTab(this);
 
-        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ClientConfig.CLIENT_CONFIG);
+        modContainer.registerConfig(ModConfig.Type.CLIENT, ClientConfig.CLIENT_CONFIG);
         
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::registerMisc);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::sendIMC);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(ModEntities::createAttributes);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(ModEntities::createSpawnPlacement);
+        modBus.addListener(this::registerMisc);
+        modBus.addListener(this::sendIMC);
+        modBus.addListener(ModEntities::createAttributes);
+        modBus.addListener(ModEntities::createSpawnPlacement);
+        modBus.addListener(ModCapabilities::register);
 
-        MinecraftForge.EVENT_BUS.addListener(this::serverStart);
-        MinecraftForge.EVENT_BUS.addListener(EventPriority.LOW, this::datapacksReloaded);
+        NeoForge.EVENT_BUS.addListener(this::serverStart);
+        NeoForge.EVENT_BUS.addListener(EventPriority.LOW, this::datapacksReloaded);
 
-        MinecraftForge.EVENT_BUS.register(new EventListener());
+        NeoForge.EVENT_BUS.register(new EventListener());
         //noinspection CodeBlock2Expr
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
-            MinecraftForge.EVENT_BUS.addListener(EventPriority.HIGH, AlfheimPortalHandler::renderGameOverlay);
-        });
-        MinecraftForge.EVENT_BUS.addListener(AlfheimPortalHandler::serverStarted);
-        MinecraftForge.EVENT_BUS.addListener(AlfheimPortalHandler::endTick);
+        if (FMLEnvironment.dist == Dist.CLIENT) {
+            modBus.addListener(MythicBotanyClient::registerClientExtensions);
+            modBus.addListener(MythicBotanyClient::registerRenderers);
+            NeoForge.EVENT_BUS.addListener(EventPriority.HIGH, AlfheimPortalHandler::renderGameOverlay);
+        }
+        NeoForge.EVENT_BUS.addListener(AlfheimPortalHandler::serverStarted);
+        NeoForge.EVENT_BUS.addListener(AlfheimPortalHandler::endTick);
 
         if (MythicConfig.addExtraRingSlot) {
             DynamicPacks.DATA_PACKS.enablePack(this.modid, "curios");
@@ -121,10 +124,10 @@ public final class MythicBotany extends ModXRegistration {
             system.addDataProvider(LexiconProvider::new);
             system.addDataProvider(AdvancementProvider::new);
             system.addDataProvider(RecipeProvider::new);
-            system.addDataProvider(BlockLootProvider::new);
-            system.addDataProvider(EntityLootProvider::new);
-            system.addDataProvider(ChestLootProvider::new);
-            system.addDataProvider(EntityAdditionLootProvider::new);
+            system.addRegistryProvider(BlockLootProvider::new);
+            system.addRegistryProvider(EntityLootProvider::new);
+            system.addRegistryProvider(ChestLootProvider::new);
+            system.addRegistryProvider(EntityAdditionLootProvider::new);
             system.addDataProvider(CommonTagsProvider::new);
             system.addDataProvider(BiomeTagsProvider::new);
             system.addDataProvider(BiomeLayerTagsProvider::new);
@@ -154,13 +157,13 @@ public final class MythicBotany extends ModXRegistration {
 
     @Override
     protected void initRegistration(RegistrationBuilder builder) {
-        builder.disableRegistryTracking(); // Registry tracking seems to have no future anyway.
     }
     
     private void registerMisc(RegisterEvent event) {
+        ModCriteria.register(event);
         event.register(Registries.PLACEMENT_MODIFIER_TYPE, this.resource("alfheim_ground"), () -> AlfheimGroundModifier.TYPE);
-        event.register(ForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, this.resource("dispose"), () -> AlfsteelDisposeModifier.CODEC);
-        event.register(ForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, this.resource("fimbultyr"), () -> FimbultyrModifier.CODEC);
+        event.register(NeoForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, this.resource("dispose"), () -> AlfsteelDisposeModifier.CODEC);
+        event.register(NeoForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, this.resource("fimbultyr"), () -> FimbultyrModifier.CODEC);
     }
 
     @Override
@@ -168,8 +171,6 @@ public final class MythicBotany extends ModXRegistration {
         logger.info("Loading MythicBotany");
         
         event.enqueueWork(() -> {
-            ModCriteria.setup();
-            
             PylonRepairables.register(new PylonRepairables.ItemPylonRepairable(), PylonRepairables.PRIORITY_ITEM_WITH_INTERFACE);
             PylonRepairables.register(new PylonRepairables.MendingPylonRepairable(), PylonRepairables.PRIORITY_MENDING);
 
@@ -182,13 +183,13 @@ public final class MythicBotany extends ModXRegistration {
     protected void clientSetup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
             ModEntities.clientSetup();
-            ClientBookRegistry.INSTANCE.pageTypes.put(new ResourceLocation(this.modid, "ritual_pattern"), PageRitualPattern.class);
-            ClientBookRegistry.INSTANCE.pageTypes.put(new ResourceLocation(this.modid, "ritual_info"), PageRitualInfo.class);
+            ClientBookRegistry.INSTANCE.pageTypes.put(ResourceLocation.fromNamespaceAndPath(this.modid, "ritual_pattern"), PageRitualPattern.class);
+            ClientBookRegistry.INSTANCE.pageTypes.put(ResourceLocation.fromNamespaceAndPath(this.modid, "ritual_info"), PageRitualInfo.class);
         });
     }
 
     private void sendIMC(final InterModEnqueueEvent event) {
-        InterModComms.sendTo("apotheosis", "set_ench_hard_cap", () -> new EnchantmentInstance(ModEnchantments.hammerMobility, 5));
+        InterModComms.sendTo("apotheosis", "set_ench_hard_cap", () -> Map.entry(ModEnchantments.HAMMER_MOBILITY.location(), 5));
         InterModComms.sendTo("apotheosis", "loot_category_override", () -> Map.entry(ModBlocks.mjoellnir.asItem(), "sword"));
     }
 

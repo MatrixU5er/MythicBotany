@@ -1,50 +1,40 @@
 package mythicbotany.network;
 
-import net.minecraft.client.Minecraft;
+import mythicbotany.MythicBotany;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.level.Level;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.PacketFlow;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.moddingx.libx.network.PacketHandler;
-import org.moddingx.libx.network.PacketSerializer;
-import vazkii.botania.client.fx.WispParticleData;
 
-import java.util.function.Supplier;
+public record PylonMessage(BlockPos pos) implements CustomPacketPayload {
 
-public record PylonMessage(BlockPos pos) {
+    public static final Type<PylonMessage> TYPE = new Type<>(MythicBotany.getInstance().resource("pylon"));
+    public static final StreamCodec<RegistryFriendlyByteBuf, PylonMessage> STREAM_CODEC = StreamCodec.composite(
+            BlockPos.STREAM_CODEC, PylonMessage::pos,
+            PylonMessage::new
+    );
     
-    public static class Serializer implements PacketSerializer<PylonMessage> {
-
-        @Override
-        public Class<PylonMessage> messageClass() {
-            return PylonMessage.class;
-        }
-
-        @Override
-        public void encode(PylonMessage msg, FriendlyByteBuf buffer) {
-            buffer.writeBlockPos(msg.pos());
-        }
-
-        @Override
-        public PylonMessage decode(FriendlyByteBuf buffer) {
-            return new PylonMessage(buffer.readBlockPos());
-        }
+    @Override
+    public Type<PylonMessage> type() {
+        return TYPE;
     }
     
-    public static class Handler implements PacketHandler<PylonMessage> {
+    public static class Handler extends PacketHandler<PylonMessage> {
 
-        @Override
-        public Target target() {
-            return Target.MAIN_THREAD;
+        public Handler() {
+            super(PacketFlow.CLIENTBOUND, STREAM_CODEC, TYPE);
         }
 
         @Override
-        public boolean handle(PylonMessage msg, Supplier<NetworkEvent.Context> ctx) {
-            Level level = Minecraft.getInstance().level;
-            if (level == null) return true;
-            WispParticleData data = WispParticleData.wisp(0.85f, 1f, 0.6f, 0f, 0.25f);
-            level.addParticle(data, msg.pos().getX() + 0.25 + (level.random.nextFloat() / 2), msg.pos().getY() + 0.75 + (level.random.nextFloat() / 4), msg.pos().getZ() + 0.25 + (level.random.nextFloat() / 2), 0, 0.3, 0);
-            return true;
+        public void handle(PylonMessage msg, IPayloadContext ctx) {
+            if (FMLEnvironment.dist == Dist.CLIENT) {
+                ClientNetworkHandlers.handlePylon(msg);
+            }
         }
     }
 }

@@ -31,7 +31,7 @@ public class BlockAlfheimLeaves extends LeavesBlock implements Registerable {
     }
 
     public BlockAlfheimLeaves(ModX mod, net.minecraft.world.item.Item.Properties itemProperties) {
-        super(BlockBehaviour.Properties.copy(Blocks.OAK_LEAVES).strength(0.2F).randomTicks().sound(SoundType.GRASS).noOcclusion().isValidSpawn((a, b, c, d) -> false).isSuffocating((a, b, c) -> false).isViewBlocking((a, b, c) -> false));
+        super(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_LEAVES).strength(0.2F).randomTicks().sound(SoundType.GRASS).noOcclusion().isValidSpawn((a, b, c, d) -> false).isSuffocating((a, b, c) -> false).isViewBlocking((a, b, c) -> false));
         this.mod = mod;
         this.item = new BlockItem(this, itemProperties);
     }

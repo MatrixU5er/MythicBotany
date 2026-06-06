@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "d": {
+      "tag": "c:dusts/mana"
+    },
+    "w": {
+      "tag": "c:gems/emerald"
+    }
+  },
+  "pattern": [
+    " w ",
+    "wdw"
+  ],
+  "result": {
+    "count": 1,
+    "id": "mythicbotany:central_rune_holder"
+  }
+}

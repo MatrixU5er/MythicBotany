@@ -1,7 +1,7 @@
 package mythicbotany.alfheim.worldgen.tree;
 
-import com.mojang.serialization.Codec;
-import mythicbotany.MythicBotany;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
@@ -11,7 +11,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.feature.configurations.TreeConfiguration;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacer;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacerType;
-import org.moddingx.libx.annotation.api.Codecs;
 import org.moddingx.libx.annotation.codec.PrimaryConstructor;
 import org.moddingx.libx.annotation.registration.Reg;
 import org.moddingx.libx.annotation.registration.RegisterClass;
@@ -21,7 +20,7 @@ import javax.annotation.Nonnull;
 @RegisterClass(registry = "FOLIAGE_PLACER_TYPE")
 public class RandomFoliagePlacer extends FoliagePlacer {
 
-    @Reg.Exclude public static final Codec<RandomFoliagePlacer> CODEC = Codecs.get(MythicBotany.class, RandomFoliagePlacer.class);
+    @Reg.Exclude public static final MapCodec<RandomFoliagePlacer> CODEC = RecordCodecBuilder.mapCodec(instance -> foliagePlacerParts(instance).apply(instance, RandomFoliagePlacer::new));
     @Reg.Name("random_foliage") public static final FoliagePlacerType<RandomFoliagePlacer> TYPE = new FoliagePlacerType<>(CODEC);
 
     @PrimaryConstructor

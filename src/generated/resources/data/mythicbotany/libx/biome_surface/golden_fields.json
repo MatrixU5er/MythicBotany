@@ -49,7 +49,10 @@
               "then_run": {
                 "type": "minecraft:block",
                 "result_state": {
-                  "Name": "botania:golden_grass"
+                  "Name": "botania:golden_grass",
+                  "Properties": {
+                    "snowy": "false"
+                  }
                 }
               }
             },

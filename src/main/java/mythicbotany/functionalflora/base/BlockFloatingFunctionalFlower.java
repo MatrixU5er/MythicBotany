@@ -6,6 +6,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -15,17 +16,16 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.fml.loading.FMLEnvironment;
+import net.minecraft.core.registries.BuiltInRegistries;
 import org.moddingx.libx.base.tile.BlockBE;
 import org.moddingx.libx.mod.ModX;
 import org.moddingx.libx.registration.SetupContext;
 import vazkii.botania.xplat.BotaniaConfig;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
 
 public class BlockFloatingFunctionalFlower<T extends FunctionalFlowerBase> extends BlockBE<T> {
@@ -35,12 +35,11 @@ public class BlockFloatingFunctionalFlower<T extends FunctionalFlowerBase> exten
     private final BlockFunctionalFlower<T> nonFloatingBlock;
 
     public BlockFloatingFunctionalFlower(ModX mod, Class<T> beClass, BlockFunctionalFlower<T> nonFloatingBlock) {
-        super(mod, beClass, Properties.copy(Blocks.RED_TULIP).isRedstoneConductor((state, world, pos) -> false)
+        super(mod, beClass, Properties.ofFullCopy(Blocks.RED_TULIP).isRedstoneConductor((state, world, pos) -> false)
                 .instabreak().sound(SoundType.GRASS));
         this.nonFloatingBlock = nonFloatingBlock;
     }
 
-    @Override
     @OnlyIn(Dist.CLIENT)
     public void registerClient(SetupContext ctx) {
         ctx.enqueue(() -> BlockEntityRenderers.register(this.getBlockEntityType(), mgr -> new RenderFunctionalFlower<>()));
@@ -66,7 +65,9 @@ public class BlockFloatingFunctionalFlower<T extends FunctionalFlowerBase> exten
     @Override
     @SuppressWarnings("deprecation")
     public int getAnalogOutputSignal(@Nonnull BlockState blockState, @Nonnull Level level, @Nonnull BlockPos pos) {
-        FunctionalFlowerBase te = this.getBlockEntity(level, pos);
+        if (!(level.getBlockEntity(pos) instanceof FunctionalFlowerBase te)) {
+            return 0;
+        }
         if (te.getCurrentMana() > 0) {
             return 1 + (int) ((te.getCurrentMana() / (double) te.maxMana) * 14);
         } else {
@@ -79,8 +80,8 @@ public class BlockFloatingFunctionalFlower<T extends FunctionalFlowerBase> exten
     }
 
     @Override
-    public void appendHoverText(@Nonnull ItemStack stack, @Nullable BlockGetter level, @Nonnull List<Component> tooltip, @Nonnull TooltipFlag flag) {
-        super.appendHoverText(stack, level, tooltip, flag);
+    public void appendHoverText(@Nonnull ItemStack stack, @Nonnull Item.TooltipContext context, @Nonnull List<Component> tooltip, @Nonnull TooltipFlag flag) {
+        super.appendHoverText(stack, context, tooltip, flag);
         if (this.getNonFloatingBlock().isGenerating) {
             tooltip.add(Component.translatable("botania.flowerType.generating").withStyle(ChatFormatting.BLUE, ChatFormatting.ITALIC));
 
@@ -88,7 +89,7 @@ public class BlockFloatingFunctionalFlower<T extends FunctionalFlowerBase> exten
             tooltip.add(Component.translatable("botania.flowerType.functional").withStyle(ChatFormatting.BLUE, ChatFormatting.ITALIC));
 
         }
-        ResourceLocation id = ForgeRegistries.BLOCKS.getKey(this.getNonFloatingBlock());
+        ResourceLocation id = BuiltInRegistries.BLOCK.getKey(this.getNonFloatingBlock());
         if (id != null) {
             tooltip.add(Component.translatable("block." + id.getNamespace() + "." + id.getPath() + ".description").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
         }

@@ -6,8 +6,9 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.nbt.CompoundTag;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import vazkii.botania.api.block_entity.RadiusDescriptor;
 
 public class Exoblaze extends FunctionalFlowerBase {
@@ -38,9 +39,15 @@ public class Exoblaze extends FunctionalFlowerBase {
                         if (this.mana < MANA_PER_BREW)
                             break outer;
                         BlockEntity te = this.level.getBlockEntity(basePos.offset(xd, yd, zd));
-                        if (te instanceof BrewingStandBlockEntity && ((BrewingStandBlockEntity) te).fuel < 20) {
+                        if (te instanceof BrewingStandBlockEntity brewingStand) {
+                            CompoundTag tag = brewingStand.saveCustomOnly(this.level.registryAccess());
+                            int fuel = tag.getByte("Fuel") & 0xFF;
+                            if (fuel >= 20) {
+                                continue;
+                            }
                             this.mana -= MANA_PER_BREW;
-                            ((BrewingStandBlockEntity) te).fuel += 1;
+                            tag.putByte("Fuel", (byte) (fuel + 1));
+                            brewingStand.loadCustomOnly(tag, this.level.registryAccess());
                             this.didWork = true;
                             this.setChanged();
                             te.setChanged();

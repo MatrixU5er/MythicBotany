@@ -1,0 +1,32 @@
+{
+  "parent": "mythicbotany:mythicbotany/root",
+  "criteria": {
+    "inventory_changed": {
+      "conditions": {
+        "items": [
+          {
+            "items": "mythicbotany:alfsteel_ingot"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.mythicbotany.mythicbotany.alfsteel.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "mythicbotany:alfsteel_ingot"
+    },
+    "title": {
+      "translate": "advancements.mythicbotany.mythicbotany.alfsteel.title"
+    }
+  },
+  "requirements": [
+    [
+      "inventory_changed"
+    ]
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "item": "mythicbotany:alfsteel_ingot"
+  },
+  "base": {
+    "item": "botania:terrasteel_helmet"
+  },
+  "result": {
+    "count": 1,
+    "id": "mythicbotany:alfsteel_helmet"
+  },
+  "template": {
+    "item": "mythicbotany:alfsteel_template"
+  }
+}

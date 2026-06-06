@@ -1,24 +1,19 @@
 package mythicbotany;
 
-import com.google.common.collect.ImmutableMap;
 import mythicbotany.config.MythicConfig;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeManager;
-import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
-import org.apache.commons.lang3.tuple.Pair;
+import net.neoforged.fml.ModList;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class RecipeRemover {
 
-    public static final ResourceLocation GAIA_PYLON = new ResourceLocation("botania", "gaia_pylon");
+    public static final ResourceLocation GAIA_PYLON = ResourceLocation.fromNamespaceAndPath("botania", "gaia_pylon");
     public static final ResourceLocation HARD_PYLON = MythicBotany.getInstance().resource("gaia_pylon");
-    public static final ResourceLocation GAIA_MANA_RING = new ResourceLocation("botanicadds", "mana_ring_gaia");
+    public static final ResourceLocation GAIA_MANA_RING = ResourceLocation.fromNamespaceAndPath("botanicadds", "mana_ring_gaia");
 
     private RecipeRemover() {
 
@@ -36,20 +31,8 @@ public class RecipeRemover {
             recipesToRemove.add(GAIA_MANA_RING);
         }
         
-        Map<RecipeType<?>, Map<ResourceLocation, Recipe<?>>> recipes = ObfuscationReflectionHelper.getPrivateValue(RecipeManager.class, rm, "f_44007_");
-        if (recipes != null) {
-            Map<RecipeType<?>, Map<ResourceLocation, Recipe<?>>> newRecipes = recipes.entrySet().stream().map(entry -> Pair.of(entry.getKey(), withRecipesRemoved(entry.getValue(), recipesToRemove))).collect(ImmutableMap.toImmutableMap(Map.Entry::getKey, Map.Entry::getValue));
-            ObfuscationReflectionHelper.setPrivateValue(RecipeManager.class, rm, newRecipes, "f_44007_");
-        }
-
-        Map<ResourceLocation, Recipe<?>> byIdMap = ObfuscationReflectionHelper.getPrivateValue(RecipeManager.class, rm, "f_199900_");
-        if (byIdMap != null) {
-            Map<ResourceLocation, Recipe<?>> newByIdMap = withRecipesRemoved(byIdMap, recipesToRemove);
-            ObfuscationReflectionHelper.setPrivateValue(RecipeManager.class, rm, newByIdMap, "f_199900_");
-        }
-    }
-
-    private static <T> ImmutableMap<ResourceLocation, T> withRecipesRemoved(Map<ResourceLocation, T> map, Set<ResourceLocation> recipesToRemove) {
-        return map.entrySet().stream().parallel().filter(entry -> !recipesToRemove.contains(entry.getKey())).collect(ImmutableMap.toImmutableMap(Map.Entry::getKey, Map.Entry::getValue));
+        rm.replaceRecipes(rm.getRecipes().stream()
+                .filter(recipe -> !recipesToRemove.contains(recipe.id()))
+                .collect(Collectors.toList()));
     }
 }

@@ -1,14 +1,13 @@
 package mythicbotany.data.recipes.extension;
 
-import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 import org.moddingx.libx.datagen.provider.recipe.RecipeExtension;
-import vazkii.botania.data.recipes.RunicAltarProvider;
+import vazkii.botania.common.block.BotaniaBlocks;
+import vazkii.botania.common.crafting.RunicAltarRecipe;
 
-import java.lang.reflect.Constructor;
 import java.util.Arrays;
 
 public interface RuneExtension extends RecipeExtension {
@@ -26,23 +25,7 @@ public interface RuneExtension extends RecipeExtension {
     }
 
     default void runeAltar(ItemStack output, int mana, Ingredient... inputs) {
-        this.consumer().accept(Wrapper.create(this.provider().loc(output.getItem(), "runic_altar"), output, mana, inputs));
-    }
-
-    class Wrapper extends RunicAltarProvider {
-
-        public Wrapper(PackOutput packOutput) {
-            super(packOutput);
-        }
-
-        private static FinishedRecipe create(ResourceLocation id, ItemStack output, int mana, Ingredient... inputs) {
-            try {
-                Constructor<FinishedRecipe> ctor = FinishedRecipe.class.getDeclaredConstructor(ResourceLocation.class, ItemStack.class, int.class, Ingredient[].class);
-                ctor.setAccessible(true);
-                return ctor.newInstance(id, output, mana, inputs);
-            } catch (ReflectiveOperationException e) {
-                throw new RuntimeException(e);
-            }
-        }
+        ResourceLocation id = this.provider().loc(output.getItem(), "runic_altar");
+        this.output().accept(id, new RunicAltarRecipe(output, Ingredient.of(BotaniaBlocks.livingrock), mana, inputs, new Ingredient[0]), null);
     }
 }

@@ -1,5 +1,7 @@
 package mythicbotany.misc;
 
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -7,7 +9,7 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 
 public class Andwari {
 
-    public static ItemStack randomAndwariItem(RandomSource random) {
+    public static ItemStack randomAndwariItem(RandomSource random, RegistryAccess registries) {
         int num = random.nextInt(40);
         if (num < 1) {
             return new ItemStack(Items.ENCHANTED_GOLDEN_APPLE);
@@ -37,7 +39,7 @@ public class Andwari {
             if (random.nextBoolean()) {
                 int amount = random.nextInt(3);
                 for (int i = 0; i < amount; i++) {
-                    stack = EnchantmentHelper.enchantItem(random, stack, 2 + random.nextInt(18), false);
+                    stack = EnchantmentHelper.enchantItem(random, stack, 2 + random.nextInt(18), registries, registries.registryOrThrow(Registries.ENCHANTMENT).getTag(net.minecraft.tags.EnchantmentTags.ON_RANDOM_LOOT));
                 }
             }
             return stack;

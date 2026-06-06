@@ -1,0 +1,32 @@
+{
+  "parent": "mythicbotany:mythicbotany/alfheim",
+  "criteria": {
+    "inventory_changed": {
+      "conditions": {
+        "items": [
+          {
+            "items": "mythicbotany:andwari_ring"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.mythicbotany.mythicbotany.andwari.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "mythicbotany:andwari_ring"
+    },
+    "title": {
+      "translate": "advancements.mythicbotany.mythicbotany.andwari.title"
+    }
+  },
+  "requirements": [
+    [
+      "inventory_changed"
+    ]
+  ]
+}

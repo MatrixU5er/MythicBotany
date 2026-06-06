@@ -1,52 +1,42 @@
 package mythicbotany.advancement;
 
-import com.google.gson.JsonObject;
-import mythicbotany.MythicBotany;
-import net.minecraft.advancements.critereon.*;
-import net.minecraft.resources.ResourceLocation;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.advancements.critereon.ContextAwarePredicate;
+import net.minecraft.advancements.critereon.EntityPredicate;
+import net.minecraft.advancements.critereon.ItemPredicate;
+import net.minecraft.advancements.critereon.SimpleCriterionTrigger;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
+import java.util.Optional;
 
 public class AlfRepairTrigger extends SimpleCriterionTrigger<AlfRepairTrigger.Instance> {
 
-    public static final ResourceLocation ID = MythicBotany.getInstance().resource("alf_repair");
-    
     @Nonnull
     @Override
-    public ResourceLocation getId() {
-        return ID;
-    }
-
-    @Nonnull
-    @Override
-    protected Instance createInstance(@Nonnull JsonObject json, @Nonnull ContextAwarePredicate entityPredicate, @Nonnull DeserializationContext context) {
-        return new Instance(entityPredicate, ItemPredicate.fromJson(json.get("item")));
+    public Codec<Instance> codec() {
+        return Instance.CODEC;
     }
 
     public void trigger(ServerPlayer player, ItemStack item) {
-        this.trigger(player, (instance) -> instance.item.matches(item));
+        this.trigger(player, instance -> instance.matches(item));
     }
 
-    public static class Instance extends AbstractCriterionTriggerInstance {
+    public record Instance(Optional<ContextAwarePredicate> player, Optional<ItemPredicate> item) implements SimpleInstance {
 
-        public final ItemPredicate item;
+        public static final Codec<Instance> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf("player").forGetter(Instance::player),
+                ItemPredicate.CODEC.optionalFieldOf("item").forGetter(Instance::item)
+        ).apply(instance, Instance::new));
 
         public Instance(ItemPredicate item) {
-            this(ContextAwarePredicate.ANY, item);
+            this(Optional.empty(), Optional.of(item));
         }
-        
-        public Instance(ContextAwarePredicate player, ItemPredicate item) {
-            super(AlfRepairTrigger.ID, player);
-            this.item = item;
-        }
-        
-        @Nonnull
-        public JsonObject serializeToJson(@Nonnull SerializationContext conditions) {
-            JsonObject json = super.serializeToJson(conditions);
-            json.add("item", this.item.serializeToJson());
-            return json;
+
+        public boolean matches(ItemStack itemStack) {
+            return this.item.map(predicate -> predicate.test(itemStack)).orElse(true);
         }
     }
 }

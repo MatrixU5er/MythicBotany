@@ -22,10 +22,9 @@ import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.IPlantable;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.minecraft.core.registries.BuiltInRegistries;
 import org.moddingx.libx.base.tile.BlockBE;
 import org.moddingx.libx.mod.ModX;
 import org.moddingx.libx.registration.RegistrationContext;
@@ -33,10 +32,9 @@ import org.moddingx.libx.registration.SetupContext;
 import vazkii.botania.common.block.BotaniaBlocks;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
 
-public class BlockFunctionalFlower<T extends FunctionalFlowerBase> extends BlockBE<T> implements IPlantable {
+public class BlockFunctionalFlower<T extends FunctionalFlowerBase> extends BlockBE<T> {
     
     private static final VoxelShape SHAPE = box(4.8D, 0.0D, 4.8D, 12.8D, 16.0D, 12.8D);
     
@@ -62,7 +60,6 @@ public class BlockFunctionalFlower<T extends FunctionalFlowerBase> extends Block
         builder.registerNamed(Registries.BLOCK, "floating", this.floatingBlock);
     }
 
-    @Override
     @OnlyIn(Dist.CLIENT)
     public void registerClient(SetupContext ctx) {
         ctx.enqueue(() -> BlockEntityRenderers.register(this.getBlockEntityType(), mgr -> new RenderFunctionalFlower<>()));
@@ -77,7 +74,9 @@ public class BlockFunctionalFlower<T extends FunctionalFlowerBase> extends Block
     @SuppressWarnings("deprecation")
     @Override
     public int getAnalogOutputSignal(@Nonnull BlockState blockState, @Nonnull Level level, @Nonnull BlockPos pos) {
-        FunctionalFlowerBase te = this.getBlockEntity(level, pos);
+        if (!(level.getBlockEntity(pos) instanceof FunctionalFlowerBase te)) {
+            return 0;
+        }
         if (te.getCurrentMana() > 0) {
             return 1 + (int) ((te.getCurrentMana() / (double) te.maxMana) * 14);
         } else {
@@ -100,8 +99,8 @@ public class BlockFunctionalFlower<T extends FunctionalFlowerBase> extends Block
 
     protected boolean isValidGround(BlockState state, BlockGetter level, BlockPos pos) {
         return state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.DIRT) || state.is(Blocks.COARSE_DIRT)
-                || state.is(Blocks.PODZOL) || state.is(Blocks.FARMLAND) || state.is(BotaniaBlocks.enchantedSoil)
-                || state.is(Blocks.MYCELIUM) || state.canSustainPlant(level, pos, Direction.UP, this);
+                || state.is(Blocks.PODZOL) || state.is(Blocks.FARMLAND) || state.is(BotaniaBlocks.infusedGrass)
+                || state.is(Blocks.MYCELIUM) || state.canSustainPlant(level, pos, Direction.UP, this.defaultBlockState()).isTrue();
     }
 
     @Override
@@ -118,20 +117,20 @@ public class BlockFunctionalFlower<T extends FunctionalFlowerBase> extends Block
 
     @Override
     @SuppressWarnings("deprecation")
-    public boolean isPathfindable(@Nonnull BlockState state, @Nonnull BlockGetter level, @Nonnull BlockPos pos, @Nonnull PathComputationType type) {
-        return type == PathComputationType.AIR && !this.hasCollision || super.isPathfindable(state, level, pos, type);
+    protected boolean isPathfindable(@Nonnull BlockState state, @Nonnull PathComputationType type) {
+        return type == PathComputationType.AIR && !this.hasCollision || super.isPathfindable(state, type);
     }
 
     @Override
-    public void appendHoverText(@Nonnull ItemStack stack, @Nullable BlockGetter level, @Nonnull List<Component> tooltip, @Nonnull TooltipFlag flag) {
-        super.appendHoverText(stack, level, tooltip, flag);
+    public void appendHoverText(@Nonnull ItemStack stack, @Nonnull Item.TooltipContext context, @Nonnull List<Component> tooltip, @Nonnull TooltipFlag flag) {
+        super.appendHoverText(stack, context, tooltip, flag);
         if (this.isGenerating) {
             tooltip.add(Component.translatable("botania.flowerType.generating").withStyle(ChatFormatting.BLUE, ChatFormatting.ITALIC));
         } else {
             tooltip.add(Component.translatable("botania.flowerType.functional").withStyle(ChatFormatting.BLUE, ChatFormatting.ITALIC));
 
         }
-        ResourceLocation id = ForgeRegistries.BLOCKS.getKey(this);
+        ResourceLocation id = BuiltInRegistries.BLOCK.getKey(this);
         if (id != null) {
             tooltip.add(Component.translatable("block." + id.getNamespace() + "." + id.getPath() + ".description").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
         }
@@ -154,7 +153,6 @@ public class BlockFunctionalFlower<T extends FunctionalFlowerBase> extends Block
         return RenderShape.MODEL;
     }
 
-    @Override
     public BlockState getPlant(BlockGetter level, BlockPos pos) {
         BlockState state = level.getBlockState(pos);
         if (state.getBlock() != this) return this.defaultBlockState();

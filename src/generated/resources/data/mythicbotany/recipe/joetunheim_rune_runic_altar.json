@@ -1,0 +1,29 @@
+{
+  "type": "botania:runic_altar",
+  "catalysts": [],
+  "ingredients": [
+    {
+      "tag": "c:bricks/normal"
+    },
+    {
+      "item": "botania:rune_earth"
+    },
+    {
+      "item": "botania:rune_autumn"
+    },
+    {
+      "item": "botania:rune_gluttony"
+    },
+    {
+      "item": "minecraft:blackstone"
+    }
+  ],
+  "mana": 16000,
+  "output": {
+    "count": 1,
+    "id": "mythicbotany:joetunheim_rune"
+  },
+  "reagent": {
+    "item": "botania:livingrock"
+  }
+}

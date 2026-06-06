@@ -26,7 +26,7 @@ public class ItemModelProvider extends ItemModelProviderBase {
     @Override
     protected void defaultBlock(ResourceLocation id, BlockItem item) {
         if (item.getBlock() instanceof BlockFunctionalFlower<?>) {
-            this.withExistingParent(id.getPath(), GENERATED).texture("layer0", new ResourceLocation(id.getNamespace(), "block/" + id.getPath()));
+            this.withExistingParent(id.getPath(), GENERATED).texture("layer0", ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "block/" + id.getPath()));
         } else {
             super.defaultBlock(id, item);
         }

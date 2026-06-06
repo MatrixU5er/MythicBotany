@@ -1,0 +1,36 @@
+{
+  "parent": "mythicbotany:mythicbotany/mjoellnir",
+  "criteria": {
+    "mythicbotany_mjoellnir": {
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "mythicbotany:alf_pixie"
+            }
+          }
+        ]
+      },
+      "trigger": "mythicbotany:mjoellnir"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.mythicbotany.mythicbotany.kill_pixie.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "mythicbotany:alf_pixie_spawn_egg"
+    },
+    "title": {
+      "translate": "advancements.mythicbotany.mythicbotany.kill_pixie.title"
+    }
+  },
+  "requirements": [
+    [
+      "mythicbotany_mjoellnir"
+    ]
+  ]
+}

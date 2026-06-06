@@ -1,62 +1,44 @@
 package mythicbotany.network;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.Level;
-import net.minecraftforge.network.NetworkEvent;
+import mythicbotany.MythicBotany;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.PacketFlow;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.moddingx.libx.network.PacketHandler;
-import org.moddingx.libx.network.PacketSerializer;
 
-import java.util.function.Supplier;
+public record MagnetImmunityMessage(int entityId, boolean immune, double x, double y, double z) implements CustomPacketPayload {
 
-public record MagnetImmunityMessage(int entityId, boolean immune, double x, double y, double z) {
+    public static final Type<MagnetImmunityMessage> TYPE = new Type<>(MythicBotany.getInstance().resource("magnet_immunity"));
+    public static final StreamCodec<RegistryFriendlyByteBuf, MagnetImmunityMessage> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.VAR_INT, MagnetImmunityMessage::entityId,
+            ByteBufCodecs.BOOL, MagnetImmunityMessage::immune,
+            ByteBufCodecs.DOUBLE, MagnetImmunityMessage::x,
+            ByteBufCodecs.DOUBLE, MagnetImmunityMessage::y,
+            ByteBufCodecs.DOUBLE, MagnetImmunityMessage::z,
+            MagnetImmunityMessage::new
+    );
 
-    public static class Serializer implements PacketSerializer<MagnetImmunityMessage> {
-
-        @Override
-        public Class<MagnetImmunityMessage> messageClass() {
-            return MagnetImmunityMessage.class;
-        }
-
-        @Override
-        public void encode(MagnetImmunityMessage msg, FriendlyByteBuf buffer) {
-            buffer.writeInt(msg.entityId());
-            buffer.writeBoolean(msg.immune());
-            buffer.writeDouble(msg.x());
-            buffer.writeDouble(msg.y());
-            buffer.writeDouble(msg.z());
-        }
-
-        @Override
-        public MagnetImmunityMessage decode(FriendlyByteBuf buffer) {
-            int entityId = buffer.readInt();
-            boolean immune = buffer.readBoolean();
-            int x = buffer.readInt();
-            int y = buffer.readInt();
-            int z = buffer.readInt();
-            return new MagnetImmunityMessage(entityId, immune, x, y, z);
-        }
+    @Override
+    public Type<MagnetImmunityMessage> type() {
+        return TYPE;
     }
     
-    public static class Handler implements PacketHandler<MagnetImmunityMessage> {
+    public static class Handler extends PacketHandler<MagnetImmunityMessage> {
 
-        @Override
-        public Target target() {
-            return Target.MAIN_THREAD;
+        public Handler() {
+            super(PacketFlow.CLIENTBOUND, STREAM_CODEC, TYPE);
         }
 
         @Override
-        public boolean handle(MagnetImmunityMessage msg, Supplier<NetworkEvent.Context> ctx) {
-            Level level = Minecraft.getInstance().level;
-            if (level != null) {
-                Entity entity = level.getEntity(msg.entityId());
-                if (entity != null) {
-                    entity.getPersistentData().putBoolean("PreventRemoteMovement", msg.immune());
-                    entity.setPos(msg.x(), msg.y(), msg.z());
-                }
+        public void handle(MagnetImmunityMessage msg, IPayloadContext ctx) {
+            if (FMLEnvironment.dist == Dist.CLIENT) {
+                ClientNetworkHandlers.handleMagnetImmunity(msg);
             }
-            return true;
         }
     }
 }

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "e": {
+      "tag": "c:ingots/elementium"
+    },
+    "r": {
+      "item": "mythicbotany:niflheim_rune"
+    }
+  },
+  "pattern": [
+    "re ",
+    "e e",
+    " e "
+  ],
+  "result": {
+    "count": 1,
+    "id": "mythicbotany:ice_ring"
+  }
+}

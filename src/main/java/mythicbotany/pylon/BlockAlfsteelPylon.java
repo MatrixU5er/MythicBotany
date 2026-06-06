@@ -4,7 +4,7 @@ import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -17,9 +17,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.extensions.common.IClientItemExtensions;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import org.moddingx.libx.base.tile.BlockBE;
 import org.moddingx.libx.mod.ModX;
 import org.moddingx.libx.registration.SetupContext;
@@ -35,13 +35,11 @@ public class BlockAlfsteelPylon extends BlockBE<TileAlfsteelPylon> {
         super(mod, TileAlfsteelPylon.class, properties);
     }
 
-    @Override
     @OnlyIn(Dist.CLIENT)
     public void registerClient(SetupContext ctx) {
         ctx.enqueue(() -> BlockEntityRenderers.register(this.getBlockEntityType(), RenderAlfsteelPylon::new));
     }
 
-    @Override
     @OnlyIn(Dist.CLIENT)
     public void initializeItemClient(@Nonnull Consumer<IClientItemExtensions> consumer) {
         consumer.accept(new IClientItemExtensions() {
@@ -68,24 +66,23 @@ public class BlockAlfsteelPylon extends BlockBE<TileAlfsteelPylon> {
     @SuppressWarnings("deprecation")
     @Nonnull
     @Override
-    public InteractionResult use(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull BlockHitResult hit) {
+    protected ItemInteractionResult useItemOn(@Nonnull ItemStack stack, @Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull BlockHitResult hit) {
         if (!level.isClientSide) {
-            ItemStack stack = player.getItemInHand(hand);
             PylonRepairable repairable = PylonRepairables.getRepairInfo(stack);
             if (stack.getCount() == 1 && repairable != null && repairable.canRepairPylon(stack)) {
                 ItemStack copy = stack.copy();
                 player.setItemInHand(hand, ItemStack.EMPTY);
                 ItemEntity entity = new ItemEntity(level, pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5, copy);
                 entity.setDeltaMovement(0, 0, 0);
-                entity.setThrower(player.getUUID());
+                entity.setThrower(player);
                 entity.setPickUpDelay(40);
                 level.addFreshEntity(entity);
-                return InteractionResult.SUCCESS;
+                return ItemInteractionResult.SUCCESS;
             } else {
-                return super.use(state, level, pos, player, hand, hit);
+                return super.useItemOn(stack, state, level, pos, player, hand, hit);
             }
         } else {
-            return super.use(state, level, pos, player, hand, hit);
+            return super.useItemOn(stack, state, level, pos, player, hand, hit);
         }
     }
 

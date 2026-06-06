@@ -13,7 +13,7 @@ import javax.annotation.Nonnull;
 
 public class RenderEntityMjoellnir extends EntityRenderer<Mjoellnir> {
 
-    protected RenderEntityMjoellnir(EntityRendererProvider.Context context) {
+    public RenderEntityMjoellnir(EntityRendererProvider.Context context) {
         super(context);
     }
 

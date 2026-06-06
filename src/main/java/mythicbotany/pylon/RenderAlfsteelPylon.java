@@ -97,10 +97,11 @@ public class RenderAlfsteelPylon implements BlockEntityRenderer<TileAlfsteelPylo
         @Override
         public void renderByItem(ItemStack stack, @Nonnull ItemDisplayContext context, @Nonnull PoseStack poseStack, @Nonnull MultiBufferSource buffer, int light, int overlay) {
             if (Block.byItem(stack.getItem()) instanceof BlockAlfsteelPylon) {
-                BlockEntityRenderer<TileAlfsteelPylon> renderer = this.blockEntityRenderDispatcher.getRenderer(DUMMY.get());
-                //noinspection ConstantConditions
-                ((RenderAlfsteelPylon) renderer).forceTransform = context;
-                ((RenderAlfsteelPylon) renderer).doRender(null, 0f, poseStack, buffer, light, overlay);
+                BlockEntityRenderer<TileAlfsteelPylon> renderer = Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(DUMMY.get());
+                if (renderer instanceof RenderAlfsteelPylon pylonRenderer) {
+                    pylonRenderer.forceTransform = context;
+                    pylonRenderer.doRender(null, 0f, poseStack, buffer, light, overlay);
+                }
             }
         }
     }

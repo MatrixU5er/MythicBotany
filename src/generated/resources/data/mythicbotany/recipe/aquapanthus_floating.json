@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "tag": "botania:floating_flowers"
+    },
+    {
+      "item": "mythicbotany:aquapanthus"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "mythicbotany:aquapanthus_floating"
+  }
+}

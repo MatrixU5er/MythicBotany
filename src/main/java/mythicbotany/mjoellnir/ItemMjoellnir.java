@@ -1,28 +1,29 @@
 package mythicbotany.mjoellnir;
 
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Multimap;
 import mythicbotany.config.MythicConfig;
 import mythicbotany.register.ModEnchantments;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.MobType;
+import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentCategory;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -31,6 +32,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import javax.annotation.Nonnull;
 
 public class ItemMjoellnir extends BlockItem {
+
+    private static final ResourceLocation DAMAGE_MODIFIER_ID = ResourceLocation.fromNamespaceAndPath("mythicbotany", "mjoellnir_damage_modifier");
+    private static final ResourceLocation SPEED_MODIFIER_ID = ResourceLocation.fromNamespaceAndPath("mythicbotany", "mjoellnir_attack_speed_modifier");
     
     public ItemMjoellnir(Block blockIn, Properties properties) {
         super(blockIn, properties);
@@ -98,12 +102,22 @@ public class ItemMjoellnir extends BlockItem {
     }
 
     @Override
-    public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
-        return (enchantment.category == EnchantmentCategory.WEAPON || enchantment.category == ModEnchantments.MJOELLNIR_ENCHANTS
-                || enchantment == Enchantments.POWER_ARROWS || enchantment == Enchantments.PUNCH_ARROWS
-                || enchantment == Enchantments.FLAMING_ARROWS || enchantment == Enchantments.LOYALTY)
-                && enchantment != Enchantments.SWEEPING_EDGE && enchantment != Enchantments.SMITE
-                && enchantment != Enchantments.BANE_OF_ARTHROPODS;
+    public boolean supportsEnchantment(ItemStack stack, Holder<Enchantment> enchantment) {
+        return this.isSupportedHammerEnchantment(enchantment);
+    }
+
+    @Override
+    public boolean isPrimaryItemFor(ItemStack stack, Holder<Enchantment> enchantment) {
+        return this.isSupportedHammerEnchantment(enchantment);
+    }
+
+    private boolean isSupportedHammerEnchantment(Holder<Enchantment> enchantment) {
+        return (enchantment.value().isSupportedItem(Items.DIAMOND_SWORD.getDefaultInstance())
+                || enchantment.is(ModEnchantments.HAMMER_MOBILITY)
+                || enchantment.is(Enchantments.POWER) || enchantment.is(Enchantments.PUNCH)
+                || enchantment.is(Enchantments.FLAME) || enchantment.is(Enchantments.LOYALTY))
+                && !enchantment.is(Enchantments.SWEEPING_EDGE) && !enchantment.is(Enchantments.SMITE)
+                && !enchantment.is(Enchantments.BANE_OF_ARTHROPODS);
     }
 
     @Override
@@ -118,6 +132,23 @@ public class ItemMjoellnir extends BlockItem {
 
     @Nonnull
     @Override
+    public ItemAttributeModifiers getDefaultAttributeModifiers(ItemStack stack) {
+        int sharpness = ModEnchantments.getLevel(stack, Enchantments.SHARPNESS);
+        int mobility = ModEnchantments.getLevel(stack, ModEnchantments.HAMMER_MOBILITY);
+        float dmgModifier = sharpness > 0 ? 0.5f * sharpness + 0.5f : 0;
+        float speedModifier = MythicConfig.mjoellnir.attack_speed_multiplier * mobility;
+        return ItemAttributeModifiers.builder()
+                .add(Attributes.ATTACK_DAMAGE, new AttributeModifier(DAMAGE_MODIFIER_ID, (MythicConfig.mjoellnir.base_damage_melee - 1) + ((MythicConfig.mjoellnir.enchantment_multiplier - 1) * dmgModifier), AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
+                .add(Attributes.ATTACK_SPEED, new AttributeModifier(SPEED_MODIFIER_ID, MythicConfig.mjoellnir.base_attack_speed + speedModifier, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
+                .build();
+    }
+
+    @Deprecated
+    @Override
+    public ItemAttributeModifiers getDefaultAttributeModifiers() {
+        return this.getDefaultAttributeModifiers(this.getDefaultInstance());
+    }
+/*
     public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slot, ItemStack stack) {
         if (slot == EquipmentSlot.MAINHAND) {
             float dmgModifier = EnchantmentHelper.getDamageBonus(stack, MobType.UNDEFINED);
@@ -130,4 +161,5 @@ public class ItemMjoellnir extends BlockItem {
             return super.getAttributeModifiers(slot, stack);
         }
     }
+*/
 }

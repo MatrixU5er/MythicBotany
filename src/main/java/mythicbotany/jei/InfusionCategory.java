@@ -44,7 +44,7 @@ public class InfusionCategory implements IRecipeCategory<InfuserRecipe> {
     public InfusionCategory(IGuiHelper guiHelper) {
         this.background = guiHelper.createBlankDrawable(114, 141);
         this.localizedName = Component.translatable("block.mythicbotany.mana_infuser");
-        this.overlay = guiHelper.createDrawable(new ResourceLocation("botania","textures/gui/terrasteel_jei_overlay.png"), 42, 29, 64, 64);
+        this.overlay = guiHelper.createDrawable(ResourceLocation.fromNamespaceAndPath("botania","textures/gui/terrasteel_jei_overlay.png"), 42, 29, 64, 64);
         this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(ModBlocks.manaInfuser));
         IDrawable shimmerrock = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(BotaniaBlocks.shimmerrock));
         this.infuserPlate = new TerrestrialAgglomerationDrawable(shimmerrock, shimmerrock, guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(Blocks.GOLD_BLOCK)));
@@ -62,10 +62,14 @@ public class InfusionCategory implements IRecipeCategory<InfuserRecipe> {
         return this.localizedName;
     }
 
-    @Nonnull
     @Override
-    public IDrawable getBackground() {
-        return this.background;
+    public int getWidth() {
+        return this.background.getWidth();
+    }
+
+    @Override
+    public int getHeight() {
+        return this.background.getHeight();
     }
 
     @Nonnull
@@ -90,6 +94,7 @@ public class InfusionCategory implements IRecipeCategory<InfuserRecipe> {
     @Override
     public void draw(@Nonnull InfuserRecipe recipe, @Nonnull IRecipeSlotsView slots, @Nonnull GuiGraphics graphics, double mouseX, double mouseY) {
         RenderSystem.enableBlend();
+        this.background.draw(graphics);
         this.overlay.draw(graphics, 25, 14);
         HUDHandler.renderManaBar(graphics, 6, 126, 0x0000FF, 0.75f, recipe.getManaUsage(), 4000000);
         this.infuserPlate.draw(graphics, 35, 92);

@@ -1,6 +1,7 @@
 package mythicbotany.alfheim.worldgen.placement;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import mythicbotany.alfheim.worldgen.AlfheimWorldGen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -15,7 +16,7 @@ import java.util.stream.Stream;
 public class AlfheimGroundModifier extends PlacementModifier {
     
     public static final AlfheimGroundModifier INSTANCE = new AlfheimGroundModifier();
-    public static final Codec<AlfheimGroundModifier> CODEC = Codec.unit(INSTANCE);
+    public static final MapCodec<AlfheimGroundModifier> CODEC = MapCodec.unit(INSTANCE);
     public static final PlacementModifierType<AlfheimGroundModifier> TYPE = () -> CODEC;
     
     private AlfheimGroundModifier() {

@@ -13,7 +13,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -24,13 +24,14 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.moddingx.libx.base.tile.BlockBE;
 import org.moddingx.libx.mod.ModX;
 import org.moddingx.libx.registration.Registerable;
@@ -68,7 +69,6 @@ public class BlockMjoellnir extends BlockBE<TileMjoellnir> implements Registerab
         builder.register(Registries.ENTITY_TYPE, this.entityType);
     }
 
-    @Override
     @OnlyIn(Dist.CLIENT)
     public void registerClient(SetupContext ctx) {
         ctx.enqueue(() -> BlockEntityRenderers.register(this.getBlockEntityType(), mgr -> new RenderMjoellnir()));
@@ -78,20 +78,23 @@ public class BlockMjoellnir extends BlockBE<TileMjoellnir> implements Registerab
     @Nonnull
     @Override
     @SuppressWarnings("deprecation")
-    public InteractionResult use(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull BlockHitResult hit) {
+    protected ItemInteractionResult useItemOn(@Nonnull ItemStack heldStack, @Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull BlockHitResult hit) {
         if (!level.isClientSide) {
             if (canHold(player)) {
-                TileMjoellnir tile = this.getBlockEntity(level, pos);
+                BlockEntity blockEntity = level.getBlockEntity(pos);
+                if (!(blockEntity instanceof TileMjoellnir tile)) {
+                    return ItemInteractionResult.FAIL;
+                }
                 if (putInInventory(player, tile.getStack().copy(), getHotbarSlot(player, hand))) {
                     level.setBlock(pos, state.getFluidState().createLegacyBlock(), 3);
                 } else {
-                    return InteractionResult.FAIL;
+                    return ItemInteractionResult.FAIL;
                 }
             } else {
                 player.sendSystemMessage(Component.translatable("message.mythicbotany.mjoellnir_heavy_pick").withStyle(ChatFormatting.GRAY));
             }
         }
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        return ItemInteractionResult.sidedSuccess(level.isClientSide);
     }
 
     @Nonnull
@@ -121,13 +124,18 @@ public class BlockMjoellnir extends BlockBE<TileMjoellnir> implements Registerab
                 drops = Block.getDrops(state, (ServerLevel) level, pos, level.getBlockEntity(pos));
             }
             if (level.setBlock(pos, ModBlocks.mjoellnir.defaultBlockState(), 11)) {
+                BlockEntity blockEntity = level.getBlockEntity(pos);
+                if (!(blockEntity instanceof TileMjoellnir tile)) {
+                    level.setBlock(pos, state, 11);
+                    return false;
+                }
+                tile.setStack(stack.copy());
                 if (drops != null) {
                     drops.forEach(drop -> {
                         ItemEntity ie = new ItemEntity(level, pos.getX(), pos.getY(), pos.getZ(), drop.copy());
                         level.addFreshEntity(ie);
                     });
                 }
-                ModBlocks.mjoellnir.getBlockEntity(level, pos).setStack(stack.copy());
                 if (!level.isClientSide) {
                     level.playSound(null, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, SoundEvents.ANVIL_PLACE, SoundSource.BLOCKS, 1, 1);
                 }

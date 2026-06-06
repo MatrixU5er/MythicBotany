@@ -30,7 +30,7 @@ public class AbandonedApothecaryFeature extends Feature<AbandonedApothecaryConfi
                 try {
                     BlockEntity be = context.level().getBlockEntity(context.origin());
                     if (be instanceof PetalApothecaryBlockEntity apothecary) {
-                        be.blockState = state.setValue(PetalApothecaryBlock.FLUID, PetalApothecary.State.WATER);
+                        be.setBlockState(state.setValue(PetalApothecaryBlock.FLUID, PetalApothecary.State.WATER));
                         int petals = context.random().nextInt(5);
                         for (int i = 0; i < petals; i++) {
                             apothecary.getItemHandler().setItem(i, new ItemStack(context.config().petals().get(context.random().nextInt(context.config().petals().size()))));

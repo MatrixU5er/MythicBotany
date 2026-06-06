@@ -1,30 +1,31 @@
 package mythicbotany.alftools;
 
-import com.google.common.collect.Multimap;
 import mythicbotany.MythicBotany;
 import mythicbotany.config.MythicConfig;
 import mythicbotany.pylon.PylonRepairable;
 import mythicbotany.register.ModItems;
+import mythicbotany.register.tags.ModItemTags;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.living.LivingEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.entity.living.LivingEvent;
 import org.moddingx.libx.util.lazy.LazyValue;
 import vazkii.botania.api.mana.ManaItemHandler;
 import vazkii.botania.common.item.equipment.armor.terrasteel.TerrasteelArmorItem;
 import vazkii.botania.common.item.equipment.tool.ToolCommons;
-import vazkii.botania.common.lib.BotaniaTags;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -36,11 +37,11 @@ public class AlfsteelArmor extends TerrasteelArmorItem implements PylonRepairabl
 
     public AlfsteelArmor(ArmorItem.Type type, Properties props) {
         super(type, props.durability(MythicConfig.alftools.durability.armor.max_durability()));
-        MinecraftForge.EVENT_BUS.addListener(this::onJump);
+        NeoForge.EVENT_BUS.addListener(this::onJump);
     }
 
-    public String getArmorTextureAfterInk(ItemStack stack, EquipmentSlot slot) {
-        return MythicBotany.getInstance().modid + ":textures/model/armor_alfsteel.png";
+    public ResourceLocation getArmorTextureAfterInk(ItemStack stack, EquipmentSlot slot) {
+        return ResourceLocation.fromNamespaceAndPath(MythicBotany.getInstance().modid, "textures/model/armor_alfsteel.png");
     }
 
     private void onJump(LivingEvent.LivingJumpEvent event) {
@@ -54,8 +55,9 @@ public class AlfsteelArmor extends TerrasteelArmorItem implements PylonRepairabl
     }
 
     @Nonnull
-    public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(@Nonnull EquipmentSlot slot) {
-        return CommonAlfsteelArmor.applyModifiers(this, super.getDefaultAttributeModifiers(slot), slot);
+    @Override
+    public ItemAttributeModifiers getDefaultAttributeModifiers() {
+        return CommonAlfsteelArmor.applyModifiers(this);
     }
 
     public int getManaPerDamage() {
@@ -63,14 +65,15 @@ public class AlfsteelArmor extends TerrasteelArmorItem implements PylonRepairabl
     }
 
     @Override
-    public void onArmorTick(ItemStack stack, Level level, Player player) {
-        if (!level.isClientSide && stack.getDamageValue() > 0 && ManaItemHandler.instance().requestManaExact(stack, player, this.getManaPerDamage() * 2, true)) {
+    public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
+        super.inventoryTick(stack, level, entity, slotId, isSelected);
+        if (entity instanceof Player player && !level.isClientSide && stack.getDamageValue() > 0 && ManaItemHandler.instance().requestManaExact(stack, player, this.getManaPerDamage() * 2, true)) {
             stack.setDamageValue(Math.max(0, stack.getDamageValue() - 2));
         }
     }
 
     @Override
-    public <T extends LivingEntity> int damageItem(ItemStack stack, int amount, T entity, Consumer<T> onBroken) {
+    public <T extends LivingEntity> int damageItem(ItemStack stack, int amount, T entity, Consumer<Item> onBroken) {
         return ToolCommons.damageItemIfPossible(stack, amount, entity, this.getManaPerDamage());
     }
 
@@ -92,7 +95,7 @@ public class AlfsteelArmor extends TerrasteelArmorItem implements PylonRepairabl
 
     @Override
     public boolean isValidRepairItem(@Nonnull ItemStack toRepair, @Nonnull ItemStack repair) {
-        return repair.getItem() == ModItems.alfsteelIngot || (!Ingredient.of(BotaniaTags.Items.INGOTS_TERRASTEEL).test(repair) && super.isValidRepairItem(toRepair, repair));
+        return repair.getItem() == ModItems.alfsteelIngot || (!Ingredient.of(ModItemTags.INGOTS_TERRASTEEL).test(repair) && super.isValidRepairItem(toRepair, repair));
     }
 
     @Override

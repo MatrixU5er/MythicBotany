@@ -26,7 +26,7 @@ public class WitherAconite extends FunctionalFlowerBase {
     protected void tickFlower() {
         //noinspection ConstantConditions
         if (!this.level.isClientSide) {
-            List<ItemEntity> items = this.level.getEntitiesOfClass(ItemEntity.class, new AABB(this.worldPosition, this.worldPosition.immutable().offset(1, 1, 1)));
+            List<ItemEntity> items = this.level.getEntitiesOfClass(ItemEntity.class, AABB.encapsulatingFullBlocks(this.worldPosition, this.worldPosition));
             if (items.size() == 1) {
                 ItemEntity item = items.get(0);
                 ItemStack stack = item.getItem();

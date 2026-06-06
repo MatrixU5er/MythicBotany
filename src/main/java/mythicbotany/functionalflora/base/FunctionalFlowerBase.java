@@ -1,10 +1,12 @@
 package mythicbotany.functionalflora.base;
 
-import net.minecraft.client.Minecraft;
+import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
@@ -15,19 +17,14 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.minecraft.core.registries.BuiltInRegistries;
 import org.moddingx.libx.LibX;
 import org.moddingx.libx.base.tile.BlockEntityBase;
 import org.moddingx.libx.base.tile.TickingBlock;
 import vazkii.botania.api.BotaniaAPI;
 import vazkii.botania.api.BotaniaAPIClient;
-import vazkii.botania.api.BotaniaForgeCapabilities;
-import vazkii.botania.api.BotaniaForgeClientCapabilities;
 import vazkii.botania.api.block.WandBindable;
 import vazkii.botania.api.block.WandHUD;
 import vazkii.botania.api.block.Wandable;
@@ -37,15 +34,15 @@ import vazkii.botania.api.mana.ManaCollector;
 import vazkii.botania.api.mana.ManaPool;
 import vazkii.botania.client.core.helper.RenderHelper;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Objects;
+import java.util.Comparator;
 
 @OnlyIn(value = Dist.CLIENT, _interface = WandHUD.class)
 public abstract class FunctionalFlowerBase extends BlockEntityBase implements TickingBlock, WandBindable, Wandable, WandHUD {
 
-    public static final ResourceLocation POOL_ID = new ResourceLocation("botania", "mana_pool");
-    public static final ResourceLocation SPREADER_ID = new ResourceLocation("botania", "mana_spreader");
+    public static final ResourceLocation POOL_ID = ResourceLocation.fromNamespaceAndPath("botania", "mana_pool");
+    public static final ResourceLocation SPREADER_ID = ResourceLocation.fromNamespaceAndPath("botania", "mana_spreader");
     
     public static final int DEFAULT_MAX_MANA = 300;
     public static final int DEFAULT_MAX_TRANSFER = 30;
@@ -82,19 +79,6 @@ public abstract class FunctionalFlowerBase extends BlockEntityBase implements Ti
         this.maxMana = maxMana;
         this.maxTransfer = maxTransfer;
         this.isGenerating = isGenerating;
-    }
-
-    @Nonnull
-    @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        if (cap == BotaniaForgeCapabilities.WANDABLE) {
-            return LazyOptional.of(() -> this).cast();
-        } else {
-            return DistExecutor.unsafeRunForDist(
-                    () -> () -> cap == BotaniaForgeClientCapabilities.WAND_HUD ? LazyOptional.of(() -> this).cast() : super.getCapability(cap, side),
-                    () -> () -> super.getCapability(cap, side)
-            );
-        }
     }
 
     @Override
@@ -156,7 +140,7 @@ public abstract class FunctionalFlowerBase extends BlockEntityBase implements Ti
     protected abstract void tickFlower();
 
     @Override
-    public boolean canSelect(Player player, ItemStack stack, BlockPos pos, Direction direction) {
+    public boolean canSelect(Player player, ItemStack stack, Direction direction) {
         return true;
     }
 
@@ -186,7 +170,6 @@ public abstract class FunctionalFlowerBase extends BlockEntityBase implements Ti
     }
 
     @Nullable
-    @Override
     public BlockPos getBinding() {
         return this.pool;
     }
@@ -226,7 +209,10 @@ public abstract class FunctionalFlowerBase extends BlockEntityBase implements Ti
                 ManaNetwork network = BotaniaAPI.instance().getManaNetworkInstance();
                 int size = network.getAllCollectorsInWorld(this.getLevel()).size();
                 if (size != this.sizeLastCheck) {
-                    ManaCollector te = network.getClosestCollector(this.getBlockPos(), this.getLevel(), 10);
+                    ManaCollector te = network.getAllCollectorsInWorld(this.getLevel()).stream()
+                            .filter(collector -> collector.getManaReceiverPos().distSqr(this.getBlockPos()) <= 100)
+                            .min(Comparator.comparingDouble(collector -> collector.getManaReceiverPos().distSqr(this.getBlockPos())))
+                            .orElse(null);
                     if (te != null) {
                         this.pool = te.getManaReceiverPos();
                         this.poolTile = null;
@@ -236,17 +222,26 @@ public abstract class FunctionalFlowerBase extends BlockEntityBase implements Ti
                     this.sizeLastCheck = size;
                 }
             } else {
-                ManaNetwork network = BotaniaAPI.instance().getManaNetworkInstance();
-                int size = network.getAllPoolsInWorld(this.getLevel()).size();
-                if (size != this.sizeLastCheck) {
-                    ManaPool te = network.getClosestPool(this.getBlockPos(), this.getLevel(), 10);
+                if (this.getLevel().getGameTime() % 20 == 0) {
+                    ManaPool te = null;
+                    double bestDistance = Double.MAX_VALUE;
+                    BlockPos base = this.getBlockPos();
+                    for (BlockPos pos : BlockPos.betweenClosed(base.offset(-10, -10, -10), base.offset(10, 10, 10))) {
+                        BlockEntity candidate = this.getLevel().getBlockEntity(pos);
+                        if (candidate instanceof ManaPool manaPool) {
+                            double distance = manaPool.getManaReceiverPos().distSqr(base);
+                            if (distance <= 100 && distance < bestDistance) {
+                                te = manaPool;
+                                bestDistance = distance;
+                            }
+                        }
+                    }
                     if (te != null) {
                         this.pool = te.getManaReceiverPos();
                         this.poolTile = te;
                         this.spreaderTile = null;
                         this.setChanged();
                     }
-                    this.sizeLastCheck = size;
                 }
             }
         }
@@ -255,8 +250,8 @@ public abstract class FunctionalFlowerBase extends BlockEntityBase implements Ti
     }
 
     @Override
-    public void load(@Nonnull CompoundTag nbt) {
-        super.load(nbt);
+    protected void loadAdditional(CompoundTag nbt, HolderLookup.Provider registries) {
+        super.loadAdditional(nbt, registries);
         if (nbt.contains("mana", Tag.TAG_INT)) {
             this.mana = Mth.clamp(nbt.getInt("mana"), 0, this.maxMana);
         } else {
@@ -272,8 +267,8 @@ public abstract class FunctionalFlowerBase extends BlockEntityBase implements Ti
     }
 
     @Override
-    public void saveAdditional(@Nonnull CompoundTag compound) {
-        super.saveAdditional(compound);
+    protected void saveAdditional(CompoundTag compound, HolderLookup.Provider registries) {
+        super.saveAdditional(compound, registries);
         compound.putInt("mana", Mth.clamp(this.mana, 0, this.maxMana));
         if (this.pool != null) {
             CompoundTag poolTag = new CompoundTag();
@@ -285,10 +280,9 @@ public abstract class FunctionalFlowerBase extends BlockEntityBase implements Ti
         compound.putBoolean("floating", this.floating);
     }
 
-    @Nonnull
     @Override
-    public CompoundTag getUpdateTag() {
-        CompoundTag tag = super.getUpdateTag();
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        CompoundTag tag = super.getUpdateTag(registries);
         //noinspection ConstantConditions
         if (!this.level.isClientSide) {
             tag.putInt("mana", Mth.clamp(this.mana, 0, this.maxMana));
@@ -305,7 +299,7 @@ public abstract class FunctionalFlowerBase extends BlockEntityBase implements Ti
     }
 
     @Override
-    public void handleUpdateTag(CompoundTag nbt) {
+    public void handleUpdateTag(CompoundTag nbt, HolderLookup.Provider registries) {
         //noinspection ConstantConditions
         if (this.level.isClientSide) {
             this.mana = Mth.clamp(nbt.getInt("mana"), 0, this.maxMana);
@@ -350,9 +344,8 @@ public abstract class FunctionalFlowerBase extends BlockEntityBase implements Ti
         return null;
     }
 
-    @Override
     public AABB getRenderBoundingBox() {
-        return INFINITE_EXTENT_AABB;
+        return AABB.INFINITE;
     }
 
     @Override
@@ -364,17 +357,17 @@ public abstract class FunctionalFlowerBase extends BlockEntityBase implements Ti
     }
     
     @Override
-    public void renderHUD(GuiGraphics graphics, Minecraft minecraft) {
+    public void renderHUD(GuiGraphics graphics, Window window, Font font, float partialTicks) {
         if (this.level == null) return;
-        String name = I18n.get(this.blockState.getBlock().getDescriptionId());
+        String name = I18n.get(this.getBlockState().getBlock().getDescriptionId());
 
-        int centerX = minecraft.getWindow().getGuiScaledWidth() / 2;
-        int centerY = minecraft.getWindow().getGuiScaledHeight() / 2;
-        int left = (Math.max(102, minecraft.font.width(name)) + 4) / 2;
+        int centerX = window.getGuiScaledWidth() / 2;
+        int centerY = window.getGuiScaledHeight() / 2;
+        int left = (Math.max(102, font.width(name)) + 4) / 2;
         int right = left + 20;
 
         RenderHelper.renderHUDBox(graphics, centerX - left, centerY + 8, centerX + right, centerY + 30);
-        BotaniaAPIClient.instance().drawComplexManaHUD(graphics, this.color, this.getCurrentMana(), this.maxMana, name, new ItemStack(Objects.requireNonNull(ForgeRegistries.ITEMS.getValue(this.isGenerating ? SPREADER_ID : POOL_ID))), this.isValidBinding());
+        BotaniaAPIClient.instance().drawComplexManaHUD(graphics, window, font, this.color, this.getCurrentMana(), this.maxMana, name, new ItemStack(Objects.requireNonNull(BuiltInRegistries.ITEM.get(this.isGenerating ? SPREADER_ID : POOL_ID))), this.isValidBinding());
     }
     
     private void setPoolChanged() {

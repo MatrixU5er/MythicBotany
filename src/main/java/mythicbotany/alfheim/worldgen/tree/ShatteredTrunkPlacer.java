@@ -1,7 +1,7 @@
 package mythicbotany.alfheim.worldgen.tree;
 
-import com.mojang.serialization.Codec;
-import mythicbotany.MythicBotany;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import mythicbotany.register.tags.ModBlockTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -15,7 +15,6 @@ import net.minecraft.world.level.levelgen.feature.configurations.TreeConfigurati
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacer;
 import net.minecraft.world.level.levelgen.feature.trunkplacers.TrunkPlacer;
 import net.minecraft.world.level.levelgen.feature.trunkplacers.TrunkPlacerType;
-import org.moddingx.libx.annotation.api.Codecs;
 import org.moddingx.libx.annotation.codec.PrimaryConstructor;
 import org.moddingx.libx.annotation.registration.Reg;
 import org.moddingx.libx.annotation.registration.RegisterClass;
@@ -28,7 +27,7 @@ import java.util.function.BiConsumer;
 @RegisterClass(registry = "TRUNK_PLACER_TYPE")
 public class ShatteredTrunkPlacer extends TrunkPlacer {
 
-    @Reg.Exclude public static final Codec<ShatteredTrunkPlacer> CODEC = Codecs.get(MythicBotany.class, ShatteredTrunkPlacer.class);
+    @Reg.Exclude public static final MapCodec<ShatteredTrunkPlacer> CODEC = RecordCodecBuilder.mapCodec(instance -> trunkPlacerParts(instance).apply(instance, ShatteredTrunkPlacer::new));
     @Reg.Name("shattered_trunk") public static final TrunkPlacerType<ShatteredTrunkPlacer> TYPE = new TrunkPlacerType<>(CODEC);
 
     @PrimaryConstructor

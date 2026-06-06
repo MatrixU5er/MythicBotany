@@ -4,7 +4,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -13,14 +13,15 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.moddingx.libx.base.tile.BlockBE;
 import org.moddingx.libx.mod.ModX;
 import org.moddingx.libx.registration.SetupContext;
@@ -42,7 +43,6 @@ public class BlockRuneHolder<T extends TileRuneHolder> extends BlockBE<T> {
         super(mod, tileClass, properties, itemProperties);
     }
 
-    @Override
     @OnlyIn(Dist.CLIENT)
     public void registerClient(SetupContext ctx) {
         ctx.enqueue(() -> BlockEntityRenderers.register(this.getBlockEntityType(), mgr -> new RenderRuneHolder()));
@@ -51,15 +51,17 @@ public class BlockRuneHolder<T extends TileRuneHolder> extends BlockBE<T> {
     @Nonnull
     @Override
     @SuppressWarnings("deprecation")
-    public InteractionResult use(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull BlockHitResult hit) {
-        TileRuneHolder tile = this.getBlockEntity(level, pos);
+    protected ItemInteractionResult useItemOn(@Nonnull ItemStack held, @Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull BlockHitResult hit) {
+        BlockEntity blockEntity = level.getBlockEntity(pos);
+        if (!(blockEntity instanceof TileRuneHolder tile)) {
+            return super.useItemOn(held, state, level, pos, player, hand, hit);
+        }
         if (!tile.getInventory().getStackInSlot(0).isEmpty()) {
             if (!level.isClientSide) {
-                ItemStack held = player.getItemInHand(hand);
                 ItemStack stack = tile.getInventory().getStackInSlot(0);
                 if (held.isEmpty()) {
                     player.setItemInHand(hand, stack.copy());
-                } else if (ItemStack.isSameItemSameTags(held, stack) && held.getCount() + stack.getCount() <= held.getMaxStackSize()) {
+                } else if (ItemStack.isSameItemSameComponents(held, stack) && held.getCount() + stack.getCount() <= held.getMaxStackSize()) {
                     held.grow(stack.getCount());
                     player.setItemInHand(hand, held);
                 } else {
@@ -67,17 +69,16 @@ public class BlockRuneHolder<T extends TileRuneHolder> extends BlockBE<T> {
                 }
                 tile.getInventory().setStackInSlot(0, ItemStack.EMPTY);
             }
-            return InteractionResult.sidedSuccess(level.isClientSide);
-        } else if (tile.getInventory().isItemValid(0, player.getItemInHand(hand)) && player.getItemInHand(hand).getCount() >= 1) {
+            return ItemInteractionResult.sidedSuccess(level.isClientSide);
+        } else if (tile.getInventory().isItemValid(0, held) && held.getCount() >= 1) {
             if (!level.isClientSide) {
-                ItemStack held = player.getItemInHand(hand);
                 ItemStack stack = held.split(1);
                 tile.getInventory().setStackInSlot(0, stack);
                 player.setItemInHand(hand, held);
             }
-            return InteractionResult.sidedSuccess(level.isClientSide);
+            return ItemInteractionResult.sidedSuccess(level.isClientSide);
         } else {
-            return super.use(state, level, pos, player, hand, hit);
+            return super.useItemOn(held, state, level, pos, player, hand, hit);
         }
     }
     

@@ -4,9 +4,9 @@ import com.google.common.base.Preconditions;
 import com.google.gson.JsonObject;
 import mythicbotany.MythicBotany;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.model.generators.BlockModelBuilder;
-import net.minecraftforge.client.model.generators.BlockModelProvider;
-import net.minecraftforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.client.model.generators.BlockModelBuilder;
+import net.neoforged.neoforge.client.model.generators.BlockModelProvider;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 public class FloatingFlowerModelBuilder extends BlockModelBuilder {
 
@@ -26,7 +26,7 @@ public class FloatingFlowerModelBuilder extends BlockModelBuilder {
         if (flower.getPath().startsWith("block/")) {
             this.flower = flower;
         } else {
-            this.flower = new ResourceLocation(flower.getNamespace(), "block/" + flower.getPath());
+            this.flower = ResourceLocation.fromNamespaceAndPath(flower.getNamespace(), "block/" + flower.getPath());
         }
         return this;
     }

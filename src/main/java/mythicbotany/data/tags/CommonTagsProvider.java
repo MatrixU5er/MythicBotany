@@ -12,7 +12,7 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.common.Tags;
+import net.neoforged.neoforge.common.Tags;
 import org.moddingx.libx.datagen.DatagenContext;
 import org.moddingx.libx.datagen.provider.tags.CommonTagsProviderBase;
 import vazkii.botania.common.block.BotaniaBlocks;
@@ -30,14 +30,12 @@ public class CommonTagsProvider extends CommonTagsProviderBase {
 
     @Override
     public void setup() {
-        this.item(BotaniaTags.Items.TERRA_PICK_BLACKLIST).add(ModItems.auraRingGreatest);
-        this.item(BotaniaTags.Items.TERRA_PICK_BLACKLIST).add(ModItems.alfsteelHelmet);
         this.item(ModItemTags.RITUAL_RUNES).addTag(BotaniaTags.Items.RUNES);
         this.item(ModItemTags.RITUAL_RUNES).add(ModItems.fimbultyrTablet);
         this.item(ItemTags.GOLD_ORES).add(ModBlocks.goldOre.asItem());
         this.item(Tags.Items.ORES).addTag(ModItemTags.ALFHEIM_ORES);
         this.item(Tags.Items.RAW_MATERIALS).add(ModItems.rawElementium);
-        this.item(ItemTags.create(new ResourceLocation("curios", "ring"))).add(
+        this.item(ItemTags.create(ResourceLocation.fromNamespaceAndPath("curios", "ring"))).add(
                 ModItems.manaRingGreatest, ModItems.auraRingGreatest, ModItems.fireRing, ModItems.iceRing,
                 ModItems.andwariRing, ModItems.cursedAndwariRing
         );

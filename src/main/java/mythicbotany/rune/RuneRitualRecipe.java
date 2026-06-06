@@ -1,28 +1,31 @@
 package mythicbotany.rune;
 
 import com.google.common.collect.ImmutableList;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import mythicbotany.register.ModRecipes;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.crafting.CraftingHelper;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
-public class RuneRitualRecipe implements Recipe<Container> {
+public class RuneRitualRecipe implements Recipe<RecipeInput> {
     
     private static final Map<ResourceLocation, SpecialRuneInput> specialInputs = new HashMap<>();
     private static final Map<ResourceLocation, SpecialRuneOutput> specialOutputs = new HashMap<>();
@@ -45,7 +48,6 @@ public class RuneRitualRecipe implements Recipe<Container> {
         }
     }
 
-    private final ResourceLocation id;
     private final Ingredient centerRune;
     private final List<RunePosition> runes;
     private final int mana;
@@ -57,8 +59,7 @@ public class RuneRitualRecipe implements Recipe<Container> {
     @Nullable
     private final SpecialRuneOutput specialOutput;
 
-    public RuneRitualRecipe(ResourceLocation id, Ingredient centerRune, List<RunePosition> runes, int mana, int ticks, List<Ingredient> inputs, List<ItemStack> outputs, @Nullable SpecialRuneInput specialInput, @Nullable SpecialRuneOutput specialOutput) {
-        this.id = id;
+    public RuneRitualRecipe(Ingredient centerRune, List<RunePosition> runes, int mana, int ticks, List<Ingredient> inputs, List<ItemStack> outputs, @Nullable SpecialRuneInput specialInput, @Nullable SpecialRuneOutput specialOutput) {
         this.centerRune = centerRune;
         this.runes = ImmutableList.copyOf(runes);
         this.mana = mana;
@@ -81,14 +82,8 @@ public class RuneRitualRecipe implements Recipe<Container> {
         return Serializer.INSTANCE;
     }
 
-    @Nonnull
     @Override
-    public ResourceLocation getId() {
-        return this.id;
-    }
-    
-    @Override
-    public boolean matches(@Nonnull Container inv, @Nonnull Level level) {
+    public boolean matches(@Nonnull RecipeInput inv, @Nonnull Level level) {
         return false;
     }
 
@@ -102,13 +97,13 @@ public class RuneRitualRecipe implements Recipe<Container> {
 
     @Nonnull
     @Override
-    public ItemStack getResultItem(@Nonnull RegistryAccess registryAccess) {
+    public ItemStack getResultItem(@Nonnull HolderLookup.Provider registries) {
         return this.getResultItem();
     }
 
     @Nonnull
     @Override
-    public ItemStack assemble(@Nonnull Container container, @Nonnull RegistryAccess registryAccess) {
+    public ItemStack assemble(@Nonnull RecipeInput container, @Nonnull HolderLookup.Provider registries) {
         return this.getResultItem();
     }
 
@@ -152,6 +147,20 @@ public class RuneRitualRecipe implements Recipe<Container> {
     }
 
     public static class RunePosition {
+
+        public static final Codec<RunePosition> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                Ingredient.CODEC_NONEMPTY.fieldOf("rune").forGetter(RunePosition::getRune),
+                Codec.INT.fieldOf("x").forGetter(RunePosition::getX),
+                Codec.INT.fieldOf("z").forGetter(RunePosition::getZ),
+                Codec.BOOL.optionalFieldOf("consume", false).forGetter(RunePosition::isConsumed)
+        ).apply(instance, RunePosition::new));
+        public static final StreamCodec<RegistryFriendlyByteBuf, RunePosition> STREAM_CODEC = StreamCodec.composite(
+                Ingredient.CONTENTS_STREAM_CODEC, RunePosition::getRune,
+                ByteBufCodecs.VAR_INT, RunePosition::getX,
+                ByteBufCodecs.VAR_INT, RunePosition::getZ,
+                ByteBufCodecs.BOOL, RunePosition::isConsumed,
+                RunePosition::new
+        );
 
         private static final int HFLIP = 1;
         private static final int VFLIP = 1 << 1;
@@ -221,157 +230,69 @@ public class RuneRitualRecipe implements Recipe<Container> {
     public static class Serializer implements RecipeSerializer<RuneRitualRecipe> {
         
         public static Serializer INSTANCE = new Serializer();
+        private static final MapCodec<RuneRitualRecipe> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+                Ingredient.CODEC_NONEMPTY.fieldOf("center").forGetter(recipe -> recipe.centerRune),
+                RunePosition.CODEC.listOf().fieldOf("runes").forGetter(recipe -> recipe.runes),
+                Codec.INT.optionalFieldOf("mana", 0).forGetter(recipe -> recipe.mana),
+                Codec.INT.optionalFieldOf("ticks", 200).forGetter(recipe -> recipe.ticks),
+                Ingredient.CODEC_NONEMPTY.listOf().optionalFieldOf("inputs", List.of()).forGetter(recipe -> recipe.inputs),
+                ItemStack.STRICT_CODEC.listOf().optionalFieldOf("outputs", List.of()).forGetter(recipe -> recipe.outputs),
+                ResourceLocation.CODEC.optionalFieldOf("special_input").forGetter(recipe -> Optional.ofNullable(recipe.specialInput).map(special -> special.id)),
+                ResourceLocation.CODEC.optionalFieldOf("special_output").forGetter(recipe -> Optional.ofNullable(recipe.specialOutput).map(special -> special.id))
+        ).apply(instance, Serializer::create));
+        private static final StreamCodec<RegistryFriendlyByteBuf, RuneRitualRecipe> STREAM_CODEC = StreamCodec.of(
+                (buffer, recipe) -> {
+                    Ingredient.CONTENTS_STREAM_CODEC.encode(buffer, recipe.getCenterRune());
+                    RunePosition.STREAM_CODEC.apply(ByteBufCodecs.list()).encode(buffer, recipe.getRunes());
+                    ByteBufCodecs.VAR_INT.encode(buffer, recipe.getMana());
+                    ByteBufCodecs.VAR_INT.encode(buffer, recipe.getTicks());
+                    Ingredient.CONTENTS_STREAM_CODEC.apply(ByteBufCodecs.list()).encode(buffer, recipe.getInputs());
+                    ItemStack.STREAM_CODEC.apply(ByteBufCodecs.list()).encode(buffer, recipe.getOutputs());
+                    ByteBufCodecs.optional(ResourceLocation.STREAM_CODEC).encode(buffer, Optional.ofNullable(recipe.getSpecialInput()).map(special -> special.id));
+                    ByteBufCodecs.optional(ResourceLocation.STREAM_CODEC).encode(buffer, Optional.ofNullable(recipe.getSpecialOutput()).map(special -> special.id));
+                },
+                buffer -> create(
+                        Ingredient.CONTENTS_STREAM_CODEC.decode(buffer),
+                        RunePosition.STREAM_CODEC.apply(ByteBufCodecs.list()).decode(buffer),
+                        ByteBufCodecs.VAR_INT.decode(buffer),
+                        ByteBufCodecs.VAR_INT.decode(buffer),
+                        Ingredient.CONTENTS_STREAM_CODEC.apply(ByteBufCodecs.list()).decode(buffer),
+                        ItemStack.STREAM_CODEC.apply(ByteBufCodecs.list()).decode(buffer),
+                        ByteBufCodecs.optional(ResourceLocation.STREAM_CODEC).decode(buffer),
+                        ByteBufCodecs.optional(ResourceLocation.STREAM_CODEC).decode(buffer)
+                )
+        );
         
         private Serializer() {
             
         }
 
-        @Nonnull
         @Override
-        public RuneRitualRecipe fromJson(@Nonnull ResourceLocation recipeId, @Nonnull JsonObject json) {
-            Ingredient centerRune = Ingredient.fromJson(json.get("center"));
-            ImmutableList.Builder<RunePosition> runes = ImmutableList.builder();
-            for (JsonElement elem : json.get("runes").getAsJsonArray()) {
-                Ingredient rune = Ingredient.fromJson(elem.getAsJsonObject().get("rune"));
-                int x = elem.getAsJsonObject().get("x").getAsInt();
-                int z = elem.getAsJsonObject().get("z").getAsInt();
-                boolean consume = elem.getAsJsonObject().has("consume") && elem.getAsJsonObject().get("consume").getAsBoolean();
-                runes.add(new RunePosition(rune, x, z, consume));
-            }
-
-            int mana = json.has("mana") ? json.get("mana").getAsInt() : 0;
-            int ticks = json.has("ticks") ? json.get("ticks").getAsInt() : 200;
-
-            ImmutableList.Builder<Ingredient> inputs = ImmutableList.builder();
-            if (json.has("inputs")) {
-                for (JsonElement elem : json.get("inputs").getAsJsonArray()) {
-                    inputs.add(Ingredient.fromJson(elem));
-                }
-            }
-
-            ImmutableList.Builder<ItemStack> outputs = ImmutableList.builder();
-            if (json.has("outputs")) {
-                for (JsonElement elem : json.get("outputs").getAsJsonArray()) {
-                    outputs.add(CraftingHelper.getItemStack(elem.getAsJsonObject(), true));
-                }
-            }
-
-            ResourceLocation specialInputId = (json.has("special_input") && !json.get("special_input").isJsonNull()) ? new ResourceLocation(json.get("special_input").getAsString()) : null;
-            SpecialRuneInput specialInput = null;
-            if (specialInputId != null) {
-                if (!specialInputs.containsKey(specialInputId)) {
-                    throw new IllegalStateException("Unknown special rune input: " + specialInputId);
-                }
-                specialInput = specialInputs.get(specialInputId);
-            }
-            
-            ResourceLocation specialOutputId = (json.has("special_output") && !json.get("special_output").isJsonNull()) ? new ResourceLocation(json.get("special_output").getAsString()) : null;
-            SpecialRuneOutput specialOutput = null;
-            if (specialOutputId != null) {
-                if (!specialOutputs.containsKey(specialOutputId)) {
-                    throw new IllegalStateException("Unknown special rune output: " + specialOutputId);
-                }
-                specialOutput = specialOutputs.get(specialOutputId);
-            }
-            
-            return new RuneRitualRecipe(recipeId, centerRune, runes.build(), mana, ticks, inputs.build(), outputs.build(), specialInput, specialOutput);
-        }
-
-        @Nullable
-        @Override
-        public RuneRitualRecipe fromNetwork(@Nonnull ResourceLocation recipeId, @Nonnull FriendlyByteBuf buffer) {
-            Ingredient centerRune = Ingredient.fromNetwork(buffer);
-            int size = buffer.readVarInt();
-            ImmutableList.Builder<RunePosition> runes = ImmutableList.builder();
-            for (int i = 0; i < size; i++) {
-                Ingredient rune = Ingredient.fromNetwork(buffer);
-                int x = buffer.readVarInt();
-                int z = buffer.readVarInt();
-                boolean consume = buffer.readBoolean();
-                runes.add(new RunePosition(rune, x, z, consume));
-            }
-
-            int mana = buffer.readVarInt();
-            int ticks = buffer.readVarInt();
-
-            size = buffer.readVarInt();
-            ImmutableList.Builder<Ingredient> inputs = ImmutableList.builder();
-            for (int i = 0; i < size; i++) {
-                inputs.add(Ingredient.fromNetwork(buffer));
-            }
-
-            size = buffer.readVarInt();
-            ImmutableList.Builder<ItemStack> outputs = ImmutableList.builder();
-            for (int i = 0; i < size; i++) {
-                outputs.add(buffer.readItem());
-            }
-
-            ResourceLocation specialInputId = null;
-            if (buffer.readBoolean()) {
-                specialInputId = buffer.readResourceLocation();
-            }
-            SpecialRuneInput specialInput = null;
-            if (specialInputId != null) {
-                if (!specialInputs.containsKey(specialInputId)) {
-                    throw new IllegalStateException("Unknown special rune input: " + specialInputId);
-                }
-                specialInput = specialInputs.get(specialInputId);
-            }
-            
-            ResourceLocation specialOutputId = null;
-            if (buffer.readBoolean()) {
-                specialOutputId = buffer.readResourceLocation();
-            }
-            SpecialRuneOutput specialOutput = null;
-            if (specialOutputId != null) {
-                if (!specialOutputs.containsKey(specialOutputId)) {
-                    throw new IllegalStateException("Unknown special rune output: " + specialOutputId);
-                }
-                specialOutput = specialOutputs.get(specialOutputId);
-            }
-
-            return new RuneRitualRecipe(recipeId, centerRune, runes.build(), mana, ticks, inputs.build(), outputs.build(), specialInput, specialOutput);
-
+        public MapCodec<RuneRitualRecipe> codec() {
+            return CODEC;
         }
 
         @Override
-        public void toNetwork(@Nonnull FriendlyByteBuf buffer, @Nonnull RuneRitualRecipe recipe) {
-            recipe.getCenterRune().toNetwork(buffer);
-            
-            buffer.writeVarInt(recipe.getRunes().size());
-            for (RunePosition rune : recipe.getRunes()) {
-                rune.getRune().toNetwork(buffer);
-                buffer.writeVarInt(rune.getX());
-                buffer.writeVarInt(rune.getZ());
-                buffer.writeBoolean(rune.isConsumed());
-            }
-            
-            buffer.writeVarInt(recipe.getMana());
-            buffer.writeVarInt(recipe.getTicks());
+        public StreamCodec<RegistryFriendlyByteBuf, RuneRitualRecipe> streamCodec() {
+            return STREAM_CODEC;
+        }
 
-            buffer.writeVarInt(recipe.getInputs().size());
-            for (Ingredient input : recipe.getInputs()) {
-                input.toNetwork(buffer);
+        private static RuneRitualRecipe create(Ingredient centerRune, List<RunePosition> runes, int mana, int ticks, List<Ingredient> inputs, List<ItemStack> outputs, Optional<ResourceLocation> specialInputId, Optional<ResourceLocation> specialOutputId) {
+            SpecialRuneInput specialInput = null;
+            if (specialInputId.isPresent()) {
+                specialInput = specialInputs.get(specialInputId.get());
+                if (specialInput == null) {
+                    throw new IllegalStateException("Unknown special rune input: " + specialInputId.get());
+                }
             }
-
-            buffer.writeVarInt(recipe.getOutputs().size());
-            for (ItemStack output : recipe.getOutputs()) {
-                buffer.writeItem(output);
+            SpecialRuneOutput specialOutput = null;
+            if (specialOutputId.isPresent()) {
+                specialOutput = specialOutputs.get(specialOutputId.get());
+                if (specialOutput == null) {
+                    throw new IllegalStateException("Unknown special rune output: " + specialOutputId.get());
+                }
             }
-            
-            if (recipe.getSpecialInput() != null) {
-                buffer.writeBoolean(true);
-                buffer.writeResourceLocation(recipe.getSpecialInput().id);
-            } else {
-                buffer.writeBoolean(false);
-            }
-            
-            if (recipe.getSpecialOutput() != null) {
-                buffer.writeBoolean(true);
-                buffer.writeResourceLocation(recipe.getSpecialOutput().id);
-            } else {
-                buffer.writeBoolean(false);
-            }
+            return new RuneRitualRecipe(centerRune, runes, mana, ticks, inputs, outputs, specialInput, specialOutput);
         }
     }
 }

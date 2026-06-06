@@ -1,14 +1,14 @@
 package mythicbotany.data.recipes.extension;
 
-import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 import org.moddingx.libx.datagen.provider.recipe.RecipeExtension;
-import vazkii.botania.data.recipes.ElvenTradeProvider;
+import vazkii.botania.common.crafting.ElvenTradeRecipe;
 
 import java.util.Arrays;
+import java.util.List;
 
 public interface ElvenTradeExtension extends RecipeExtension {
 
@@ -25,17 +25,7 @@ public interface ElvenTradeExtension extends RecipeExtension {
     }
 
     default void elvenTrade(ItemStack output, Ingredient... inputs) {
-        this.consumer().accept(Wrapper.create(this.provider().loc(output.getItem(), "elven_trade"), output, inputs));
-    }
-    
-    class Wrapper extends ElvenTradeProvider {
-        
-        public Wrapper(PackOutput packOutput) {
-            super(packOutput);
-        }
-
-        private static FinishedElvenRecipe create(ResourceLocation id, ItemStack output, Ingredient... inputs) {
-            return new FinishedElvenRecipe(id, output, inputs);
-        }
+        ResourceLocation id = this.provider().loc(output.getItem(), "elven_trade");
+        this.output().accept(id, new ElvenTradeRecipe(List.of(output), List.of(inputs)), null);
     }
 }

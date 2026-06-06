@@ -3,6 +3,7 @@ package mythicbotany.infuser;
 import com.google.common.base.Predicates;
 import mythicbotany.MythicBotany;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
@@ -17,7 +18,6 @@ import net.minecraft.world.phys.AABB;
 import org.apache.commons.lang3.tuple.Pair;
 import org.moddingx.libx.base.tile.BlockEntityBase;
 import org.moddingx.libx.base.tile.TickingBlock;
-import vazkii.botania.api.BotaniaForgeCapabilities;
 import vazkii.botania.api.mana.ManaPool;
 import vazkii.botania.api.mana.ManaReceiver;
 import vazkii.botania.api.mana.spark.ManaSpark;
@@ -43,7 +43,7 @@ public class TileManaInfuser extends BlockEntityBase implements SparkAttachable,
     private transient int toColor = -1;
 
     public TileManaInfuser(BlockEntityType<?> type, BlockPos pos, BlockState state) {
-        super(type, pos, state, BotaniaForgeCapabilities.MANA_RECEIVER, BotaniaForgeCapabilities.SPARK_ATTACHABLE);
+        super(type, pos, state);
     }
 
     @Override
@@ -126,7 +126,7 @@ public class TileManaInfuser extends BlockEntityBase implements SparkAttachable,
 
     private List<ItemEntity> getItems() {
         //noinspection ConstantConditions
-        return this.level.getEntitiesOfClass(ItemEntity.class, new AABB(this.worldPosition, this.worldPosition.offset(1, 1, 1)));
+        return this.level.getEntitiesOfClass(ItemEntity.class, AABB.encapsulatingFullBlocks(this.worldPosition, this.worldPosition));
     }
 
     private boolean hasValidPlatform() {
@@ -169,10 +169,9 @@ public class TileManaInfuser extends BlockEntityBase implements SparkAttachable,
         }
     }
 
-    @Override
     public ManaSpark getAttachedSpark() {
         if (this.level == null) return null;
-        List<Entity> sparks = this.level.getEntitiesOfClass(Entity.class, new AABB(this.worldPosition.above(), this.worldPosition.above().offset(1, 1, 1)), Predicates.instanceOf(ManaSpark.class));
+        List<Entity> sparks = this.level.getEntitiesOfClass(Entity.class, AABB.encapsulatingFullBlocks(this.worldPosition.above(), this.worldPosition.above()), Predicates.instanceOf(ManaSpark.class));
         if (sparks.size() == 1) {
             Entity e = sparks.get(0);
             return (ManaSpark) e;
@@ -182,7 +181,7 @@ public class TileManaInfuser extends BlockEntityBase implements SparkAttachable,
     }
 
     @Override
-    public boolean areIncomingTranfersDone() {
+    public boolean areIncomingTransfersDone() {
         return this.recipe == null;
     }
 
@@ -227,32 +226,31 @@ public class TileManaInfuser extends BlockEntityBase implements SparkAttachable,
     }
 
     @Override
-    public void load(@Nonnull CompoundTag nbt) {
-        super.load(nbt);
+    protected void loadAdditional(CompoundTag nbt, HolderLookup.Provider registries) {
+        super.loadAdditional(nbt, registries);
         this.mana = nbt.getInt("mana");
         if (nbt.contains("output")) {
-            this.output = ItemStack.of(nbt.getCompound("output"));
+            this.output = ItemStack.parseOptional(registries, nbt.getCompound("output"));
         } else {
             this.output = null;
         }
     }
 
     @Override
-    public void saveAdditional(@Nonnull CompoundTag nbt) {
-        super.saveAdditional(nbt);
+    protected void saveAdditional(CompoundTag nbt, HolderLookup.Provider registries) {
+        super.saveAdditional(nbt, registries);
         nbt.putInt("mana", this.mana);
         if (this.output != null) {
-            nbt.put("output", this.output.save(new CompoundTag()));
+            nbt.put("output", this.output.save(registries));
         }
     }
 
-    @Nonnull
     @Override
-    public CompoundTag getUpdateTag() {
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         //noinspection ConstantConditions
         if (this.level.isClientSide)
-            return super.getUpdateTag();
-        CompoundTag compound = super.getUpdateTag();
+            return super.getUpdateTag(registries);
+        CompoundTag compound = super.getUpdateTag(registries);
         compound.putInt("mana", this.mana);
         if (this.recipe != null) {
             compound.putInt("maxMana", this.maxMana);
@@ -267,7 +265,7 @@ public class TileManaInfuser extends BlockEntityBase implements SparkAttachable,
     }
 
     @Override
-    public void handleUpdateTag(CompoundTag tag) {
+    public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider registries) {
         //noinspection ConstantConditions
         if (!this.level.isClientSide)
             return;

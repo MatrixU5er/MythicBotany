@@ -1,0 +1,29 @@
+{
+  "type": "botania:runic_altar",
+  "catalysts": [],
+  "ingredients": [
+    {
+      "tag": "c:ingots/terrasteel"
+    },
+    {
+      "item": "botania:rune_earth"
+    },
+    {
+      "item": "botania:rune_spring"
+    },
+    {
+      "item": "botania:rune_pride"
+    },
+    {
+      "item": "botania:alfheim_portal"
+    }
+  ],
+  "mana": 16000,
+  "output": {
+    "count": 1,
+    "id": "mythicbotany:vanaheim_rune"
+  },
+  "reagent": {
+    "item": "botania:livingrock"
+  }
+}

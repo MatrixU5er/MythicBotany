@@ -7,12 +7,14 @@ import mythicbotany.rune.RuneRitualRecipe;
 import mythicbotany.rune.SpecialRuneInput;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.StringTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
+import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.npc.WanderingTrader;
 import net.minecraft.world.item.ItemStack;
@@ -21,8 +23,6 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.crafting.StrictNBTIngredient;
-import org.moddingx.libx.util.Misc;
 
 import java.util.List;
 import java.util.UUID;
@@ -36,7 +36,7 @@ public class WanderingTraderRuneInput extends SpecialRuneInput {
     private WanderingTraderRuneInput() {
         super(MythicBotany.getInstance().resource("wandering_trader"));
         this.traderStack = new ItemStack(Items.PLAYER_HEAD);
-        CompoundTag nbt = this.traderStack.getOrCreateTag();
+        CompoundTag nbt = new CompoundTag();
         CompoundTag skullOwner = new CompoundTag();
         skullOwner.putUUID("Id", UUID.fromString("3358ddae-3a41-4ba0-bdfa-ee54b6c55cf5"));
         CompoundTag properties = new CompoundTag();
@@ -47,13 +47,12 @@ public class WanderingTraderRuneInput extends SpecialRuneInput {
         properties.put("textures", textures);
         skullOwner.put("Properties", properties);
         nbt.put("SkullOwner", skullOwner);
-        CompoundTag display = new CompoundTag();
-        ListTag tooltipNBT = new ListTag();
-        tooltipNBT.add(StringTag.valueOf(Component.Serializer.toJson(Component.translatable("tooltip.mythicbotany.sacrifice_entity1").withStyle(ChatFormatting.RESET).withStyle(Style.EMPTY.withItalic(false)).withStyle(ChatFormatting.AQUA))));
-        tooltipNBT.add(StringTag.valueOf(Component.Serializer.toJson(Component.translatable("tooltip.mythicbotany.sacrifice_entity2").withStyle(ChatFormatting.RESET).withStyle(Style.EMPTY.withItalic(false)).withStyle(ChatFormatting.AQUA))));
-        display.put("Lore", tooltipNBT);
-        nbt.put("display", display);
-        this.traderStack.setHoverName(Component.translatable("entity.minecraft.wandering_trader").withStyle(Style.EMPTY.withItalic(false)).withStyle(ChatFormatting.DARK_AQUA));
+        this.traderStack.set(DataComponents.CUSTOM_DATA, CustomData.of(nbt));
+        this.traderStack.set(DataComponents.LORE, new ItemLore(List.of(
+                Component.translatable("tooltip.mythicbotany.sacrifice_entity1").withStyle(ChatFormatting.RESET).withStyle(Style.EMPTY.withItalic(false)).withStyle(ChatFormatting.AQUA),
+                Component.translatable("tooltip.mythicbotany.sacrifice_entity2").withStyle(ChatFormatting.RESET).withStyle(Style.EMPTY.withItalic(false)).withStyle(ChatFormatting.AQUA)
+        )));
+        this.traderStack.set(DataComponents.CUSTOM_NAME, Component.translatable("entity.minecraft.wandering_trader").withStyle(Style.EMPTY.withItalic(false)).withStyle(ChatFormatting.DARK_AQUA));
     }
 
     @Override
@@ -72,9 +71,7 @@ public class WanderingTraderRuneInput extends SpecialRuneInput {
             trader.ejectPassengers();
         }
         CompoundTag traderData = trader.saveWithoutId(new CompoundTag());
-        // Don't drop anything on death
-        trader.lootTable = Misc.MISSINGNO;
-        trader.kill();
+        trader.discard();
         return Either.right(traderData);
     }
 
@@ -90,6 +87,6 @@ public class WanderingTraderRuneInput extends SpecialRuneInput {
 
     @Override
     public List<Ingredient> getJeiInputItems() {
-        return ImmutableList.of(StrictNBTIngredient.of(this.traderStack));
+        return ImmutableList.of(Ingredient.of(this.traderStack));
     }
 }

@@ -37,9 +37,9 @@ public class RenderFunctionalFlower<T extends FunctionalFlowerBase> implements B
                         if (hasBindingAttempt(view, blockEntity.getBlockPos())) {
                             poseStack.translate(0, 0.005, 0);
                         }
-                        SpecialFlowerBlockEntityRenderer.renderRadius(blockEntity, poseStack, buffer, blockEntity.getRadius());
+                        SpecialFlowerBlockEntityRenderer.renderRadius(blockEntity, partialTicks, poseStack, buffer, blockEntity.getRadius());
                         poseStack.translate(0, 0.002, 0);
-                        SpecialFlowerBlockEntityRenderer.renderRadius(blockEntity, poseStack, buffer, blockEntity.getSecondaryRadius());
+                        SpecialFlowerBlockEntityRenderer.renderRadius(blockEntity, partialTicks, poseStack, buffer, blockEntity.getSecondaryRadius());
                         poseStack.popPose();
                     }
                 }
@@ -50,8 +50,8 @@ public class RenderFunctionalFlower<T extends FunctionalFlowerBase> implements B
     public static boolean hasBindingAttempt(LivingEntity view, BlockPos tilePos) {
         ItemStack stackHeld = PlayerHelper.getFirstHeldItem(view, BotaniaItems.twigWand);
         if (!stackHeld.isEmpty() && WandOfTheForestItem.getBindMode(stackHeld)) {
-            Optional<BlockPos> coords = WandOfTheForestItem.getBindingAttempt(stackHeld);
-            return coords.isPresent() && coords.get().equals(tilePos);
+            Optional<net.minecraft.core.GlobalPos> coords = WandOfTheForestItem.getBindingAttempt(stackHeld);
+            return coords.isPresent() && coords.get().pos().equals(tilePos);
         } else {
             return false;
         }

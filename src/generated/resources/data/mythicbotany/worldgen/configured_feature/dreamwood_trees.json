@@ -12,17 +12,13 @@
       "type": "mythicbotany:random_foliage",
       "offset": {
         "type": "minecraft:uniform",
-        "value": {
-          "max_inclusive": 0,
-          "min_inclusive": 0
-        }
+        "max_inclusive": 0,
+        "min_inclusive": 0
       },
       "radius": {
         "type": "minecraft:uniform",
-        "value": {
-          "max_inclusive": 2,
-          "min_inclusive": 2
-        }
+        "max_inclusive": 2,
+        "min_inclusive": 2
       }
     },
     "foliage_provider": {

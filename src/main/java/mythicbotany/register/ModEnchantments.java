@@ -1,23 +1,25 @@
 package mythicbotany.register;
 
-import mythicbotany.MythicBotany;
-import net.minecraft.world.entity.EquipmentSlot;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentCategory;
-import org.moddingx.libx.annotation.registration.Reg;
-import org.moddingx.libx.annotation.registration.RegisterClass;
 
-@RegisterClass(registry = "ENCHANTMENT")
 public class ModEnchantments {
 
-    @Reg.Exclude
-    public static final EnchantmentCategory MJOELLNIR_ENCHANTS = EnchantmentCategory.create(MythicBotany.getInstance().modid + "_mjoellnir", i -> i == ModBlocks.mjoellnir.asItem());
-    
-    public static final Enchantment hammerMobility = new Enchantment(Enchantment.Rarity.UNCOMMON, MJOELLNIR_ENCHANTS, new EquipmentSlot[]{ EquipmentSlot.MAINHAND }) {
-        
-        @Override
-        public int getMaxLevel() {
-            return 5;
+    public static final ResourceKey<Enchantment> HAMMER_MOBILITY = ResourceKey.create(
+            Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath("mythicbotany", "hammer_mobility")
+    );
+
+    public static int getLevel(ItemStack stack, ResourceKey<Enchantment> key) {
+        for (Object2IntMap.Entry<Holder<Enchantment>> entry : stack.getEnchantments().entrySet()) {
+            if (entry.getKey().is(key)) {
+                return entry.getIntValue();
+            }
         }
-    };
+        return 0;
+    }
 }

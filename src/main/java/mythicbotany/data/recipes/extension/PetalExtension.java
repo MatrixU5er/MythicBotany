@@ -1,6 +1,5 @@
 package mythicbotany.data.recipes.extension;
 
-import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
@@ -8,9 +7,8 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 import org.moddingx.libx.datagen.provider.recipe.RecipeExtension;
 import vazkii.botania.common.lib.BotaniaTags;
-import vazkii.botania.data.recipes.PetalApothecaryProvider;
+import vazkii.botania.common.crafting.PetalApothecaryRecipe;
 
-import java.lang.reflect.Constructor;
 import java.util.Arrays;
 
 public interface PetalExtension extends RecipeExtension {
@@ -49,23 +47,7 @@ public interface PetalExtension extends RecipeExtension {
     }
 
     default void petalApothecary(ItemStack output, Ingredient... inputs) {
-        this.consumer().accept(Wrapper.create(this.provider().loc(output.getItem(), "petal_apothecary"), output, inputs));
-    }
-    
-    class Wrapper extends PetalApothecaryProvider {
-
-        public Wrapper(PackOutput packOutput) {
-            super(packOutput);
-        }
-
-        private static FinishedRecipe create(ResourceLocation id, ItemStack output, Ingredient... inputs) {
-            try {
-                Constructor<FinishedRecipe> ctor = FinishedRecipe.class.getDeclaredConstructor(ResourceLocation.class, ItemStack.class, Ingredient.class, Ingredient[].class);
-                ctor.setAccessible(true);
-                return ctor.newInstance(id, output, Ingredient.of(BotaniaTags.Items.SEED_APOTHECARY_REAGENT), inputs);
-            } catch (ReflectiveOperationException e) {
-                throw new RuntimeException(e);
-            }
-        }
+        ResourceLocation id = this.provider().loc(output.getItem(), "petal_apothecary");
+        this.output().accept(id, new PetalApothecaryRecipe(output, Ingredient.of(BotaniaTags.Items.SEED_APOTHECARY_REAGENT), inputs), null);
     }
 }

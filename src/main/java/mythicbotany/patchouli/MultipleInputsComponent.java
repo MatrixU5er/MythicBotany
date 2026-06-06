@@ -1,8 +1,10 @@
 package mythicbotany.patchouli;
 
 import com.google.gson.annotations.SerializedName;
+import mythicbotany.MythicBotany;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
@@ -11,6 +13,7 @@ import vazkii.patchouli.api.ICustomComponent;
 import vazkii.patchouli.api.IVariable;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.UnaryOperator;
@@ -31,13 +34,17 @@ public class MultipleInputsComponent implements ICustomComponent {
     }
 
     private List<Ingredient> makeIngredients() {
+        if (Minecraft.getInstance().level == null) {
+            MythicBotany.logger.warn("Can't load Patchouli recipe inputs for {} without a client level.", this.recipeName);
+            return List.of();
+        }
         AtomicReference<Recipe<?>> recipe = new AtomicReference<>(null);
-        //noinspection ConstantConditions
-        Minecraft.getInstance().level.getRecipeManager().byKey(new ResourceLocation(this.recipeName)).ifPresent(recipe::set);
+        Minecraft.getInstance().level.getRecipeManager().byKey(ResourceLocation.parse(this.recipeName)).ifPresent(holder -> recipe.set(holder.value()));
         if (recipe.get() == null) {
-            throw new RuntimeException("Missing recipe: " + this.recipeName);
+            MythicBotany.logger.warn("Missing Patchouli recipe inputs for {}.", this.recipeName);
+            return List.of();
         } else {
-            return recipe.get().getIngredients();
+            return new ArrayList<>(recipe.get().getIngredients());
         }
     }
 
@@ -48,7 +55,7 @@ public class MultipleInputsComponent implements ICustomComponent {
         }
     }
 
-    public void onVariablesAvailable(UnaryOperator<IVariable> lookup) {
+    public void onVariablesAvailable(UnaryOperator<IVariable> lookup, HolderLookup.Provider registries) {
         this.recipeName = lookup.apply(IVariable.wrap(this.recipeName)).asString();
     }
 }

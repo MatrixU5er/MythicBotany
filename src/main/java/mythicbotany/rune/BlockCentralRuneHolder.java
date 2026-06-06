@@ -5,9 +5,10 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -29,19 +30,21 @@ public class BlockCentralRuneHolder extends BlockRuneHolder<TileCentralRuneHolde
 
     @Nonnull
     @Override
-    public InteractionResult use(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull BlockHitResult hit) {
-        if (player.getItemInHand(hand).getItem() instanceof WandOfTheForestItem) {
+    protected ItemInteractionResult useItemOn(@Nonnull ItemStack held, @Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull BlockHitResult hit) {
+        if (held.getItem() instanceof WandOfTheForestItem) {
             if (!level.isClientSide) {
                 if (!MythicPlayerData.getData(player).getBoolean("MimirKnowledge")) {
                     player.sendSystemMessage(Component.translatable("message.mythicbotany.mimir_unknown").withStyle(ChatFormatting.GRAY));
                 } else {
-                    TileCentralRuneHolder tile = this.getBlockEntity(level, pos);
-                    tile.tryStartRitual(player);
+                    BlockEntity blockEntity = level.getBlockEntity(pos);
+                    if (blockEntity instanceof TileCentralRuneHolder tile) {
+                        tile.tryStartRitual(player);
+                    }
                 }
             }
-            return InteractionResult.sidedSuccess(level.isClientSide);
+            return ItemInteractionResult.sidedSuccess(level.isClientSide);
         } else {
-            return super.use(state, level, pos, player, hand, hit);
+            return super.useItemOn(held, state, level, pos, player, hand, hit);
         }
     }
 

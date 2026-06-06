@@ -1,6 +1,6 @@
 package mythicbotany.loot;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import mythicbotany.alftools.AlfsteelPick;
@@ -10,8 +10,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import net.minecraftforge.common.loot.IGlobalLootModifier;
-import net.minecraftforge.common.loot.LootModifier;
+import net.neoforged.neoforge.common.loot.LootModifier;
 import vazkii.botania.common.lib.BotaniaTags;
 
 import javax.annotation.Nonnull;
@@ -19,7 +18,7 @@ import java.util.List;
 
 public class AlfsteelDisposeModifier extends LootModifier {
     
-    public static final Codec<AlfsteelDisposeModifier> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+    public static final MapCodec<AlfsteelDisposeModifier> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             LOOT_CONDITIONS_CODEC.fieldOf("conditions").forGetter(lm -> lm.conditions)
     ).apply(instance, AlfsteelDisposeModifier::new));
 
@@ -28,7 +27,7 @@ public class AlfsteelDisposeModifier extends LootModifier {
     }
 
     @Override
-    public Codec<? extends IGlobalLootModifier> codec() {
+    public MapCodec<AlfsteelDisposeModifier> codec() {
         return CODEC;
     }
 

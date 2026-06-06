@@ -7,6 +7,7 @@ import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import mezz.jei.api.runtime.IJeiRuntime;
+import mythicbotany.MythicBotany;
 import mythicbotany.register.ModBlocks;
 import mythicbotany.register.ModRecipes;
 import net.minecraft.client.Minecraft;
@@ -16,7 +17,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeManager;
 
 import javax.annotation.Nonnull;
-import java.util.Objects;
+import java.util.stream.Collectors;
 
 @JeiPlugin
 public class MythicJei implements IModPlugin {
@@ -24,7 +25,7 @@ public class MythicJei implements IModPlugin {
     @Nonnull
     @Override
     public ResourceLocation getPluginUid() {
-        return new ResourceLocation("mythicbotany", "jeiplugin");
+        return ResourceLocation.fromNamespaceAndPath("mythicbotany", "jeiplugin");
     }
 
     @Override
@@ -38,10 +39,14 @@ public class MythicJei implements IModPlugin {
     @Override
     public void registerRecipes(@Nonnull IRecipeRegistration registration) {
         ClientLevel level = Minecraft.getInstance().level;
-        RecipeManager recipes = Objects.requireNonNull(level).getRecipeManager();
+        if (level == null) {
+            MythicBotany.logger.warn("Skipping MythicBotany JEI recipe registration because no client level is available.");
+            return;
+        }
+        RecipeManager recipes = level.getRecipeManager();
 
-        registration.addRecipes(InfusionCategory.TYPE, recipes.getAllRecipesFor(ModRecipes.infuser));
-        registration.addRecipes(RuneRitualCategory.TYPE, recipes.getAllRecipesFor(ModRecipes.runeRitual));
+        registration.addRecipes(InfusionCategory.TYPE, recipes.getAllRecipesFor(ModRecipes.infuser).stream().map(holder -> holder.value()).collect(Collectors.toList()));
+        registration.addRecipes(RuneRitualCategory.TYPE, recipes.getAllRecipesFor(ModRecipes.runeRitual).stream().map(holder -> holder.value()).collect(Collectors.toList()));
     }
 
     @Override

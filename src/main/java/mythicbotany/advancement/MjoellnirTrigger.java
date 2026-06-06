@@ -1,62 +1,47 @@
 package mythicbotany.advancement;
 
-import com.google.gson.JsonObject;
-import mythicbotany.MythicBotany;
-import net.minecraft.advancements.critereon.*;
-import net.minecraft.resources.ResourceLocation;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.advancements.critereon.ContextAwarePredicate;
+import net.minecraft.advancements.critereon.EntityPredicate;
+import net.minecraft.advancements.critereon.ItemPredicate;
+import net.minecraft.advancements.critereon.SimpleCriterionTrigger;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 
 import javax.annotation.Nonnull;
+import java.util.Optional;
 
 public class MjoellnirTrigger extends SimpleCriterionTrigger<MjoellnirTrigger.Instance> {
 
-    public static final ResourceLocation ID = MythicBotany.getInstance().resource("mjoellnir");
-    
     @Nonnull
     @Override
-    public ResourceLocation getId() {
-        return ID;
-    }
-
-    @Nonnull
-    @Override
-    protected Instance createInstance(@Nonnull JsonObject json, @Nonnull ContextAwarePredicate entityPredicate, @Nonnull DeserializationContext context) {
-        return new Instance(entityPredicate, ItemPredicate.fromJson(json.get("item")), EntityPredicate.fromJson(json, "entity", context));
+    public Codec<Instance> codec() {
+        return Instance.CODEC;
     }
 
     public void trigger(ServerPlayer player, ItemStack item, Entity entity) {
         LootContext ctx = EntityPredicate.createContext(player, entity);
-        this.trigger(player, (instance) -> instance.item.matches(item) && instance.entity.matches(ctx));
+        this.trigger(player, instance -> instance.matches(item, ctx));
     }
 
-    public static class Instance extends AbstractCriterionTriggerInstance {
+    public record Instance(Optional<ContextAwarePredicate> player, Optional<ItemPredicate> item, Optional<ContextAwarePredicate> entity) implements SimpleInstance {
 
-        public final ItemPredicate item;
-        public final ContextAwarePredicate entity;
+        public static final Codec<Instance> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf("player").forGetter(Instance::player),
+                ItemPredicate.CODEC.optionalFieldOf("item").forGetter(Instance::item),
+                EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf("entity").forGetter(Instance::entity)
+        ).apply(instance, Instance::new));
 
         public Instance(ItemPredicate item, ContextAwarePredicate entity) {
-            this(ContextAwarePredicate.ANY, item, entity);
-        }
-        
-        public Instance(ContextAwarePredicate player, ItemPredicate item, ContextAwarePredicate entity) {
-            super(MjoellnirTrigger.ID, player);
-            this.item = item;
-            this.entity = entity;
+            this(Optional.empty(), Optional.of(item), Optional.of(entity));
         }
 
-        public boolean test(ItemStack item, LootContext entity) {
-            return this.item.matches(item) && this.entity.matches(entity);
-        }
-
-        @Nonnull
-        public JsonObject serializeToJson(@Nonnull SerializationContext context) {
-            JsonObject json = super.serializeToJson(context);
-            json.add("item", this.item.serializeToJson());
-            json.add("entity", this.entity.toJson(context));
-            return json;
+        public boolean matches(ItemStack itemStack, LootContext entityContext) {
+            return this.item.map(predicate -> predicate.test(itemStack)).orElse(true)
+                    && this.entity.map(predicate -> predicate.matches(entityContext)).orElse(true);
         }
     }
 }

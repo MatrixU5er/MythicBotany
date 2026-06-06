@@ -16,11 +16,11 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.RenderGuiEvent;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.server.ServerStartedEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.client.event.RenderGuiEvent;
+import net.neoforged.neoforge.event.server.ServerStartedEvent;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import org.moddingx.libx.render.RenderHelper;
 
 import java.util.*;
@@ -39,29 +39,27 @@ public class AlfheimPortalHandler {
         timesInPortal.clear();
     }
     
-    public static void endTick(TickEvent.ServerTickEvent event) {
-        if (event.phase == TickEvent.Phase.END) {
-            Iterator<ServerPlayer> itr = timesInPortal.keySet().iterator();
-            while (itr.hasNext()) {
-                ServerPlayer player = itr.next();
-                if (!inPortal.contains(player)) {
-                    MythicBotany.getNetwork().updatePortalTime(player, 0);
-                    itr.remove();
-                }
+    public static void endTick(ServerTickEvent.Post event) {
+        Iterator<ServerPlayer> itr = timesInPortal.keySet().iterator();
+        while (itr.hasNext()) {
+            ServerPlayer player = itr.next();
+            if (!inPortal.contains(player)) {
+                MythicBotany.getNetwork().updatePortalTime(player, 0);
+                itr.remove();
             }
-            
-            itr = portalBlocked.iterator();
-            while (itr.hasNext()) {
-                ServerPlayer player = itr.next();
-                if (canRemovePortalBlocked(player)) {
-                    MythicBotany.getNetwork().updatePortalTime(player, 0);
-                    itr.remove();
-                }
-            }
-            
-            portalBlocked.removeIf(AlfheimPortalHandler::canRemovePortalBlocked);
-            inPortal.clear();
         }
+
+        itr = portalBlocked.iterator();
+        while (itr.hasNext()) {
+            ServerPlayer player = itr.next();
+            if (canRemovePortalBlocked(player)) {
+                MythicBotany.getNetwork().updatePortalTime(player, 0);
+                itr.remove();
+            }
+        }
+
+        portalBlocked.removeIf(AlfheimPortalHandler::canRemovePortalBlocked);
+        inPortal.clear();
     }
     
     private static boolean canRemovePortalBlocked(ServerPlayer player) {
@@ -118,8 +116,8 @@ public class AlfheimPortalHandler {
             graphics.pose().scale(scale, scale, scale);
             RenderSystem.enableBlend();
             RenderSystem.defaultBlendFunc();
-            RenderSystem.setShaderColor(1, 1, 1, Mth.clamp((clientInPortalTime + Minecraft.getInstance().getFrameTime()) / 120f, 0.05f, 0.8f));
-            TextureAtlasSprite sprite = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(new ResourceLocation("botania", "block/alfheim_portal_swirl"));
+            RenderSystem.setShaderColor(1, 1, 1, Mth.clamp((clientInPortalTime + event.getPartialTick().getGameTimeDeltaPartialTick(true)) / 120f, 0.05f, 0.8f));
+            TextureAtlasSprite sprite = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(ResourceLocation.fromNamespaceAndPath("botania", "block/alfheim_portal_swirl"));
             RenderSystem.setShaderTexture(0, sprite.atlasLocation());
             graphics.blit(0, 0, 0, 48, 48, sprite);
             RenderHelper.resetColor();

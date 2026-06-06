@@ -6,12 +6,12 @@ import mythicbotany.alfheim.content.AlfPixieRender;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.entity.SpawnPlacements;
+import net.minecraft.world.entity.SpawnPlacementTypes;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
-import net.minecraftforge.event.entity.SpawnPlacementRegisterEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
+import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
 import org.moddingx.libx.annotation.registration.RegisterClass;
 
 @RegisterClass(registry = "ENTITY_TYPE")
@@ -28,7 +28,7 @@ public class ModEntities {
         event.put(alfPixie, AlfPixie.entityAttributes());
     }
     
-    public static void createSpawnPlacement(SpawnPlacementRegisterEvent event) {
-        event.register(alfPixie, SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AlfPixie::canSpawnAt, SpawnPlacementRegisterEvent.Operation.REPLACE);
+    public static void createSpawnPlacement(RegisterSpawnPlacementsEvent event) {
+        event.register(alfPixie, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AlfPixie::canSpawnAt, RegisterSpawnPlacementsEvent.Operation.REPLACE);
     }
 }

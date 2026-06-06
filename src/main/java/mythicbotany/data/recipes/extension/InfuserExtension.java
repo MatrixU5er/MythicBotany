@@ -1,21 +1,14 @@
 package mythicbotany.data.recipes.extension;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import mythicbotany.infuser.InfuserRecipe;
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.ItemLike;
-import org.moddingx.libx.crafting.RecipeHelper;
 import org.moddingx.libx.datagen.provider.recipe.RecipeExtension;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -94,7 +87,7 @@ public interface InfuserExtension extends RecipeExtension {
 
         public void build(ResourceLocation id) {
             this.validate(id);
-            this.ext.consumer().accept(new TheRecipe(new ResourceLocation(id.getNamespace(), "mythicbotany_infusion/" + id.getPath()), this.result, this.manaCost, this.group == null ? "" : this.group, this.fromColor, this.toColor, this.ingredients));
+            this.ext.output().accept(id.withPath("mythicbotany_infusion/" + id.getPath()), new InfuserRecipe(this.result, this.manaCost, this.fromColor, this.toColor, this.ingredients), null);
         }
 
         private void validate(ResourceLocation id) {
@@ -103,66 +96,5 @@ public interface InfuserExtension extends RecipeExtension {
             }
         }
 
-        @SuppressWarnings("ClassCanBeRecord")
-        private static class TheRecipe implements FinishedRecipe {
-
-            private final ResourceLocation id;
-            private final ItemStack output;
-            private final int mana;
-            private final String group;
-            private final int fromColor;
-            private final int toColor;
-            private final List<Ingredient> inputs;
-
-            private TheRecipe(ResourceLocation id, ItemStack output, int mana, String group, int fromColor, int toColor, List<Ingredient> inputs) {
-                this.id = id;
-                this.output = output;
-                this.mana = mana;
-                this.group = group;
-                this.fromColor = fromColor;
-                this.toColor = toColor;
-                this.inputs = inputs;
-            }
-
-            @Override
-            public void serializeRecipeData(@Nonnull JsonObject json) {
-                if (!this.group.isEmpty()) {
-                    json.addProperty("group", this.group);
-                }
-                json.add("output", RecipeHelper.serializeItemStack(this.output, true));
-                JsonArray ingredients = new JsonArray();
-                for (Ingredient ingredient : this.inputs) {
-                    ingredients.add(ingredient.toJson());
-                }
-                json.addProperty("mana", this.mana);
-                json.add("ingredients", ingredients);
-                json.addProperty("fromColor", this.fromColor);
-                json.addProperty("toColor", this.toColor);
-            }
-
-            @Nonnull
-            @Override
-            public ResourceLocation getId() {
-                return this.id;
-            }
-
-            @Nonnull
-            @Override
-            public RecipeSerializer<?> getType() {
-                return InfuserRecipe.Serializer.INSTANCE;
-            }
-
-            @Nullable
-            @Override
-            public JsonObject serializeAdvancement() {
-                return null;
-            }
-
-            @Nullable
-            @Override
-            public ResourceLocation getAdvancementId() {
-                return null;
-            }
-        }
     }
 }
