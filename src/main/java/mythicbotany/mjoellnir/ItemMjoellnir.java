@@ -10,9 +10,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.EquipmentSlotGroup;
-import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
@@ -148,18 +146,4 @@ public class ItemMjoellnir extends BlockItem {
     public ItemAttributeModifiers getDefaultAttributeModifiers() {
         return this.getDefaultAttributeModifiers(this.getDefaultInstance());
     }
-/*
-    public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slot, ItemStack stack) {
-        if (slot == EquipmentSlot.MAINHAND) {
-            float dmgModifier = EnchantmentHelper.getDamageBonus(stack, MobType.UNDEFINED);
-            float speedModifier = MythicConfig.mjoellnir.attack_speed_multiplier * stack.getEnchantmentLevel(ModEnchantments.hammerMobility);
-            ImmutableMultimap.Builder<Attribute, AttributeModifier> attributeBuilder = ImmutableMultimap.builder();
-            attributeBuilder.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "mjoellnir_damage_modifier", (MythicConfig.mjoellnir.base_damage_melee - 1) + ((MythicConfig.mjoellnir.enchantment_multiplier - 1) * dmgModifier), AttributeModifier.Operation.ADDITION));
-            attributeBuilder.put(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_UUID, "mjoellnir_attack_speed_modifier", MythicConfig.mjoellnir.base_attack_speed + speedModifier, AttributeModifier.Operation.ADDITION));
-            return attributeBuilder.build();
-        } else {
-            return super.getAttributeModifiers(slot, stack);
-        }
-    }
-*/
 }
