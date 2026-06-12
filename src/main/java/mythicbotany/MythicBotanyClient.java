@@ -11,14 +11,23 @@ import mythicbotany.mjoellnir.RenderMjoellnir;
 import mythicbotany.pylon.RenderAlfsteelPylon;
 import mythicbotany.register.ModBlocks;
 import mythicbotany.register.ModEntities;
+import mythicbotany.register.ModItems;
 import mythicbotany.rune.RenderRuneHolder;
 import mythicbotany.rune.TileCentralRuneHolder;
+import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import org.moddingx.libx.render.ItemStackRenderer;
+import vazkii.botania.client.model.armor.ArmorModels;
+
+import java.util.Objects;
 
 final class MythicBotanyClient {
 
@@ -44,6 +53,22 @@ final class MythicBotanyClient {
 
         if (!event.isItemRegistered(ModBlocks.yggdrasilBranch.asItem())) {
             event.registerItem(ItemStackRenderer.createProperties(), ModBlocks.yggdrasilBranch.asItem());
+        }
+
+        // Alfsteel armor extends Botania's terrasteel armor and uses a 64x128 Botania-layout texture,
+        // which only renders correctly with Botania's custom ArmorModel. Botania registers that model
+        // extension only for items in its own "botania" namespace, so our alfsteel pieces would fall
+        // back to the vanilla humanoid model and render garbled. Register the same extension ourselves.
+        IClientItemExtensions alfsteelArmorModel = new IClientItemExtensions() {
+            @Override
+            public HumanoidModel<?> getHumanoidArmorModel(LivingEntity entity, ItemStack stack, EquipmentSlot slot, HumanoidModel<?> defaultModel) {
+                return Objects.requireNonNullElse(ArmorModels.get(stack), defaultModel);
+            }
+        };
+        for (Item armor : new Item[]{ModItems.alfsteelHelmet, ModItems.alfsteelChestplate, ModItems.alfsteelLeggings, ModItems.alfsteelBoots}) {
+            if (!event.isItemRegistered(armor)) {
+                event.registerItem(alfsteelArmorModel, armor);
+            }
         }
     }
 
