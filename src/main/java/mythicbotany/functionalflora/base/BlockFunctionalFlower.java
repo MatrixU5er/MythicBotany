@@ -99,7 +99,7 @@ public class BlockFunctionalFlower<T extends FunctionalFlowerBase> extends Block
 
     protected boolean isValidGround(BlockState state, BlockGetter level, BlockPos pos) {
         return state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.DIRT) || state.is(Blocks.COARSE_DIRT)
-                || state.is(Blocks.PODZOL) || state.is(Blocks.FARMLAND) || state.is(BotaniaBlocks.infusedGrass)
+                || state.is(Blocks.PODZOL) || state.is(Blocks.FARMLAND) || state.is(BotaniaBlocks.INFUSED_GRASS_BLOCK)
                 || state.is(Blocks.MYCELIUM) || state.canSustainPlant(level, pos, Direction.UP, this.defaultBlockState()).isTrue();
     }
 

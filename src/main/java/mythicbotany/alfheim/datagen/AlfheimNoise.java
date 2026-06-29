@@ -133,7 +133,7 @@ public class AlfheimNoise extends NoiseProviderBase {
     ));
 
     public final Holder<NoiseGeneratorSettings> alfheim = this.generator()
-            .defaultBlock(BotaniaBlocks.livingrock)
+            .defaultBlock(BotaniaBlocks.LIVINGROCK)
             .disableOreVeins()
             .router().initialDensityWithoutJaggedness(this.alfheimInitial)
             .router().finalDensity(this.alfheimFinal)

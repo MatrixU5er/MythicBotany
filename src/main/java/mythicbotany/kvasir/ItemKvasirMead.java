@@ -46,9 +46,9 @@ public class ItemKvasirMead extends ItemBase {
             if (!player.isCreative()) {
                 stack.shrink(1);
                 if (stack.isEmpty()) {
-                    return new ItemStack(BotaniaItems.vial);
+                    return new ItemStack(BotaniaItems.MANAGLASS_VIAL);
                 } else {
-                    player.getInventory().add(new ItemStack(BotaniaItems.vial));
+                    player.getInventory().add(new ItemStack(BotaniaItems.MANAGLASS_VIAL));
                 }
             }
         }

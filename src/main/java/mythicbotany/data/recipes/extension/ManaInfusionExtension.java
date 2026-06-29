@@ -60,7 +60,7 @@ public interface ManaInfusionExtension extends RecipeExtension {
 
     default void manaAlchemy(Ingredient input, ItemStack result, int mana) {
         ResourceLocation id = this.provider().loc(result.getItem(), "mana_alchemy");
-        this.output().accept(id, new ManaInfusionRecipe(result, input, mana, "", StateIngredients.of(BotaniaBlocks.alchemyCatalyst)), null);
+        this.output().accept(id, new ManaInfusionRecipe(result, input, mana, "", StateIngredients.of(BotaniaBlocks.ALCHEMY_CATALYST)), null);
     }
 
     default void manaConjuration(ItemLike input, ItemLike result, int mana) {
@@ -85,6 +85,6 @@ public interface ManaInfusionExtension extends RecipeExtension {
 
     default void manaConjuration(Ingredient input, ItemStack result, int mana) {
         ResourceLocation id = this.provider().loc(result.getItem(), "mana_conjuration");
-        this.output().accept(id, new ManaInfusionRecipe(result, input, mana, "", StateIngredients.of(BotaniaBlocks.conjurationCatalyst)), null);
+        this.output().accept(id, new ManaInfusionRecipe(result, input, mana, "", StateIngredients.of(BotaniaBlocks.CONJURATION_CATALYST)), null);
     }
 }

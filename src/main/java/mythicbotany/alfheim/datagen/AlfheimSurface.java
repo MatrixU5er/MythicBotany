@@ -29,7 +29,7 @@ public class AlfheimSurface extends SurfaceProviderBase {
     
     public AlfheimSurface(DatagenContext ctx) {
         super(ctx);
-        this.biome(this.biomes.goldenFields, this.defaultAlfheimSurface(BotaniaBlocks.goldenGrass.defaultBlockState(), Blocks.DIRT.defaultBlockState()));
+        this.biome(this.biomes.goldenFields, this.defaultAlfheimSurface(BotaniaBlocks.GOLDEN_GRASS_BLOCK.defaultBlockState(), Blocks.DIRT.defaultBlockState()));
         this.biome(this.biomes.alfheimLakes, SurfaceRules.ifTrue(SurfaceRules.not(SurfaceRules.yBlockCheck(VerticalAnchor.absolute(68), 0)), defaultAlfheimSurface(Blocks.SAND.defaultBlockState(), Blocks.GRAVEL.defaultBlockState())));
     }
 

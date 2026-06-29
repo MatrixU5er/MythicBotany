@@ -26,7 +26,7 @@ public class ManaCrystalFeature extends Feature<NoneFeatureConfiguration> {
                 && context.level().getBlockState(context.origin().below().south()).canOcclude()
                 && context.level().getBlockState(context.origin().below().east()).canOcclude()
                 && context.level().getBlockState(context.origin().below().west()).canOcclude()) {
-            if (!context.level().setBlock(context.origin(), BotaniaBlocks.dilutedPool.defaultBlockState(), 2)) {
+            if (!context.level().setBlock(context.origin(), BotaniaBlocks.DILUTED_MANA_POOL.defaultBlockState(), 2)) {
                 return false;
             }
             try {
@@ -37,7 +37,7 @@ public class ManaCrystalFeature extends Feature<NoneFeatureConfiguration> {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            BlockState bifrost = BotaniaBlocks.bifrostPerm.defaultBlockState();
+            BlockState bifrost = BotaniaBlocks.BIFROST_BRIDGE.defaultBlockState();
             int mainHeight = 5 + context.random().nextInt(5);
             for (int i = 2; i < mainHeight; i++) {
                 context.level().setBlock(context.origin().above(i), bifrost, 2);

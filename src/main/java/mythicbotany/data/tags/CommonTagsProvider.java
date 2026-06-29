@@ -39,20 +39,20 @@ public class CommonTagsProvider extends CommonTagsProviderBase {
                 ModItems.manaRingGreatest, ModItems.auraRingGreatest, ModItems.fireRing, ModItems.iceRing,
                 ModItems.andwariRing, ModItems.cursedAndwariRing
         );
-        this.item(ModItemTags.ELEMENTIUM_WEAPONS).add(BotaniaItems.elementiumSword);
+        this.item(ModItemTags.ELEMENTIUM_WEAPONS).add(BotaniaItems.ELEMENTIUM_SWORD);
 
         this.block(BlockTags.BEACON_BASE_BLOCKS).add(ModBlocks.alfsteelBlock);
-        this.block(ModBlockTags.ALFHEIM_LOGS).add(BotaniaBlocks.dreamwood);
+        this.block(ModBlockTags.ALFHEIM_LOGS).add(BotaniaBlocks.DREAMWOOD);
         this.block(ModBlockTags.ALFHEIM_LEAVES).add(ModBlocks.dreamwoodLeaves);
         this.block(ModBlockTags.BASE_STONE_ALFHEIM).add(
-                BotaniaBlocks.livingrock,
-                BotaniaBlocks.biomeStoneForest,
-                BotaniaBlocks.biomeStoneMountain,
-                BotaniaBlocks.biomeStoneFungal,
-                BotaniaBlocks.biomeStoneSwamp,
-                BotaniaBlocks.biomeStoneDesert,
-                BotaniaBlocks.biomeStoneTaiga,
-                BotaniaBlocks.biomeStoneMesa
+                BotaniaBlocks.LIVINGROCK,
+                BotaniaBlocks.FUCHSITE,
+                BotaniaBlocks.GNEISS,
+                BotaniaBlocks.MYCELITE,
+                BotaniaBlocks.ROSY_TALC,
+                BotaniaBlocks.SOLITE,
+                BotaniaBlocks.CATACLASITE,
+                BotaniaBlocks.LUNITE
         );
         this.block(BlockTags.GOLD_ORES).add(ModBlocks.goldOre);
         this.block(ModBlockTags.ALFHEIM_ORES).add(

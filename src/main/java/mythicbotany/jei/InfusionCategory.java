@@ -46,7 +46,7 @@ public class InfusionCategory implements IRecipeCategory<InfuserRecipe> {
         this.localizedName = Component.translatable("block.mythicbotany.mana_infuser");
         this.overlay = guiHelper.createDrawable(ResourceLocation.fromNamespaceAndPath("botania","textures/gui/terrasteel_jei_overlay.png"), 42, 29, 64, 64);
         this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(ModBlocks.manaInfuser));
-        IDrawable shimmerrock = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(BotaniaBlocks.shimmerrock));
+        IDrawable shimmerrock = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(BotaniaBlocks.SHIMMERROCK));
         this.infuserPlate = new TerrestrialAgglomerationDrawable(shimmerrock, shimmerrock, guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(Blocks.GOLD_BLOCK)));
     }
 

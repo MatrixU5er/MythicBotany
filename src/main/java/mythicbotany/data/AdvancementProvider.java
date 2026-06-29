@@ -35,22 +35,22 @@ public class AdvancementProvider extends AdvancementProviderBase {
 
         this.advancement("all_runes").display(ModItems.joetunheimRune)
                 .tasks(this.itemTasks(
-                        BotaniaItems.runeAir,
-                        BotaniaItems.runeAutumn,
-                        BotaniaItems.runeEarth,
-                        BotaniaItems.runeEnvy,
-                        BotaniaItems.runeFire,
-                        BotaniaItems.runeGluttony,
-                        BotaniaItems.runeGreed,
-                        BotaniaItems.runeLust,
-                        BotaniaItems.runeMana,
-                        BotaniaItems.runePride,
-                        BotaniaItems.runeSloth,
-                        BotaniaItems.runeSpring,
-                        BotaniaItems.runeSummer,
-                        BotaniaItems.runeWater,
-                        BotaniaItems.runeWinter,
-                        BotaniaItems.runeWrath,
+                        BotaniaItems.RUNE_OF_AIR,
+                        BotaniaItems.RUNE_OF_AUTUMN,
+                        BotaniaItems.RUNE_OF_EARTH,
+                        BotaniaItems.RUNE_OF_ENVY,
+                        BotaniaItems.RUNE_OF_FIRE,
+                        BotaniaItems.RUNE_OF_GLUTTONY,
+                        BotaniaItems.RUNE_OF_GREED,
+                        BotaniaItems.RUNE_OF_LUST,
+                        BotaniaItems.RUNE_OF_MANA,
+                        BotaniaItems.RUNE_OF_PRIDE,
+                        BotaniaItems.RUNE_OF_SLOTH,
+                        BotaniaItems.RUNE_OF_SPRING,
+                        BotaniaItems.RUNE_OF_SUMMER,
+                        BotaniaItems.RUNE_OF_WATER,
+                        BotaniaItems.RUNE_OF_WINTER,
+                        BotaniaItems.RUNE_OF_WRATH,
                         ModItems.asgardRune, ModItems.vanaheimRune, ModItems.alfheimRune,
                         ModItems.midgardRune, ModItems.joetunheimRune, ModItems.muspelheimRune,
                         ModItems.niflheimRune, ModItems.nidavellirRune, ModItems.helheimRune
@@ -79,7 +79,7 @@ public class AdvancementProvider extends AdvancementProviderBase {
     }
     
     private static ItemStack wandIcon() {
-        ItemStack stack = new ItemStack(BotaniaItems.dreamwoodWand);
+        ItemStack stack = new ItemStack(BotaniaItems.WAND_OF_THE_ELVEN_FOREST);
         CompoundTag tag = new CompoundTag();
         tag.putInt("color1", 4);
         tag.putInt("color2", 3);

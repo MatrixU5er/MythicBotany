@@ -51,18 +51,18 @@ import java.util.stream.Stream;
 public class TileCentralRuneHolder extends TileRuneHolder implements TickingBlock {
 
     private static final Map<Item, Integer> RUNE_COLORS = ImmutableMap.<Item, Integer>builder()
-            .put(BotaniaItems.runeAir, 0x68B0EA)
-            .put(BotaniaItems.runeSpring, 0xFF919F)
-            .put(BotaniaItems.runeSummer, 0x00DDED)
-            .put(BotaniaItems.runeAutumn, 0xE5C200)
-            .put(BotaniaItems.runeWinter, 0xE0DBD5)
-            .put(BotaniaItems.runeLust, 0xF346D1)
-            .put(BotaniaItems.runeGluttony, 0x6E6E6E)
-            .put(BotaniaItems.runeGreed, 0x009431)
-            .put(BotaniaItems.runeSloth, 0xBB9661)
-            .put(BotaniaItems.runeWrath, 0xFF2424)
-            .put(BotaniaItems.runeEnvy, 0xC858E6)
-            .put(BotaniaItems.runePride, 0x2C3237)
+            .put(BotaniaItems.RUNE_OF_AIR, 0x68B0EA)
+            .put(BotaniaItems.RUNE_OF_SPRING, 0xFF919F)
+            .put(BotaniaItems.RUNE_OF_SUMMER, 0x00DDED)
+            .put(BotaniaItems.RUNE_OF_AUTUMN, 0xE5C200)
+            .put(BotaniaItems.RUNE_OF_WINTER, 0xE0DBD5)
+            .put(BotaniaItems.RUNE_OF_LUST, 0xF346D1)
+            .put(BotaniaItems.RUNE_OF_GLUTTONY, 0x6E6E6E)
+            .put(BotaniaItems.RUNE_OF_GREED, 0x009431)
+            .put(BotaniaItems.RUNE_OF_SLOTH, 0xBB9661)
+            .put(BotaniaItems.RUNE_OF_WRATH, 0xFF2424)
+            .put(BotaniaItems.RUNE_OF_ENVY, 0xC858E6)
+            .put(BotaniaItems.RUNE_OF_PRIDE, 0x2C3237)
             .put(ModItems.asgardRune, 0xE1C500)
             .put(ModItems.vanaheimRune, 0x5FC748)
             .put(ModItems.alfheimRune, 0xFF76F7)
@@ -451,15 +451,15 @@ public class TileCentralRuneHolder extends TileRuneHolder implements TickingBloc
     private ParticleOptions getParticle(Item rune) {
         if (rune == ModItems.fimbultyrTablet) {
             return new ItemParticleOption(ParticleTypes.ITEM, new ItemStack(Items.GOLD_BLOCK));
-        } else if (rune == BotaniaItems.runeMana) {
+        } else if (rune == BotaniaItems.RUNE_OF_MANA) {
             return WispParticleData.wisp(0.2f, 0, 0, 1, 0.3f);
-        } else if (rune == BotaniaItems.runeFire) {
+        } else if (rune == BotaniaItems.RUNE_OF_FIRE) {
             return ParticleTypes.FLAME;
-        } else if (rune == BotaniaItems.runeAir) {
+        } else if (rune == BotaniaItems.RUNE_OF_AIR) {
             return ParticleTypes.CLOUD;
-        } else if (rune == BotaniaItems.runeEarth) {
+        } else if (rune == BotaniaItems.RUNE_OF_EARTH) {
             return new ItemParticleOption(ParticleTypes.ITEM, new ItemStack(Items.DIRT));
-        } else if (rune == BotaniaItems.runeWater) {
+        } else if (rune == BotaniaItems.RUNE_OF_WATER) {
             return ParticleTypes.DOLPHIN;
         } else {
             int color = RUNE_COLORS.getOrDefault(rune, 0xFFFFFF);

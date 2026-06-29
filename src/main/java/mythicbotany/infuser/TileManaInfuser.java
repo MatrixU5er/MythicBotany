@@ -132,11 +132,11 @@ public class TileManaInfuser extends BlockEntityBase implements SparkAttachable,
     private boolean hasValidPlatform() {
         BlockPos center = this.worldPosition.below();
         //noinspection ConstantConditions
-        return this.level.getBlockState(center).getBlock() == BotaniaBlocks.shimmerrock
-                && this.level.getBlockState(center.north().west()).getBlock() == BotaniaBlocks.shimmerrock
-                && this.level.getBlockState(center.north().east()).getBlock() == BotaniaBlocks.shimmerrock
-                && this.level.getBlockState(center.south().west()).getBlock() == BotaniaBlocks.shimmerrock
-                && this.level.getBlockState(center.south().east()).getBlock() == BotaniaBlocks.shimmerrock
+        return this.level.getBlockState(center).getBlock() == BotaniaBlocks.SHIMMERROCK
+                && this.level.getBlockState(center.north().west()).getBlock() == BotaniaBlocks.SHIMMERROCK
+                && this.level.getBlockState(center.north().east()).getBlock() == BotaniaBlocks.SHIMMERROCK
+                && this.level.getBlockState(center.south().west()).getBlock() == BotaniaBlocks.SHIMMERROCK
+                && this.level.getBlockState(center.south().east()).getBlock() == BotaniaBlocks.SHIMMERROCK
                 && this.level.getBlockState(center.north()).getBlock() == Blocks.GOLD_BLOCK
                 && this.level.getBlockState(center.east()).getBlock() == Blocks.GOLD_BLOCK
                 && this.level.getBlockState(center.south()).getBlock() == Blocks.GOLD_BLOCK

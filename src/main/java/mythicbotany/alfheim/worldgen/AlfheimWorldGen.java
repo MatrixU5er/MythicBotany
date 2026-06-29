@@ -16,7 +16,7 @@ import vazkii.botania.common.block.BotaniaBlocks;
 
 public class AlfheimWorldGen {
 
-    public static final RuleTest livingrock = new BlockMatchTest(BotaniaBlocks.livingrock);
+    public static final RuleTest livingrock = new BlockMatchTest(BotaniaBlocks.LIVINGROCK);
     public static final RuleTest alfheimStone = new TagMatchTest(ModBlockTags.BASE_STONE_ALFHEIM);
     
     public static BlockPos highestFreeBlock(LevelAccessor level, HorizontalPos hor) {
@@ -24,6 +24,6 @@ public class AlfheimWorldGen {
     }
     
     public static boolean passthrough(BlockState state) {
-        return (state.canBeReplaced() && state.getBlock() != Blocks.WATER && state.getBlock() != Blocks.LAVA && !(state.getBlock() instanceof LiquidBlock)) || state.is(BlockTags.LEAVES) || state.getBlock() == ModBlocks.dreamwoodLeaves || state.getBlock() == BotaniaBlocks.dreamwood;
+        return (state.canBeReplaced() && state.getBlock() != Blocks.WATER && state.getBlock() != Blocks.LAVA && !(state.getBlock() instanceof LiquidBlock)) || state.is(BlockTags.LEAVES) || state.getBlock() == ModBlocks.dreamwoodLeaves || state.getBlock() == BotaniaBlocks.DREAMWOOD;
     }
 }

@@ -15,7 +15,7 @@ import javax.annotation.Nonnull;
 
 public class RenderYggdrasilBranch extends RotatedBlockRenderer<TileYggdrasilBranch> {
 
-    private final LazyValue<ItemStack> twig = new LazyValue<>(() -> new ItemStack(BotaniaItems.livingwoodTwig));
+    private final LazyValue<ItemStack> twig = new LazyValue<>(() -> new ItemStack(BotaniaItems.LIVINGWOOD_TWIG));
 
     @Override
     protected void doRender(@Nonnull TileYggdrasilBranch tile, float partialTicks, @Nonnull PoseStack poseStack, @Nonnull MultiBufferSource buffer, int light, int overlay) {

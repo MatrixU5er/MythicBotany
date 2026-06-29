@@ -13,8 +13,8 @@ import java.util.List;
 public class MotifFlowerFeature extends Feature<NoneFeatureConfiguration> {
 
     private static final List<BlockState> FLOWERS = ImmutableList.of(
-            BotaniaBlocks.motifDaybloom.defaultBlockState(),
-            BotaniaBlocks.motifNightshade.defaultBlockState()
+            BotaniaBlocks.DAYBLOOM_MOTIF.defaultBlockState(),
+            BotaniaBlocks.NIGHTSHADE_MOTIF.defaultBlockState()
     );
 
     public MotifFlowerFeature() {

@@ -199,7 +199,7 @@ public class EventListener {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void itemDespawn(ItemExpireEvent event) {
         if (!event.getEntity().level().isClientSide && Alfheim.DIMENSION.equals(event.getEntity().level().dimension())) {
-            if (event.getEntity().getItem().getItem() == BotaniaItems.pixieDust) {
+            if (event.getEntity().getItem().getItem() == BotaniaItems.PIXIE_DUST) {
                 BlockPos pos = event.getEntity().blockPosition();
                 if (TileReturnPortal.validPortal(event.getEntity().level(), pos)) {
                     event.getEntity().level().setBlock(pos, ModBlocks.returnPortal.defaultBlockState(), 3);

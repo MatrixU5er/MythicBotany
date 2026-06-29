@@ -26,6 +26,6 @@ public interface RuneExtension extends RecipeExtension {
 
     default void runeAltar(ItemStack output, int mana, Ingredient... inputs) {
         ResourceLocation id = this.provider().loc(output.getItem(), "runic_altar");
-        this.output().accept(id, new RunicAltarRecipe(output, Ingredient.of(BotaniaBlocks.livingrock), mana, inputs, new Ingredient[0]), null);
+        this.output().accept(id, new RunicAltarRecipe(output, Ingredient.of(BotaniaBlocks.LIVINGROCK), mana, inputs, new Ingredient[0]), null);
     }
 }

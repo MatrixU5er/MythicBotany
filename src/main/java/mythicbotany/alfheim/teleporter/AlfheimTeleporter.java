@@ -21,14 +21,14 @@ public class AlfheimTeleporter {
             BlockPos pos = findBlock(target, new HorizontalPos(sourcePos), ModBlocks.returnPortal);
             if (pos == null) {
                 pos = AlfheimWorldGen.highestFreeBlock(target, new HorizontalPos(sourcePos)).below();
-                target.setBlock(pos.north(), BotaniaBlocks.livingwoodGlimmering.defaultBlockState(), 3);
-                target.setBlock(pos.south(), BotaniaBlocks.livingwoodGlimmering.defaultBlockState(), 3);
-                target.setBlock(pos.east(), BotaniaBlocks.livingwoodGlimmering.defaultBlockState(), 3);
-                target.setBlock(pos.west(), BotaniaBlocks.livingwoodGlimmering.defaultBlockState(), 3);
-                target.setBlock(pos.offset(-1, 0, -1), BotaniaBlocks.livingwood.defaultBlockState(), 3);
-                target.setBlock(pos.offset(-1, 0, 1), BotaniaBlocks.livingwood.defaultBlockState(), 3);
-                target.setBlock(pos.offset(1, 0, -1), BotaniaBlocks.livingwood.defaultBlockState(), 3);
-                target.setBlock(pos.offset(1, 0, 1), BotaniaBlocks.livingwood.defaultBlockState(), 3);
+                target.setBlock(pos.north(), BotaniaBlocks.GLIMMERING_LIVINGWOOD.defaultBlockState(), 3);
+                target.setBlock(pos.south(), BotaniaBlocks.GLIMMERING_LIVINGWOOD.defaultBlockState(), 3);
+                target.setBlock(pos.east(), BotaniaBlocks.GLIMMERING_LIVINGWOOD.defaultBlockState(), 3);
+                target.setBlock(pos.west(), BotaniaBlocks.GLIMMERING_LIVINGWOOD.defaultBlockState(), 3);
+                target.setBlock(pos.offset(-1, 0, -1), BotaniaBlocks.LIVINGWOOD.defaultBlockState(), 3);
+                target.setBlock(pos.offset(-1, 0, 1), BotaniaBlocks.LIVINGWOOD.defaultBlockState(), 3);
+                target.setBlock(pos.offset(1, 0, -1), BotaniaBlocks.LIVINGWOOD.defaultBlockState(), 3);
+                target.setBlock(pos.offset(1, 0, 1), BotaniaBlocks.LIVINGWOOD.defaultBlockState(), 3);
                 target.setBlock(pos, ModBlocks.returnPortal.defaultBlockState(), 3);
             }
             player.teleportTo(target, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, player.getYRot(), player.getXRot());
@@ -42,7 +42,7 @@ public class AlfheimTeleporter {
     
     public static void teleportToOverworld(ServerPlayer player, BlockPos sourcePos) {
         ServerLevel target = player.server.overworld();
-        BlockPos pos = findBlock(target, new HorizontalPos(sourcePos), BotaniaBlocks.alfPortal);
+        BlockPos pos = findBlock(target, new HorizontalPos(sourcePos), BotaniaBlocks.ELVEN_GATEWAY_CORE);
         if (pos != null) {
             pos = pos.above();
         } else {

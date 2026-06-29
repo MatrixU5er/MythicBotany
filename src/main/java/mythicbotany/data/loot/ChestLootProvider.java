@@ -36,13 +36,13 @@ public class ChestLootProvider extends ChestLootProviderBase {
         
         this.drops("elven_house",
                 this.first(
-                        this.stack(BotaniaItems.blackerLotus).with(this.random(0.02f)),
-                        this.stack(BotaniaItems.blackLotus)
+                        this.stack(BotaniaItems.BLACKER_LOTUS).with(this.random(0.02f)),
+                        this.stack(BotaniaItems.BLACK_LOTUS)
                 ).with(this.random(0.5f)),
-                this.stack(BotaniaItems.elementium).with(this.count(1, 6)).with(this.random(0.7f)),
+                this.stack(BotaniaItems.ELEMENTIUM_INGOT).with(this.count(1, 6)).with(this.random(0.7f)),
                 this.first(
-                        this.stack(BotaniaItems.dragonstone).with(this.count(1, 2)).with(this.random(0.5f)),
-                        this.stack(BotaniaItems.pixieDust).with(this.count(1, 2))
+                        this.stack(BotaniaItems.DRAGONSTONE).with(this.count(1, 2)).with(this.random(0.5f)),
+                        this.stack(BotaniaItems.PIXIE_DUST).with(this.count(1, 2))
                 ).with(this.random(0.4f)),
                 this.stack(ModItems.dreamCherry).with(this.count(1, 3)).with(this.random(0.4f)),
                 this.stack(Items.GOLD_NUGGET).with(this.count(1, 5)),

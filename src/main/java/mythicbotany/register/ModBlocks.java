@@ -35,7 +35,7 @@ public class ModBlocks {
 
     public static final BlockBE<TileManaInfuser> manaInfuser = new BlockManaInfuser(MythicBotany.getInstance(), TileManaInfuser.class, Properties.of().strength(20));
     public static final BlockBase alfsteelBlock = new BlockBase(MythicBotany.getInstance(), Properties.ofFullCopy(Blocks.EMERALD_BLOCK).strength(20).requiresCorrectToolForDrops());
-    public static final BlockBE<TileAlfsteelPylon> alfsteelPylon = new BlockAlfsteelPylon(MythicBotany.getInstance(), Properties.ofFullCopy(BotaniaBlocks.naturaPylon).strength(5.5f).sound(SoundType.METAL).lightLevel((s) -> 7));
+    public static final BlockBE<TileAlfsteelPylon> alfsteelPylon = new BlockAlfsteelPylon(MythicBotany.getInstance(), Properties.ofFullCopy(BotaniaBlocks.NATURA_PYLON).strength(5.5f).sound(SoundType.METAL).lightLevel((s) -> 7));
     public static final BlockBE<TileManaCollector> manaCollector = new BlockBE<>(MythicBotany.getInstance(), TileManaCollector.class, Properties.of().strength(5));
     public static final BlockFunctionalFlower<Exoblaze> exoblaze = new BlockFunctionalFlower<>(MythicBotany.getInstance(), Exoblaze.class, Properties.ofFullCopy(Blocks.RED_TULIP), false);
     public static final BlockFunctionalFlower<WitherAconite> witherAconite = new BlockFunctionalFlower<>(MythicBotany.getInstance(), WitherAconite.class, Properties.ofFullCopy(Blocks.RED_TULIP), true);

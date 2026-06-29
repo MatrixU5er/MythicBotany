@@ -14,7 +14,7 @@ public class EntityLootProvider extends EntityLootProviderBase {
     @Override
     @SuppressWarnings("unchecked")
     protected void setup() {
-        this.drops(ModEntities.alfPixie, this.stack(BotaniaItems.pixieDust)
+        this.drops(ModEntities.alfPixie, this.stack(BotaniaItems.PIXIE_DUST)
                 .with(this.count(0, 1))
                 .with(this.looting(2))
         );

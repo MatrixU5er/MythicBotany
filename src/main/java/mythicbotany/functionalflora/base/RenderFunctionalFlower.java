@@ -48,7 +48,7 @@ public class RenderFunctionalFlower<T extends FunctionalFlowerBase> implements B
     }
 
     public static boolean hasBindingAttempt(LivingEntity view, BlockPos tilePos) {
-        ItemStack stackHeld = PlayerHelper.getFirstHeldItem(view, BotaniaItems.twigWand);
+        ItemStack stackHeld = PlayerHelper.getFirstHeldItem(view, BotaniaItems.WAND_OF_THE_FOREST);
         if (!stackHeld.isEmpty() && WandOfTheForestItem.getBindMode(stackHeld)) {
             Optional<net.minecraft.core.GlobalPos> coords = WandOfTheForestItem.getBindingAttempt(stackHeld);
             return coords.isPresent() && coords.get().pos().equals(tilePos);
