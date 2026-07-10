@@ -2,9 +2,8 @@ package mythicbotany.patchouli;
 
 import mythicbotany.MythicBotany;
 import mythicbotany.infuser.InfuserRecipe;
-import net.minecraft.client.Minecraft;
+import mythicbotany.register.ModRecipes;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.Level;
 import vazkii.botania.client.patchouli.processor.PetalApothecaryProcessor;
 import vazkii.patchouli.api.IVariable;
@@ -12,31 +11,25 @@ import vazkii.patchouli.api.IVariableProvider;
 
 public class InfusionProcessor extends PetalApothecaryProcessor {
 
-    protected Recipe<?> recipe;
+    protected InfuserRecipe recipe;
     protected ResourceLocation recipeId;
 
     public InfusionProcessor() {
 
     }
 
-    public void setup(IVariableProvider variables) {
-        Level level = Minecraft.getInstance().level;
-        if (level == null) {
-            MythicBotany.logger.warn("Can't load mythicbotany infusion recipe for Patchouli without a client level.");
-            this.recipeId = null;
-            this.recipe = null;
-            return;
-        }
+    @Override
+    public void setup(Level level, IVariableProvider variables) {
         var registries = level.registryAccess();
         ResourceLocation id = ResourceLocation.parse(variables.get("recipe", registries).asString());
         this.recipeId = id;
-        this.recipe = null;
-        level.getRecipeManager().byKey(id).ifPresent(recipe -> this.recipe = recipe.value());
+        this.recipe = level.getRecipeManager().getAllRecipesFor(ModRecipes.infuser).stream()
+                .filter(holder -> holder.id().equals(id))
+                .map(holder -> holder.value())
+                .findFirst()
+                .orElse(null);
         if (this.recipe == null) {
             MythicBotany.logger.warn("Missing mythicbotany infusion recipe: " + id);
-        } else if (!(this.recipe instanceof InfuserRecipe)) {
-            MythicBotany.logger.warn("Recipe is not a mythicbotany infusion recipe: " + id);
-            this.recipe = null;
         }
     }
 
@@ -49,7 +42,7 @@ public class InfusionProcessor extends PetalApothecaryProcessor {
                 case "output" -> IVariable.from(this.recipe.getResultItem(level.registryAccess()), level.registryAccess());
                 case "recipe" -> IVariable.wrap(this.recipeId.toString());
                 case "heading" -> IVariable.from(this.recipe.getResultItem(level.registryAccess()).getHoverName(), level.registryAccess());
-                case "mana" -> IVariable.wrap(((InfuserRecipe) this.recipe).getManaUsage());
+                case "mana" -> IVariable.wrap(this.recipe.getManaUsage());
                 default -> null;
             };
         }

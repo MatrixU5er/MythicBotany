@@ -1,10 +1,6 @@
 {
   "type": "botania:runic_altar",
-  "catalysts": [],
-  "ingredients": [
-    {
-      "tag": "c:bricks/nether"
-    },
+  "catalysts": [
     {
       "item": "botania:rune_fire"
     },
@@ -13,6 +9,11 @@
     },
     {
       "item": "botania:rune_wrath"
+    }
+  ],
+  "ingredients": [
+    {
+      "tag": "c:bricks/nether"
     },
     {
       "item": "minecraft:magma_block"

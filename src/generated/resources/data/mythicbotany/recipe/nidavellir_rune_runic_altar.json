@@ -1,10 +1,6 @@
 {
   "type": "botania:runic_altar",
-  "catalysts": [],
-  "ingredients": [
-    {
-      "tag": "c:ingots/copper"
-    },
+  "catalysts": [
     {
       "item": "botania:rune_earth"
     },
@@ -13,6 +9,11 @@
     },
     {
       "item": "botania:rune_sloth"
+    }
+  ],
+  "ingredients": [
+    {
+      "tag": "c:ingots/copper"
     },
     {
       "item": "minecraft:iron_block"

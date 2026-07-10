@@ -1,10 +1,6 @@
 {
   "type": "botania:runic_altar",
-  "catalysts": [],
-  "ingredients": [
-    {
-      "tag": "c:bricks/normal"
-    },
+  "catalysts": [
     {
       "item": "botania:rune_earth"
     },
@@ -13,6 +9,11 @@
     },
     {
       "item": "botania:rune_gluttony"
+    }
+  ],
+  "ingredients": [
+    {
+      "tag": "c:bricks/normal"
     },
     {
       "item": "minecraft:blackstone"

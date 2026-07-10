@@ -1,0 +1,27 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "botanicadds"
+    }
+  ],
+  "type": "mythicbotany:infuser",
+  "fromColor": 3398912,
+  "ingredients": [
+    {
+      "tag": "c:nuggets/terrasteel"
+    },
+    {
+      "item": "botania:grass_seeds"
+    },
+    {
+      "item": "botanicadds:gaia_shard"
+    }
+  ],
+  "mana": 250000,
+  "output": {
+    "count": 1,
+    "id": "botania:overgrowth_seed"
+  },
+  "toColor": 65280
+}

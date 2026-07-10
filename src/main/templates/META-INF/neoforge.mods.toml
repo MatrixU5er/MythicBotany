@@ -12,6 +12,9 @@ updateJSONURL="https://assets.melanx.de/updates/mythicbotany.json"
 authors="${mod_authors}"
 description='''${mod_description}'''
 
+[[mixins]]
+config="${mod_id}.mixins.json"
+
 [[dependencies.${mod_id}]]
 modId="minecraft"
 type="required"

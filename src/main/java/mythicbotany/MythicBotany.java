@@ -82,6 +82,7 @@ public final class MythicBotany extends ModXRegistration {
         modBus.addListener(ModEntities::createAttributes);
         modBus.addListener(ModEntities::createSpawnPlacement);
         modBus.addListener(ModCapabilities::register);
+        modBus.addListener(ModItemComponents::modify);
 
         NeoForge.EVENT_BUS.addListener(this::serverStart);
         NeoForge.EVENT_BUS.addListener(EventPriority.LOW, this::datapacksReloaded);
@@ -89,6 +90,7 @@ public final class MythicBotany extends ModXRegistration {
         NeoForge.EVENT_BUS.register(new EventListener());
         //noinspection CodeBlock2Expr
         if (FMLEnvironment.dist == Dist.CLIENT) {
+            modBus.addListener(MythicBotanyClient::setup);
             modBus.addListener(MythicBotanyClient::registerClientExtensions);
             modBus.addListener(MythicBotanyClient::registerRenderers);
             NeoForge.EVENT_BUS.addListener(EventPriority.HIGH, AlfheimPortalHandler::renderGameOverlay);

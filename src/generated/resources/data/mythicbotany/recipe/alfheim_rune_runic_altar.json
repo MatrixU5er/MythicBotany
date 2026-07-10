@@ -1,10 +1,6 @@
 {
   "type": "botania:runic_altar",
-  "catalysts": [],
-  "ingredients": [
-    {
-      "tag": "c:ingots/elementium"
-    },
+  "catalysts": [
     {
       "item": "botania:rune_air"
     },
@@ -13,6 +9,11 @@
     },
     {
       "item": "botania:rune_lust"
+    }
+  ],
+  "ingredients": [
+    {
+      "tag": "c:ingots/elementium"
     },
     [
       {

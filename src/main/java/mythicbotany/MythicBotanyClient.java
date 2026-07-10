@@ -2,6 +2,8 @@ package mythicbotany;
 
 import mythicbotany.alfheim.content.AlfPixieRender;
 import mythicbotany.alfheim.teleporter.RenderReturnPortal;
+import mythicbotany.alftools.AlfsteelAxe;
+import mythicbotany.alftools.AlfsteelPick;
 import mythicbotany.functionalflora.base.BlockFunctionalFlower;
 import mythicbotany.functionalflora.base.FunctionalFlowerBase;
 import mythicbotany.functionalflora.base.RenderFunctionalFlower;
@@ -17,13 +19,16 @@ import mythicbotany.rune.TileCentralRuneHolder;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import org.moddingx.libx.render.ItemStackRenderer;
 import vazkii.botania.client.model.armor.ArmorModels;
 
@@ -33,6 +38,18 @@ final class MythicBotanyClient {
 
     private MythicBotanyClient() {
 
+    }
+
+    static void setup(FMLClientSetupEvent event) {
+        event.enqueueWork(() -> {
+            ItemProperties.register(ModItems.alfsteelPick, MythicBotany.getInstance().resource("tipped"),
+                    (stack, level, entity, seed) -> AlfsteelPick.isTipped(stack) ? 1F : 0F);
+            ItemProperties.register(ModItems.alfsteelPick, MythicBotany.getInstance().resource("active"),
+                    (stack, level, entity, seed) -> AlfsteelPick.isEnabled(stack) ? 1F : 0F);
+            ItemProperties.register(ModItems.alfsteelAxe, MythicBotany.getInstance().resource("active"),
+                    (stack, level, entity, seed) -> entity instanceof Player player && !AlfsteelAxe.shouldBreak(player) ? 0F : 1F);
+            ItemStackRenderer.addRenderBlock(ModBlocks.yggdrasilBranch.getBlockEntityType(), false);
+        });
     }
 
     static void registerClientExtensions(RegisterClientExtensionsEvent event) {

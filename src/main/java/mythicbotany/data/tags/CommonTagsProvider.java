@@ -35,6 +35,14 @@ public class CommonTagsProvider extends CommonTagsProviderBase {
         this.item(ItemTags.GOLD_ORES).add(ModBlocks.goldOre.asItem());
         this.item(Tags.Items.ORES).addTag(ModItemTags.ALFHEIM_ORES);
         this.item(Tags.Items.RAW_MATERIALS).add(ModItems.rawElementium);
+        this.item(ItemTags.SWORDS).add(ModItems.alfsteelSword);
+        this.item(ItemTags.PICKAXES).add(ModItems.alfsteelPick);
+        this.item(ItemTags.AXES).add(ModItems.alfsteelAxe);
+        this.item(ItemTags.HEAD_ARMOR).add(ModItems.alfsteelHelmet);
+        this.item(ItemTags.CHEST_ARMOR).add(ModItems.alfsteelChestplate);
+        this.item(ItemTags.LEG_ARMOR).add(ModItems.alfsteelLeggings);
+        this.item(ItemTags.FOOT_ARMOR).add(ModItems.alfsteelBoots);
+        this.item(ItemTags.DURABILITY_ENCHANTABLE).add(ModItems.fadedNetherStar);
         this.item(ItemTags.create(ResourceLocation.fromNamespaceAndPath("curios", "ring"))).add(
                 ModItems.manaRingGreatest, ModItems.auraRingGreatest, ModItems.fireRing, ModItems.iceRing,
                 ModItems.andwariRing, ModItems.cursedAndwariRing

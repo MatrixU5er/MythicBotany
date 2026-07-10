@@ -1,0 +1,30 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "feywild"
+    }
+  ],
+  "type": "botania:petal_apothecary",
+  "ingredients": [
+    {
+      "tag": "botania:petals/yellow"
+    },
+    {
+      "tag": "botania:petals/yellow"
+    },
+    {
+      "tag": "botania:petals/purple"
+    },
+    {
+      "item": "feywild:lesser_fey_gem"
+    }
+  ],
+  "output": {
+    "count": 1,
+    "id": "mythicbotany:feysythia"
+  },
+  "reagent": {
+    "tag": "botania:seed_apothecary_reagent"
+  }
+}

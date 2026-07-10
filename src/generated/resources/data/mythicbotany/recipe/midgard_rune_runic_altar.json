@@ -1,10 +1,6 @@
 {
   "type": "botania:runic_altar",
-  "catalysts": [],
-  "ingredients": [
-    {
-      "tag": "c:ingots/manasteel"
-    },
+  "catalysts": [
     {
       "item": "botania:rune_earth"
     },
@@ -13,6 +9,11 @@
     },
     {
       "item": "botania:rune_greed"
+    }
+  ],
+  "ingredients": [
+    {
+      "tag": "c:ingots/manasteel"
     },
     {
       "item": "minecraft:grass_block"

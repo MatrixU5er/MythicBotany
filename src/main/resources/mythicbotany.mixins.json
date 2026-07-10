@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "mythicbotany.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "TerrasteelHelmItemMixin"
+  ],
+  "client": [
+    "LevelRendererMixin",
+    "RenderHelperMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -40,7 +40,7 @@
     },
     {
       "type": "patchouli:custom",
-      "class": "vazkii.botania.client.patchouli.component.TerraPlateComponent",
+      "class": "mythicbotany.patchouli.ManaInfuserPlateComponent",
       "x": 36,
       "y": 74,
       "plate": "mythicbotany:mana_infuser",

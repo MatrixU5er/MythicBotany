@@ -1,10 +1,6 @@
 {
   "type": "botania:runic_altar",
-  "catalysts": [],
-  "ingredients": [
-    {
-      "tag": "c:ingots/terrasteel"
-    },
+  "catalysts": [
     {
       "item": "botania:rune_earth"
     },
@@ -13,6 +9,11 @@
     },
     {
       "item": "botania:rune_pride"
+    }
+  ],
+  "ingredients": [
+    {
+      "tag": "c:ingots/terrasteel"
     },
     {
       "item": "botania:alfheim_portal"

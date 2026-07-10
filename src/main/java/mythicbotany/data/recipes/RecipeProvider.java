@@ -27,6 +27,7 @@ import vazkii.botania.common.block.BotaniaBlocks;
 import vazkii.botania.common.item.BotaniaItems;
 import vazkii.botania.common.lib.BotaniaTags;
 
+import java.util.List;
 import java.util.Objects;
 
 public class RecipeProvider extends RecipeProviderBase implements CraftingExtension, CompressionExtension, SmeltingExtension, SmithingExtension, PetalExtension, ManaInfusionExtension, RuneExtension, ElvenTradeExtension, InfuserExtension, RuneRitualExtension {
@@ -86,15 +87,15 @@ public class RecipeProvider extends RecipeProviderBase implements CraftingExtens
 
         this.manaInfusion(BotaniaItems.HORN_OF_THE_WILD, ModItems.gjallarHornEmpty, 20000);
 
-        this.runeAltar(ModItems.midgardRune, 16000, Ingredient.of(ModItemTags.INGOTS_MANASTEEL), Ingredient.of(BotaniaItems.RUNE_OF_EARTH), Ingredient.of(BotaniaItems.RUNE_OF_SPRING), Ingredient.of(BotaniaItems.RUNE_OF_GREED), Ingredient.of(Blocks.GRASS_BLOCK));
-        this.runeAltar(ModItems.alfheimRune, 16000, Ingredient.of(ModItemTags.INGOTS_ELEMENTIUM), Ingredient.of(BotaniaItems.RUNE_OF_AIR), Ingredient.of(BotaniaItems.RUNE_OF_SUMMER), Ingredient.of(BotaniaItems.RUNE_OF_LUST), Ingredient.of(Blocks.ACACIA_LEAVES, Blocks.BIRCH_LEAVES, Blocks.DARK_OAK_LEAVES, Blocks.JUNGLE_LEAVES, Blocks.OAK_LEAVES, Blocks.SPRUCE_LEAVES));
-        this.runeAltar(ModItems.muspelheimRune, 16000, Ingredient.of(Tags.Items.BRICKS_NETHER), Ingredient.of(BotaniaItems.RUNE_OF_FIRE), Ingredient.of(BotaniaItems.RUNE_OF_SUMMER), Ingredient.of(BotaniaItems.RUNE_OF_WRATH), Ingredient.of(Blocks.MAGMA_BLOCK));
-        this.runeAltar(ModItems.niflheimRune, 16000, Ingredient.of(Tags.Items.INGOTS_IRON), Ingredient.of(BotaniaItems.RUNE_OF_WATER), Ingredient.of(BotaniaItems.RUNE_OF_WINTER), Ingredient.of(BotaniaItems.RUNE_OF_WRATH), Ingredient.of(Blocks.BLUE_ICE));
-        this.runeAltar(ModItems.asgardRune, 16000, Ingredient.of(Tags.Items.INGOTS_NETHERITE), Ingredient.of(BotaniaItems.RUNE_OF_AIR), Ingredient.of(BotaniaItems.RUNE_OF_AUTUMN), Ingredient.of(BotaniaItems.RUNE_OF_PRIDE), Ingredient.of(BotaniaItems.ROD_OF_THE_BIFROST));
-        this.runeAltar(ModItems.vanaheimRune, 16000, Ingredient.of(ModItemTags.INGOTS_TERRASTEEL), Ingredient.of(BotaniaItems.RUNE_OF_EARTH), Ingredient.of(BotaniaItems.RUNE_OF_SPRING), Ingredient.of(BotaniaItems.RUNE_OF_PRIDE), Ingredient.of(BotaniaBlocks.ELVEN_GATEWAY_CORE));
-        this.runeAltar(ModItems.helheimRune, 16000, Ingredient.of(Tags.Items.INGOTS_GOLD), Ingredient.of(BotaniaItems.RUNE_OF_FIRE), Ingredient.of(BotaniaItems.RUNE_OF_AUTUMN), Ingredient.of(BotaniaItems.RUNE_OF_ENVY), Ingredient.of(Items.SKELETON_SKULL, Items.WITHER_SKELETON_SKULL, Items.CREEPER_HEAD, Items.DRAGON_HEAD, Items.ZOMBIE_HEAD));
-        this.runeAltar(ModItems.nidavellirRune, 16000, Ingredient.of(Tags.Items.INGOTS_COPPER), Ingredient.of(BotaniaItems.RUNE_OF_EARTH), Ingredient.of(BotaniaItems.RUNE_OF_WINTER), Ingredient.of(BotaniaItems.RUNE_OF_SLOTH), Ingredient.of(Blocks.IRON_BLOCK));
-        this.runeAltar(ModItems.joetunheimRune, 16000, Ingredient.of(Tags.Items.BRICKS_NORMAL), Ingredient.of(BotaniaItems.RUNE_OF_EARTH), Ingredient.of(BotaniaItems.RUNE_OF_AUTUMN), Ingredient.of(BotaniaItems.RUNE_OF_GLUTTONY), Ingredient.of(Blocks.BLACKSTONE));
+        this.runeAltar(ModItems.midgardRune, 16000, List.of(Ingredient.of(ModItemTags.INGOTS_MANASTEEL), Ingredient.of(Blocks.GRASS_BLOCK)), List.of(Ingredient.of(BotaniaItems.RUNE_OF_EARTH), Ingredient.of(BotaniaItems.RUNE_OF_SPRING), Ingredient.of(BotaniaItems.RUNE_OF_GREED)));
+        this.runeAltar(ModItems.alfheimRune, 16000, List.of(Ingredient.of(ModItemTags.INGOTS_ELEMENTIUM), Ingredient.of(Blocks.ACACIA_LEAVES, Blocks.BIRCH_LEAVES, Blocks.DARK_OAK_LEAVES, Blocks.JUNGLE_LEAVES, Blocks.OAK_LEAVES, Blocks.SPRUCE_LEAVES)), List.of(Ingredient.of(BotaniaItems.RUNE_OF_AIR), Ingredient.of(BotaniaItems.RUNE_OF_SUMMER), Ingredient.of(BotaniaItems.RUNE_OF_LUST)));
+        this.runeAltar(ModItems.muspelheimRune, 16000, List.of(Ingredient.of(Tags.Items.BRICKS_NETHER), Ingredient.of(Blocks.MAGMA_BLOCK)), List.of(Ingredient.of(BotaniaItems.RUNE_OF_FIRE), Ingredient.of(BotaniaItems.RUNE_OF_SUMMER), Ingredient.of(BotaniaItems.RUNE_OF_WRATH)));
+        this.runeAltar(ModItems.niflheimRune, 16000, List.of(Ingredient.of(Tags.Items.INGOTS_IRON), Ingredient.of(Blocks.BLUE_ICE)), List.of(Ingredient.of(BotaniaItems.RUNE_OF_WATER), Ingredient.of(BotaniaItems.RUNE_OF_WINTER), Ingredient.of(BotaniaItems.RUNE_OF_WRATH)));
+        this.runeAltar(ModItems.asgardRune, 16000, List.of(Ingredient.of(Tags.Items.INGOTS_NETHERITE), Ingredient.of(BotaniaItems.ROD_OF_THE_BIFROST)), List.of(Ingredient.of(BotaniaItems.RUNE_OF_AIR), Ingredient.of(BotaniaItems.RUNE_OF_AUTUMN), Ingredient.of(BotaniaItems.RUNE_OF_PRIDE)));
+        this.runeAltar(ModItems.vanaheimRune, 16000, List.of(Ingredient.of(ModItemTags.INGOTS_TERRASTEEL), Ingredient.of(BotaniaBlocks.ELVEN_GATEWAY_CORE)), List.of(Ingredient.of(BotaniaItems.RUNE_OF_EARTH), Ingredient.of(BotaniaItems.RUNE_OF_SPRING), Ingredient.of(BotaniaItems.RUNE_OF_PRIDE)));
+        this.runeAltar(ModItems.helheimRune, 16000, List.of(Ingredient.of(Tags.Items.INGOTS_GOLD), Ingredient.of(Items.SKELETON_SKULL, Items.WITHER_SKELETON_SKULL, Items.CREEPER_HEAD, Items.DRAGON_HEAD, Items.ZOMBIE_HEAD)), List.of(Ingredient.of(BotaniaItems.RUNE_OF_FIRE), Ingredient.of(BotaniaItems.RUNE_OF_AUTUMN), Ingredient.of(BotaniaItems.RUNE_OF_ENVY)));
+        this.runeAltar(ModItems.nidavellirRune, 16000, List.of(Ingredient.of(Tags.Items.INGOTS_COPPER), Ingredient.of(Blocks.IRON_BLOCK)), List.of(Ingredient.of(BotaniaItems.RUNE_OF_EARTH), Ingredient.of(BotaniaItems.RUNE_OF_WINTER), Ingredient.of(BotaniaItems.RUNE_OF_SLOTH)));
+        this.runeAltar(ModItems.joetunheimRune, 16000, List.of(Ingredient.of(Tags.Items.BRICKS_NORMAL), Ingredient.of(Blocks.BLACKSTONE)), List.of(Ingredient.of(BotaniaItems.RUNE_OF_EARTH), Ingredient.of(BotaniaItems.RUNE_OF_AUTUMN), Ingredient.of(BotaniaItems.RUNE_OF_GLUTTONY)));
 
         this.elvenTrade(ModBlocks.dreamwoodLeaves, Ingredient.of(ItemTags.LEAVES));
 

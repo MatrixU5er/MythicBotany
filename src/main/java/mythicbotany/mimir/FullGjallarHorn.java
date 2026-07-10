@@ -55,7 +55,8 @@ public class FullGjallarHorn extends ItemBase {
         return stack;
     }
 
-    public int getUseDuration(@Nonnull ItemStack stack) {
+    @Override
+    public int getUseDuration(@Nonnull ItemStack stack, @Nonnull LivingEntity entity) {
         return 48;
     }
 

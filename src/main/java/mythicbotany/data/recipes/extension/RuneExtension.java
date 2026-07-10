@@ -9,6 +9,7 @@ import vazkii.botania.common.block.BotaniaBlocks;
 import vazkii.botania.common.crafting.RunicAltarRecipe;
 
 import java.util.Arrays;
+import java.util.List;
 
 public interface RuneExtension extends RecipeExtension {
 
@@ -25,7 +26,21 @@ public interface RuneExtension extends RecipeExtension {
     }
 
     default void runeAltar(ItemStack output, int mana, Ingredient... inputs) {
+        this.runeAltar(output, mana, Arrays.asList(inputs), List.of());
+    }
+
+    default void runeAltar(ItemLike output, int mana, List<Ingredient> inputs, List<Ingredient> catalysts) {
+        this.runeAltar(new ItemStack(output), mana, inputs, catalysts);
+    }
+
+    default void runeAltar(ItemStack output, int mana, List<Ingredient> inputs, List<Ingredient> catalysts) {
         ResourceLocation id = this.provider().loc(output.getItem(), "runic_altar");
-        this.output().accept(id, new RunicAltarRecipe(output, Ingredient.of(BotaniaBlocks.LIVINGROCK), mana, inputs, new Ingredient[0]), null);
+        this.output().accept(id, new RunicAltarRecipe(
+                output,
+                Ingredient.of(BotaniaBlocks.LIVINGROCK),
+                mana,
+                inputs.toArray(Ingredient[]::new),
+                catalysts.toArray(Ingredient[]::new)
+        ), null);
     }
 }

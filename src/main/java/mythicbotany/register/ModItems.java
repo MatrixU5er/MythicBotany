@@ -11,13 +11,16 @@ import mythicbotany.misc.ItemFadedNetherStar;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.food.FoodProperties;
+import net.minecraft.util.Unit;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Item.Properties;
 import net.neoforged.neoforge.common.DeferredSpawnEggItem;
 import org.moddingx.libx.annotation.registration.RegisterClass;
 import org.moddingx.libx.base.ItemBase;
+import vazkii.botania.common.component.BotaniaDataComponents;
 import vazkii.botania.common.item.equipment.bauble.BaubleItem;
+import vazkii.botania.common.item.equipment.tool.terrasteel.TerraShattererItem;
 import vazkii.botania.common.item.material.RuneItem;
 
 @RegisterClass(registry = "ITEM")
@@ -37,13 +40,20 @@ public class ModItems {
     public static final Item alfsteelNugget = new ItemBase(MythicBotany.getInstance(), new Properties());
     public static final Item alfsteelTemplate = new AlfsteelTemplateItem();
     public static final Item alfsteelSword = new AlfsteelSword(new Properties().stacksTo(1).fireResistant());
-    public static final Item alfsteelPick = new AlfsteelPick(new Properties().stacksTo(1).fireResistant());
+    public static final Item alfsteelPick = new AlfsteelPick(new Properties().stacksTo(1).fireResistant()
+            .component(BotaniaDataComponents.MAX_MANA, TerraShattererItem.MAX_MANA)
+            .component(BotaniaDataComponents.CAN_RECEIVE_MANA_FROM_POOL, Unit.INSTANCE));
     public static final Item alfsteelAxe = new AlfsteelAxe(new Properties().stacksTo(1).fireResistant());
     public static final Item alfsteelHelmet = new AlfsteelHelm(new Properties().stacksTo(1).fireResistant());
     public static final Item alfsteelChestplate = new AlfsteelArmor(ArmorItem.Type.CHESTPLATE, new Properties().stacksTo(1).fireResistant());
     public static final Item alfsteelLeggings = new AlfsteelArmor(ArmorItem.Type.LEGGINGS, new Properties().stacksTo(1).fireResistant());
     public static final Item alfsteelBoots = new AlfsteelArmor(ArmorItem.Type.BOOTS, new Properties().stacksTo(1).fireResistant());
-    public static final Item manaRingGreatest = new GreatestManaRing(new Properties().stacksTo(1).fireResistant());
+    public static final Item manaRingGreatest = new GreatestManaRing(new Properties().stacksTo(1).fireResistant()
+            .component(BotaniaDataComponents.MAX_MANA, GreatestManaRing.MAX_MANA)
+            .component(BotaniaDataComponents.CAN_PROVIDE_MANA_TO_ITEMS, Unit.INSTANCE)
+            .component(BotaniaDataComponents.CAN_DRAIN_MANA_TO_POOL, Unit.INSTANCE)
+            .component(BotaniaDataComponents.CAN_ACCEPT_MANA_FROM_ITEMS, Unit.INSTANCE)
+            .component(BotaniaDataComponents.CAN_RECEIVE_MANA_FROM_POOL, Unit.INSTANCE));
     public static final Item auraRingGreatest = new GreatestAuraRing(new Properties().stacksTo(1).fireResistant());
     public static final Item fadedNetherStar = new ItemFadedNetherStar();
     public static final Item fireRing = new ItemFireRing(new Properties().stacksTo(1));

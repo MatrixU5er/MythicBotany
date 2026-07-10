@@ -52,7 +52,7 @@ public class AlfsteelHelm extends TerrasteelHelmItem implements PylonRepairable 
     @Override
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
         super.inventoryTick(stack, level, entity, slotId, isSelected);
-        if (entity instanceof Player player && !level.isClientSide) {
+        if (entity instanceof Player player && !level.isClientSide && player.getItemBySlot(this.getEquipmentSlot()) == stack) {
             if (stack.getDamageValue() > 0 && ManaItemHandler.instance().requestManaExact(stack, player, this.getManaPerDamage() * 2, true)) {
                 stack.setDamageValue(Math.max(0, stack.getDamageValue() - 2));
             }

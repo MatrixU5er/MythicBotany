@@ -4,7 +4,6 @@ import mythicbotany.alfheim.Alfheim;
 import mythicbotany.alfheim.teleporter.AlfheimPortalHandler;
 import mythicbotany.alfheim.teleporter.AlfheimTeleporter;
 import mythicbotany.alfheim.teleporter.TileReturnPortal;
-import mythicbotany.alftools.AlfsteelHelm;
 import mythicbotany.config.MythicConfig;
 import mythicbotany.misc.Andwari;
 import mythicbotany.mjoellnir.BlockMjoellnir;
@@ -27,26 +26,23 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.event.entity.item.ItemExpireEvent;
+import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
-import net.neoforged.neoforge.event.entity.player.CriticalHitEvent;
 import net.neoforged.neoforge.event.entity.player.ItemEntityPickupEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.level.SleepFinishedTimeEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
-import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.common.util.TriState;
 import top.theillusivec4.curios.api.CuriosApi;
 import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler;
 import top.theillusivec4.curios.api.type.inventory.ICurioStacksHandler;
-import vazkii.botania.api.item.AncientWillContainer;
 import vazkii.botania.api.mana.ManaItemHandler;
 import vazkii.botania.api.recipe.ElvenPortalUpdateEvent;
 import vazkii.botania.common.block.block_entity.AlfheimPortalBlockEntity;
 import vazkii.botania.common.item.BotaniaItems;
-import vazkii.botania.common.item.equipment.armor.terrasteel.TerrasteelHelmItem;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -56,10 +52,11 @@ public class EventListener {
     @Nullable
     public static LivingEntity lightningImmuneEntity = null;
     
-    private final Set<UUID> crittingPlayers = new HashSet<>();
-
     @SubscribeEvent
-    public void onDamage(LivingIncomingDamageEvent event) {
+    public void onDamage(LivingDamageEvent.Post event) {
+        if (event.getNewDamage() <= 0) {
+            return;
+        }
         if (event.getSource().getEntity() instanceof Player) {
             ICuriosItemHandler curios = CuriosApi.getCuriosInventory(event.getEntity()).orElse(null);
             if (curios != null && curios.findFirstCurio(ModItems.fireRing).isPresent()) {
@@ -71,21 +68,6 @@ public class EventListener {
                 if (!event.getEntity().hasEffect(MobEffects.MOVEMENT_SLOWDOWN)) {
                     event.getEntity().addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 20, 99));
                 }
-            }
-        }
-    }
-
-    @SubscribeEvent(priority = EventPriority.LOW)
-    public void citicalHit(CriticalHitEvent event) {
-        if (event.isCriticalHit()) {
-            if (((AlfsteelHelm) ModItems.alfsteelHelmet).hasArmorSet(event.getEntity())) {
-                if (((AlfsteelHelm) ModItems.alfsteelHelmet).hasAncientWill(event.getEntity().getItemBySlot(EquipmentSlot.HEAD), AncientWillContainer.AncientWillType.DHAROK)) {
-                    float calculatedModifier = event.getDamageMultiplier() * (1f + (1f - event.getEntity().getHealth() / event.getEntity().getMaxHealth()) * 0.5f);
-                    if (calculatedModifier != 1 && calculatedModifier != 0 && Float.isFinite(calculatedModifier)) {
-                        event.setDamageMultiplier(calculatedModifier);
-                    }
-                }
-                this.crittingPlayers.add(event.getEntity().getUUID());
             }
         }
     }
@@ -110,14 +92,6 @@ public class EventListener {
                 return;
             }
         }
-        if (event.getSource().getEntity() instanceof Player && this.crittingPlayers.contains(event.getSource().getEntity().getUUID())) {
-            TerrasteelHelmItem.onEntityAttacked(event.getSource(), event.getAmount(), ((Player) event.getSource().getEntity()), event.getEntity());
-        }
-    }
-
-    @SubscribeEvent
-    public void endTick(ServerTickEvent.Post event) {
-        this.crittingPlayers.clear();
     }
 
     @SubscribeEvent
@@ -211,6 +185,9 @@ public class EventListener {
     
     @SubscribeEvent
     public void playerTick(PlayerTickEvent.Post event) {
+        if (!event.getEntity().level().isClientSide && event.getEntity().tickCount % 20 == 0) {
+            LegacyStackData.migrate(event.getEntity());
+        }
         if (event.getEntity().tickCount % 4 == 1 && !event.getEntity().level().isClientSide && Alfheim.DIMENSION.equals(event.getEntity().level().dimension())) {
             if (MythicConfig.lockAlfheim && !MythicPlayerData.getData(event.getEntity()).getBoolean("KvasirKnowledge")) {
                 // Player used another mod to get to alfheim

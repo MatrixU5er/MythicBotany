@@ -17,7 +17,6 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -36,13 +35,15 @@ public class AlfsteelSword extends TerraBladeItem implements PylonRepairable {
 
     private static final ResourceLocation DAMAGE_MODIFIER_ID = ResourceLocation.fromNamespaceAndPath("mythicbotany", "alfsteel_sword_damage");
     private static final ResourceLocation SPEED_MODIFIER_ID = ResourceLocation.fromNamespaceAndPath("mythicbotany", "alfsteel_sword_speed");
-    private final ItemAttributeModifiers attributeModifiers;
 
     public AlfsteelSword(Properties props) {
         super(props.durability(MythicConfig.alftools.durability.sword.max_durability()));
         NeoForge.EVENT_BUS.addListener(this::onLeftClick);
-        this.attributeModifiers = ItemAttributeModifiers.builder()
-                .add(Attributes.ATTACK_DAMAGE, new AttributeModifier(DAMAGE_MODIFIER_ID, this.getDamage(), AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
+    }
+
+    public static ItemAttributeModifiers createAttributes() {
+        return ItemAttributeModifiers.builder()
+                .add(Attributes.ATTACK_DAMAGE, new AttributeModifier(DAMAGE_MODIFIER_ID, MythicConfig.alftools.tool_values.sword_damage, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
                 .add(Attributes.ATTACK_SPEED, new AttributeModifier(SPEED_MODIFIER_ID, MythicConfig.alftools.tool_values.sword_speed, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
                 .build();
     }
@@ -60,12 +61,6 @@ public class AlfsteelSword extends TerraBladeItem implements PylonRepairable {
 
     public float getDamage() {
         return (float) MythicConfig.alftools.tool_values.sword_damage;
-    }
-
-    @Nonnull
-    @Override
-    public ItemAttributeModifiers getDefaultAttributeModifiers() {
-        return this.attributeModifiers;
     }
 
     @Override
