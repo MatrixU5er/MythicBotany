@@ -9,6 +9,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+import net.neoforged.neoforge.network.registration.HandlerThread;
 import org.moddingx.libx.network.PacketHandler;
 
 public record MagnetImmunityMessage(int entityId, boolean immune, double x, double y, double z) implements CustomPacketPayload {
@@ -31,7 +32,7 @@ public record MagnetImmunityMessage(int entityId, boolean immune, double x, doub
     public static class Handler extends PacketHandler<MagnetImmunityMessage> {
 
         public Handler() {
-            super(PacketFlow.CLIENTBOUND, STREAM_CODEC, TYPE);
+            super(TYPE, PacketFlow.CLIENTBOUND, STREAM_CODEC, HandlerThread.MAIN);
         }
 
         @Override

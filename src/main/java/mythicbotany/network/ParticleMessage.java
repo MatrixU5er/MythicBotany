@@ -9,6 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+import net.neoforged.neoforge.network.registration.HandlerThread;
 import org.moddingx.libx.network.PacketHandler;
 
 public record ParticleMessage(ResourceLocation particleId, double x, double y, double z, int amount, double xm, double ym, double zm, double xd, double yd, double zd, boolean randomizePosition) implements CustomPacketPayload {
@@ -55,7 +56,7 @@ public record ParticleMessage(ResourceLocation particleId, double x, double y, d
     public static class Handler extends PacketHandler<ParticleMessage> {
 
         public Handler() {
-            super(PacketFlow.CLIENTBOUND, STREAM_CODEC, TYPE);
+            super(TYPE, PacketFlow.CLIENTBOUND, STREAM_CODEC, HandlerThread.MAIN);
         }
 
         @Override

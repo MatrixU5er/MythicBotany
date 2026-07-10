@@ -9,6 +9,7 @@ import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+import net.neoforged.neoforge.network.registration.HandlerThread;
 import org.moddingx.libx.network.PacketHandler;
 
 public record AlfSwordLeftClickMessage() implements CustomPacketPayload {
@@ -24,7 +25,7 @@ public record AlfSwordLeftClickMessage() implements CustomPacketPayload {
     public static class Handler extends PacketHandler<AlfSwordLeftClickMessage> {
 
         public Handler() {
-            super(PacketFlow.SERVERBOUND, STREAM_CODEC, TYPE);
+            super(TYPE, PacketFlow.SERVERBOUND, STREAM_CODEC, HandlerThread.MAIN);
         }
 
         @Override

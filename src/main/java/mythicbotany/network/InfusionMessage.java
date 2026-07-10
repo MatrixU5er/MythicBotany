@@ -10,6 +10,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+import net.neoforged.neoforge.network.registration.HandlerThread;
 import org.moddingx.libx.network.PacketHandler;
 
 public record InfusionMessage(BlockPos pos, double progress, int fromColor, int toColor) implements CustomPacketPayload {
@@ -31,7 +32,7 @@ public record InfusionMessage(BlockPos pos, double progress, int fromColor, int 
     public static class Handler extends PacketHandler<InfusionMessage> {
 
         public Handler() {
-            super(PacketFlow.CLIENTBOUND, STREAM_CODEC, TYPE);
+            super(TYPE, PacketFlow.CLIENTBOUND, STREAM_CODEC, HandlerThread.MAIN);
         }
 
         @Override

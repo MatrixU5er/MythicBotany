@@ -9,6 +9,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+import net.neoforged.neoforge.network.registration.HandlerThread;
 import org.moddingx.libx.network.PacketHandler;
 
 public record PylonMessage(BlockPos pos) implements CustomPacketPayload {
@@ -27,7 +28,7 @@ public record PylonMessage(BlockPos pos) implements CustomPacketPayload {
     public static class Handler extends PacketHandler<PylonMessage> {
 
         public Handler() {
-            super(PacketFlow.CLIENTBOUND, STREAM_CODEC, TYPE);
+            super(TYPE, PacketFlow.CLIENTBOUND, STREAM_CODEC, HandlerThread.MAIN);
         }
 
         @Override
