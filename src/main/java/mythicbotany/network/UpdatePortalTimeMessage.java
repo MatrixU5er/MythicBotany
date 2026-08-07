@@ -33,9 +33,7 @@ public record UpdatePortalTimeMessage(int portalTime) implements CustomPacketPay
 
         @Override
         public void handle(UpdatePortalTimeMessage msg, IPayloadContext ctx) {
-            if (FMLEnvironment.dist == Dist.CLIENT) {
-                ClientNetworkHandlers.handlePortalTime(msg);
-            }
+            ClientNetworkDispatch.dispatch("handlePortalTime", msg);
         }
     }
 }

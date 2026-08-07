@@ -158,7 +158,7 @@
                       "function": "minecraft:set_count"
                     }
                   ],
-                  "name": "botania:white_petal"
+                  "name": "botania:white_mystical_petal"
                 },
                 {
                   "type": "minecraft:item",
@@ -179,7 +179,7 @@
                       "function": "minecraft:set_count"
                     }
                   ],
-                  "name": "botania:orange_petal"
+                  "name": "botania:orange_mystical_petal"
                 },
                 {
                   "type": "minecraft:item",
@@ -200,7 +200,7 @@
                       "function": "minecraft:set_count"
                     }
                   ],
-                  "name": "botania:magenta_petal"
+                  "name": "botania:magenta_mystical_petal"
                 },
                 {
                   "type": "minecraft:item",
@@ -221,7 +221,7 @@
                       "function": "minecraft:set_count"
                     }
                   ],
-                  "name": "botania:light_blue_petal"
+                  "name": "botania:light_blue_mystical_petal"
                 },
                 {
                   "type": "minecraft:item",
@@ -242,7 +242,7 @@
                       "function": "minecraft:set_count"
                     }
                   ],
-                  "name": "botania:yellow_petal"
+                  "name": "botania:yellow_mystical_petal"
                 },
                 {
                   "type": "minecraft:item",
@@ -263,7 +263,7 @@
                       "function": "minecraft:set_count"
                     }
                   ],
-                  "name": "botania:lime_petal"
+                  "name": "botania:lime_mystical_petal"
                 },
                 {
                   "type": "minecraft:item",
@@ -284,7 +284,7 @@
                       "function": "minecraft:set_count"
                     }
                   ],
-                  "name": "botania:pink_petal"
+                  "name": "botania:pink_mystical_petal"
                 },
                 {
                   "type": "minecraft:item",
@@ -305,7 +305,7 @@
                       "function": "minecraft:set_count"
                     }
                   ],
-                  "name": "botania:gray_petal"
+                  "name": "botania:gray_mystical_petal"
                 },
                 {
                   "type": "minecraft:item",
@@ -326,7 +326,7 @@
                       "function": "minecraft:set_count"
                     }
                   ],
-                  "name": "botania:light_gray_petal"
+                  "name": "botania:light_gray_mystical_petal"
                 },
                 {
                   "type": "minecraft:item",
@@ -347,7 +347,7 @@
                       "function": "minecraft:set_count"
                     }
                   ],
-                  "name": "botania:cyan_petal"
+                  "name": "botania:cyan_mystical_petal"
                 },
                 {
                   "type": "minecraft:item",
@@ -368,7 +368,7 @@
                       "function": "minecraft:set_count"
                     }
                   ],
-                  "name": "botania:purple_petal"
+                  "name": "botania:purple_mystical_petal"
                 },
                 {
                   "type": "minecraft:item",
@@ -389,7 +389,7 @@
                       "function": "minecraft:set_count"
                     }
                   ],
-                  "name": "botania:blue_petal"
+                  "name": "botania:blue_mystical_petal"
                 },
                 {
                   "type": "minecraft:item",
@@ -410,7 +410,7 @@
                       "function": "minecraft:set_count"
                     }
                   ],
-                  "name": "botania:brown_petal"
+                  "name": "botania:brown_mystical_petal"
                 },
                 {
                   "type": "minecraft:item",
@@ -431,7 +431,7 @@
                       "function": "minecraft:set_count"
                     }
                   ],
-                  "name": "botania:green_petal"
+                  "name": "botania:green_mystical_petal"
                 },
                 {
                   "type": "minecraft:item",
@@ -452,7 +452,7 @@
                       "function": "minecraft:set_count"
                     }
                   ],
-                  "name": "botania:red_petal"
+                  "name": "botania:red_mystical_petal"
                 },
                 {
                   "type": "minecraft:item",
@@ -467,7 +467,7 @@
                       "function": "minecraft:set_count"
                     }
                   ],
-                  "name": "botania:black_petal"
+                  "name": "botania:black_mystical_petal"
                 }
               ],
               "conditions": [
@@ -499,7 +499,7 @@
                       "function": "minecraft:set_count"
                     }
                   ],
-                  "name": "botania:white_petal"
+                  "name": "botania:white_mystical_petal"
                 },
                 {
                   "type": "minecraft:item",
@@ -520,7 +520,7 @@
                       "function": "minecraft:set_count"
                     }
                   ],
-                  "name": "botania:orange_petal"
+                  "name": "botania:orange_mystical_petal"
                 },
                 {
                   "type": "minecraft:item",
@@ -541,7 +541,7 @@
                       "function": "minecraft:set_count"
                     }
                   ],
-                  "name": "botania:magenta_petal"
+                  "name": "botania:magenta_mystical_petal"
                 },
                 {
                   "type": "minecraft:item",
@@ -562,7 +562,7 @@
                       "function": "minecraft:set_count"
                     }
                   ],
-                  "name": "botania:light_blue_petal"
+                  "name": "botania:light_blue_mystical_petal"
                 },
                 {
                   "type": "minecraft:item",
@@ -583,7 +583,7 @@
                       "function": "minecraft:set_count"
                     }
                   ],
-                  "name": "botania:yellow_petal"
+                  "name": "botania:yellow_mystical_petal"
                 },
                 {
                   "type": "minecraft:item",
@@ -604,7 +604,7 @@
                       "function": "minecraft:set_count"
                     }
                   ],
-                  "name": "botania:lime_petal"
+                  "name": "botania:lime_mystical_petal"
                 },
                 {
                   "type": "minecraft:item",
@@ -625,7 +625,7 @@
                       "function": "minecraft:set_count"
                     }
                   ],
-                  "name": "botania:pink_petal"
+                  "name": "botania:pink_mystical_petal"
                 },
                 {
                   "type": "minecraft:item",
@@ -646,7 +646,7 @@
                       "function": "minecraft:set_count"
                     }
                   ],
-                  "name": "botania:gray_petal"
+                  "name": "botania:gray_mystical_petal"
                 },
                 {
                   "type": "minecraft:item",
@@ -667,7 +667,7 @@
                       "function": "minecraft:set_count"
                     }
                   ],
-                  "name": "botania:light_gray_petal"
+                  "name": "botania:light_gray_mystical_petal"
                 },
                 {
                   "type": "minecraft:item",
@@ -688,7 +688,7 @@
                       "function": "minecraft:set_count"
                     }
                   ],
-                  "name": "botania:cyan_petal"
+                  "name": "botania:cyan_mystical_petal"
                 },
                 {
                   "type": "minecraft:item",
@@ -709,7 +709,7 @@
                       "function": "minecraft:set_count"
                     }
                   ],
-                  "name": "botania:purple_petal"
+                  "name": "botania:purple_mystical_petal"
                 },
                 {
                   "type": "minecraft:item",
@@ -730,7 +730,7 @@
                       "function": "minecraft:set_count"
                     }
                   ],
-                  "name": "botania:blue_petal"
+                  "name": "botania:blue_mystical_petal"
                 },
                 {
                   "type": "minecraft:item",
@@ -751,7 +751,7 @@
                       "function": "minecraft:set_count"
                     }
                   ],
-                  "name": "botania:brown_petal"
+                  "name": "botania:brown_mystical_petal"
                 },
                 {
                   "type": "minecraft:item",
@@ -772,7 +772,7 @@
                       "function": "minecraft:set_count"
                     }
                   ],
-                  "name": "botania:green_petal"
+                  "name": "botania:green_mystical_petal"
                 },
                 {
                   "type": "minecraft:item",
@@ -793,7 +793,7 @@
                       "function": "minecraft:set_count"
                     }
                   ],
-                  "name": "botania:red_petal"
+                  "name": "botania:red_mystical_petal"
                 },
                 {
                   "type": "minecraft:item",
@@ -808,7 +808,7 @@
                       "function": "minecraft:set_count"
                     }
                   ],
-                  "name": "botania:black_petal"
+                  "name": "botania:black_mystical_petal"
                 }
               ],
               "conditions": [
@@ -840,7 +840,7 @@
                       "function": "minecraft:set_count"
                     }
                   ],
-                  "name": "botania:white_petal"
+                  "name": "botania:white_mystical_petal"
                 },
                 {
                   "type": "minecraft:item",
@@ -861,7 +861,7 @@
                       "function": "minecraft:set_count"
                     }
                   ],
-                  "name": "botania:orange_petal"
+                  "name": "botania:orange_mystical_petal"
                 },
                 {
                   "type": "minecraft:item",
@@ -882,7 +882,7 @@
                       "function": "minecraft:set_count"
                     }
                   ],
-                  "name": "botania:magenta_petal"
+                  "name": "botania:magenta_mystical_petal"
                 },
                 {
                   "type": "minecraft:item",
@@ -903,7 +903,7 @@
                       "function": "minecraft:set_count"
                     }
                   ],
-                  "name": "botania:light_blue_petal"
+                  "name": "botania:light_blue_mystical_petal"
                 },
                 {
                   "type": "minecraft:item",
@@ -924,7 +924,7 @@
                       "function": "minecraft:set_count"
                     }
                   ],
-                  "name": "botania:yellow_petal"
+                  "name": "botania:yellow_mystical_petal"
                 },
                 {
                   "type": "minecraft:item",
@@ -945,7 +945,7 @@
                       "function": "minecraft:set_count"
                     }
                   ],
-                  "name": "botania:lime_petal"
+                  "name": "botania:lime_mystical_petal"
                 },
                 {
                   "type": "minecraft:item",
@@ -966,7 +966,7 @@
                       "function": "minecraft:set_count"
                     }
                   ],
-                  "name": "botania:pink_petal"
+                  "name": "botania:pink_mystical_petal"
                 },
                 {
                   "type": "minecraft:item",
@@ -987,7 +987,7 @@
                       "function": "minecraft:set_count"
                     }
                   ],
-                  "name": "botania:gray_petal"
+                  "name": "botania:gray_mystical_petal"
                 },
                 {
                   "type": "minecraft:item",
@@ -1008,7 +1008,7 @@
                       "function": "minecraft:set_count"
                     }
                   ],
-                  "name": "botania:light_gray_petal"
+                  "name": "botania:light_gray_mystical_petal"
                 },
                 {
                   "type": "minecraft:item",
@@ -1029,7 +1029,7 @@
                       "function": "minecraft:set_count"
                     }
                   ],
-                  "name": "botania:cyan_petal"
+                  "name": "botania:cyan_mystical_petal"
                 },
                 {
                   "type": "minecraft:item",
@@ -1050,7 +1050,7 @@
                       "function": "minecraft:set_count"
                     }
                   ],
-                  "name": "botania:purple_petal"
+                  "name": "botania:purple_mystical_petal"
                 },
                 {
                   "type": "minecraft:item",
@@ -1071,7 +1071,7 @@
                       "function": "minecraft:set_count"
                     }
                   ],
-                  "name": "botania:blue_petal"
+                  "name": "botania:blue_mystical_petal"
                 },
                 {
                   "type": "minecraft:item",
@@ -1092,7 +1092,7 @@
                       "function": "minecraft:set_count"
                     }
                   ],
-                  "name": "botania:brown_petal"
+                  "name": "botania:brown_mystical_petal"
                 },
                 {
                   "type": "minecraft:item",
@@ -1113,7 +1113,7 @@
                       "function": "minecraft:set_count"
                     }
                   ],
-                  "name": "botania:green_petal"
+                  "name": "botania:green_mystical_petal"
                 },
                 {
                   "type": "minecraft:item",
@@ -1134,7 +1134,7 @@
                       "function": "minecraft:set_count"
                     }
                   ],
-                  "name": "botania:red_petal"
+                  "name": "botania:red_mystical_petal"
                 },
                 {
                   "type": "minecraft:item",
@@ -1149,7 +1149,7 @@
                       "function": "minecraft:set_count"
                     }
                   ],
-                  "name": "botania:black_petal"
+                  "name": "botania:black_mystical_petal"
                 }
               ],
               "conditions": [

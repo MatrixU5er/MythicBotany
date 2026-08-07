@@ -1,7 +1,7 @@
 {
   "type": "botania:mana_infusion",
   "input": {
-    "item": "botania:horn_grass"
+    "item": "botania:horn_of_the_wild"
   },
   "mana": 20000,
   "output": {

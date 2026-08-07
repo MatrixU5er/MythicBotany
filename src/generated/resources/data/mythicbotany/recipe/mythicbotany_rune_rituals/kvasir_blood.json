@@ -5,13 +5,13 @@
   },
   "inputs": [
     {
-      "item": "botania:ender_dagger"
+      "item": "botania:soulscribe"
     },
     {
       "item": "mythicbotany:alfsteel_nugget"
     },
     {
-      "item": "botania:vial"
+      "item": "botania:managlass_vial"
     }
   ],
   "mana": 20000,
@@ -52,56 +52,56 @@
     },
     {
       "rune": {
-        "item": "botania:rune_summer"
+        "item": "botania:rune_of_summer"
       },
       "x": -1,
       "z": -3
     },
     {
       "rune": {
-        "item": "botania:rune_summer"
+        "item": "botania:rune_of_summer"
       },
       "x": 1,
       "z": 3
     },
     {
       "rune": {
-        "item": "botania:rune_summer"
+        "item": "botania:rune_of_summer"
       },
       "x": -3,
       "z": -1
     },
     {
       "rune": {
-        "item": "botania:rune_summer"
+        "item": "botania:rune_of_summer"
       },
       "x": 3,
       "z": 1
     },
     {
       "rune": {
-        "item": "botania:rune_fire"
+        "item": "botania:rune_of_fire"
       },
       "x": 1,
       "z": -3
     },
     {
       "rune": {
-        "item": "botania:rune_fire"
+        "item": "botania:rune_of_fire"
       },
       "x": -1,
       "z": 3
     },
     {
       "rune": {
-        "item": "botania:rune_fire"
+        "item": "botania:rune_of_fire"
       },
       "x": 3,
       "z": -1
     },
     {
       "rune": {
-        "item": "botania:rune_fire"
+        "item": "botania:rune_of_fire"
       },
       "x": -3,
       "z": 1

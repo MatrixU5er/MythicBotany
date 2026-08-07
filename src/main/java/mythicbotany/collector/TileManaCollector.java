@@ -10,7 +10,7 @@ import vazkii.botania.api.internal.ManaBurst;
 import vazkii.botania.api.mana.ManaBlockType;
 import vazkii.botania.api.mana.ManaCollector;
 import vazkii.botania.api.mana.ManaNetworkAction;
-import vazkii.botania.api.mana.ManaNetworkEvent;
+import vazkii.botania.api.neoforge.mana.ManaNetworkEvent;
 import vazkii.botania.common.handler.ManaNetworkHandler;
 
 public class TileManaCollector extends BlockEntityMana implements ManaCollector, TickingBlock {

@@ -11,7 +11,7 @@
       "tag": "c:ingots/gold"
     },
     {
-      "item": "botania:golden_seeds"
+      "item": "botania:golden_pasture_seeds"
     },
     {
       "item": "botania:red_string"
@@ -24,112 +24,112 @@
   "runes": [
     {
       "rune": {
-        "item": "botania:rune_wrath"
+        "item": "botania:rune_of_wrath"
       },
       "x": -5,
       "z": 0
     },
     {
       "rune": {
-        "item": "botania:rune_wrath"
+        "item": "botania:rune_of_wrath"
       },
       "x": 5,
       "z": 0
     },
     {
       "rune": {
-        "item": "botania:rune_wrath"
+        "item": "botania:rune_of_wrath"
       },
       "x": 0,
       "z": -5
     },
     {
       "rune": {
-        "item": "botania:rune_wrath"
+        "item": "botania:rune_of_wrath"
       },
       "x": 0,
       "z": 5
     },
     {
       "rune": {
-        "item": "botania:rune_pride"
+        "item": "botania:rune_of_pride"
       },
       "x": -4,
       "z": -4
     },
     {
       "rune": {
-        "item": "botania:rune_pride"
+        "item": "botania:rune_of_pride"
       },
       "x": -4,
       "z": 4
     },
     {
       "rune": {
-        "item": "botania:rune_pride"
+        "item": "botania:rune_of_pride"
       },
       "x": 4,
       "z": -4
     },
     {
       "rune": {
-        "item": "botania:rune_pride"
+        "item": "botania:rune_of_pride"
       },
       "x": 4,
       "z": 4
     },
     {
       "rune": {
-        "item": "botania:rune_air"
+        "item": "botania:rune_of_air"
       },
       "x": -3,
       "z": 2
     },
     {
       "rune": {
-        "item": "botania:rune_air"
+        "item": "botania:rune_of_air"
       },
       "x": 3,
       "z": 2
     },
     {
       "rune": {
-        "item": "botania:rune_air"
+        "item": "botania:rune_of_air"
       },
       "x": -2,
       "z": 3
     },
     {
       "rune": {
-        "item": "botania:rune_air"
+        "item": "botania:rune_of_air"
       },
       "x": 2,
       "z": 3
     },
     {
       "rune": {
-        "item": "botania:rune_earth"
+        "item": "botania:rune_of_earth"
       },
       "x": -3,
       "z": -2
     },
     {
       "rune": {
-        "item": "botania:rune_earth"
+        "item": "botania:rune_of_earth"
       },
       "x": 3,
       "z": -2
     },
     {
       "rune": {
-        "item": "botania:rune_earth"
+        "item": "botania:rune_of_earth"
       },
       "x": -2,
       "z": -3
     },
     {
       "rune": {
-        "item": "botania:rune_earth"
+        "item": "botania:rune_of_earth"
       },
       "x": 2,
       "z": -3

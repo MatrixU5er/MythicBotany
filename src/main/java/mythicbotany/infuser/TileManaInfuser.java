@@ -21,8 +21,8 @@ import org.moddingx.libx.base.tile.TickingBlock;
 import vazkii.botania.api.mana.ManaPool;
 import vazkii.botania.api.mana.ManaReceiver;
 import vazkii.botania.api.mana.spark.ManaSpark;
-import vazkii.botania.api.mana.spark.SparkAttachable;
-import vazkii.botania.api.mana.spark.SparkHelper;
+import vazkii.botania.api.mana.spark.ManaSparkAttachable;
+import vazkii.botania.api.mana.spark.ManaSparkHelper;
 import vazkii.botania.common.block.BotaniaBlocks;
 import vazkii.botania.common.handler.BotaniaSounds;
 
@@ -31,7 +31,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class TileManaInfuser extends BlockEntityBase implements SparkAttachable, ManaReceiver, TickingBlock {
+public class TileManaInfuser extends BlockEntityBase implements ManaSparkAttachable, ManaReceiver, TickingBlock {
 
     private int mana;
     @Nullable private transient InfuserRecipe recipe;
@@ -146,7 +146,7 @@ public class TileManaInfuser extends BlockEntityBase implements SparkAttachable,
     private void receiveManaFromSparks() {
         ManaSpark spark = this.getAttachedSpark();
         if (this.level != null && spark != null) {
-            var otherSparks = SparkHelper.getSparksAround(this.level, this.getBlockPos().getX() + 0.5, this.getBlockPos().getY() + 0.5, this.getBlockPos().getZ() + 0.5, spark.getNetwork());
+            var otherSparks = ManaSparkHelper.getSparksAround(this.level, this.getBlockPos().getX() + 0.5, this.getBlockPos().getY() + 0.5, this.getBlockPos().getZ() + 0.5, spark.getNetwork());
             for (var otherSpark : otherSparks) {
                 if (spark != otherSpark && otherSpark.getAttachedManaReceiver() instanceof ManaPool) {
                     otherSpark.registerTransfer(spark);

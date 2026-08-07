@@ -2,13 +2,13 @@
   "type": "botania:runic_altar",
   "catalysts": [
     {
-      "item": "botania:rune_air"
+      "item": "botania:rune_of_air"
     },
     {
-      "item": "botania:rune_autumn"
+      "item": "botania:rune_of_autumn"
     },
     {
-      "item": "botania:rune_pride"
+      "item": "botania:rune_of_pride"
     }
   ],
   "ingredients": [
@@ -16,7 +16,7 @@
       "tag": "c:ingots/netherite"
     },
     {
-      "item": "botania:rainbow_rod"
+      "item": "botania:rod_of_the_bifrost"
     }
   ],
   "mana": 16000,

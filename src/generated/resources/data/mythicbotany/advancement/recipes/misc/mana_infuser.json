@@ -35,7 +35,7 @@
       "conditions": {
         "items": [
           {
-            "items": "botania:rune_spring"
+            "items": "botania:rune_of_spring"
           }
         ]
       },
@@ -45,7 +45,7 @@
       "conditions": {
         "items": [
           {
-            "items": "botania:rune_summer"
+            "items": "botania:rune_of_summer"
           }
         ]
       },
@@ -55,7 +55,7 @@
       "conditions": {
         "items": [
           {
-            "items": "botania:rune_autumn"
+            "items": "botania:rune_of_autumn"
           }
         ]
       },
@@ -65,7 +65,7 @@
       "conditions": {
         "items": [
           {
-            "items": "botania:rune_winter"
+            "items": "botania:rune_of_winter"
           }
         ]
       },

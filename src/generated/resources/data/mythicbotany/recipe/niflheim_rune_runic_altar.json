@@ -2,13 +2,13 @@
   "type": "botania:runic_altar",
   "catalysts": [
     {
-      "item": "botania:rune_water"
+      "item": "botania:rune_of_water"
     },
     {
-      "item": "botania:rune_winter"
+      "item": "botania:rune_of_winter"
     },
     {
-      "item": "botania:rune_wrath"
+      "item": "botania:rune_of_wrath"
     }
   ],
   "ingredients": [

@@ -33,9 +33,7 @@ public record PylonMessage(BlockPos pos) implements CustomPacketPayload {
 
         @Override
         public void handle(PylonMessage msg, IPayloadContext ctx) {
-            if (FMLEnvironment.dist == Dist.CLIENT) {
-                ClientNetworkHandlers.handlePylon(msg);
-            }
+            ClientNetworkDispatch.dispatch("handlePylon", msg);
         }
     }
 }

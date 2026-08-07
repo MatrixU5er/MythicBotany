@@ -37,9 +37,7 @@ public record InfusionMessage(BlockPos pos, double progress, int fromColor, int 
 
         @Override
         public void handle(InfusionMessage msg, IPayloadContext ctx) {
-            if (FMLEnvironment.dist == Dist.CLIENT) {
-                ClientNetworkHandlers.handleInfusion(msg);
-            }
+            ClientNetworkDispatch.dispatch("handleInfusion", msg);
         }
     }
 }

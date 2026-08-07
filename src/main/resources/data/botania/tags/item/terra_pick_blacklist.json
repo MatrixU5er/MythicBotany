@@ -1,8 +1,8 @@
 {
   "replace": false,
   "values": [
-    "botania:aura_ring",
-    "botania:aura_ring_greater",
+    "botania:band_of_aura",
+    "botania:greater_band_of_aura",
     "botania:terrasteel_helmet",
     "botania:spark"
   ]

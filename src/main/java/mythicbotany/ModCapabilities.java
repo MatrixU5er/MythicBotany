@@ -30,7 +30,7 @@ import vazkii.botania.api.block.WandHUD;
 import vazkii.botania.api.block.Wandable;
 import vazkii.botania.api.mana.ManaItem;
 import vazkii.botania.api.mana.ManaReceiver;
-import vazkii.botania.api.mana.spark.SparkAttachable;
+import vazkii.botania.api.mana.spark.ManaSparkAttachable;
 import vazkii.botania.common.component.BotaniaDataComponents;
 import vazkii.botania.common.impl.mana.DefaultManaItemImpl;
 
@@ -76,14 +76,14 @@ public final class ModCapabilities {
         event.registerBlockEntity(blockApi(Wandable.LOOKUP), type, (be, direction) -> be);
         event.registerBlockEntity(blockApi(WandHUD.BLOCK_LOOKUP), type, (be, ignored) -> be);
         if (sparkAttachable) {
-            event.registerBlockEntity(blockApi(SparkAttachable.LOOKUP), type, (be, ignored) -> be);
+            event.registerBlockEntity(blockApi(ManaSparkAttachable.LOOKUP), type, (be, ignored) -> be);
         }
     }
 
     private static void registerInfuser(RegisterCapabilitiesEvent event, BlockEntityType<TileManaInfuser> type, boolean sparkAttachable) {
         event.registerBlockEntity(blockApi(ManaReceiver.LOOKUP), type, (be, direction) -> be);
         if (sparkAttachable) {
-            event.registerBlockEntity(blockApi(SparkAttachable.LOOKUP), type, (be, ignored) -> be);
+            event.registerBlockEntity(blockApi(ManaSparkAttachable.LOOKUP), type, (be, ignored) -> be);
         }
     }
 

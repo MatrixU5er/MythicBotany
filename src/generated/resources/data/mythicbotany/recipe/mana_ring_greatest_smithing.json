@@ -4,7 +4,7 @@
     "item": "mythicbotany:alfsteel_ingot"
   },
   "base": {
-    "item": "botania:mana_ring_greater"
+    "item": "botania:greater_band_of_mana"
   },
   "result": {
     "count": 1,

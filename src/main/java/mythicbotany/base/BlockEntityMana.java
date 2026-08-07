@@ -27,14 +27,14 @@ import vazkii.botania.api.block.WandHUD;
 import vazkii.botania.api.block.Wandable;
 import vazkii.botania.api.mana.ManaReceiver;
 import vazkii.botania.api.mana.spark.ManaSpark;
-import vazkii.botania.api.mana.spark.SparkAttachable;
+import vazkii.botania.api.mana.spark.ManaSparkAttachable;
 import vazkii.botania.client.core.helper.RenderHelper;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
 @OnlyIn(value = Dist.CLIENT, _interface = WandHUD.class)
-public abstract class BlockEntityMana extends BlockEntityBase implements SparkAttachable, ManaReceiver, WandHUD, Wandable {
+public abstract class BlockEntityMana extends BlockEntityBase implements ManaSparkAttachable, ManaReceiver, WandHUD, Wandable {
 
     public final int maxMana;
     private final boolean bursts;

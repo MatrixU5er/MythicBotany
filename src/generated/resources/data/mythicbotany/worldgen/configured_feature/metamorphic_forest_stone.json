@@ -6,7 +6,7 @@
     "targets": [
       {
         "state": {
-          "Name": "botania:metamorphic_forest_stone"
+          "Name": "botania:fuchsite"
         },
         "target": {
           "block": "botania:livingrock",

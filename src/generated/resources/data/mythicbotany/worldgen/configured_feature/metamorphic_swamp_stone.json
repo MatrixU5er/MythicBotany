@@ -6,7 +6,7 @@
     "targets": [
       {
         "state": {
-          "Name": "botania:metamorphic_swamp_stone"
+          "Name": "botania:rosy_talc"
         },
         "target": {
           "block": "botania:livingrock",

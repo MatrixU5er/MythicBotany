@@ -40,7 +40,7 @@ import top.theillusivec4.curios.api.CuriosApi;
 import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler;
 import top.theillusivec4.curios.api.type.inventory.ICurioStacksHandler;
 import vazkii.botania.api.mana.ManaItemHandler;
-import vazkii.botania.api.recipe.ElvenPortalUpdateEvent;
+import vazkii.botania.api.neoforge.recipe.ElvenPortalUpdateEvent;
 import vazkii.botania.common.block.block_entity.AlfheimPortalBlockEntity;
 import vazkii.botania.common.item.BotaniaItems;
 

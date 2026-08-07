@@ -6,7 +6,7 @@
     "targets": [
       {
         "state": {
-          "Name": "botania:metamorphic_taiga_stone"
+          "Name": "botania:cataclasite"
         },
         "target": {
           "block": "botania:livingrock",

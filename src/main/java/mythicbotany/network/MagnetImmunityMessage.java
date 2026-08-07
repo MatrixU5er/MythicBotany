@@ -37,9 +37,7 @@ public record MagnetImmunityMessage(int entityId, boolean immune, double x, doub
 
         @Override
         public void handle(MagnetImmunityMessage msg, IPayloadContext ctx) {
-            if (FMLEnvironment.dist == Dist.CLIENT) {
-                ClientNetworkHandlers.handleMagnetImmunity(msg);
-            }
+            ClientNetworkDispatch.dispatch("handleMagnetImmunity", msg);
         }
     }
 }

@@ -4,7 +4,7 @@
     "item": "mythicbotany:alfsteel_ingot"
   },
   "base": {
-    "item": "botania:aura_ring_greater"
+    "item": "botania:greater_band_of_aura"
   },
   "result": {
     "count": 1,

@@ -4,7 +4,7 @@
     "item": "mythicbotany:alfsteel_ingot"
   },
   "base": {
-    "item": "botania:terra_axe"
+    "item": "botania:terra_truncator"
   },
   "result": {
     "count": 1,

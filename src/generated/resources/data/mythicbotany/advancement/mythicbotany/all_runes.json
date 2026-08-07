@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": "botania:rune_air"
+            "items": "botania:rune_of_air"
           }
         ]
       },
@@ -15,7 +15,7 @@
       "conditions": {
         "items": [
           {
-            "items": "botania:rune_pride"
+            "items": "botania:rune_of_pride"
           }
         ]
       },
@@ -25,7 +25,7 @@
       "conditions": {
         "items": [
           {
-            "items": "botania:rune_sloth"
+            "items": "botania:rune_of_sloth"
           }
         ]
       },
@@ -35,7 +35,7 @@
       "conditions": {
         "items": [
           {
-            "items": "botania:rune_spring"
+            "items": "botania:rune_of_spring"
           }
         ]
       },
@@ -45,7 +45,7 @@
       "conditions": {
         "items": [
           {
-            "items": "botania:rune_summer"
+            "items": "botania:rune_of_summer"
           }
         ]
       },
@@ -55,7 +55,7 @@
       "conditions": {
         "items": [
           {
-            "items": "botania:rune_water"
+            "items": "botania:rune_of_water"
           }
         ]
       },
@@ -65,7 +65,7 @@
       "conditions": {
         "items": [
           {
-            "items": "botania:rune_winter"
+            "items": "botania:rune_of_winter"
           }
         ]
       },
@@ -75,7 +75,7 @@
       "conditions": {
         "items": [
           {
-            "items": "botania:rune_wrath"
+            "items": "botania:rune_of_wrath"
           }
         ]
       },
@@ -115,7 +115,7 @@
       "conditions": {
         "items": [
           {
-            "items": "botania:rune_autumn"
+            "items": "botania:rune_of_autumn"
           }
         ]
       },
@@ -185,7 +185,7 @@
       "conditions": {
         "items": [
           {
-            "items": "botania:rune_earth"
+            "items": "botania:rune_of_earth"
           }
         ]
       },
@@ -195,7 +195,7 @@
       "conditions": {
         "items": [
           {
-            "items": "botania:rune_envy"
+            "items": "botania:rune_of_envy"
           }
         ]
       },
@@ -205,7 +205,7 @@
       "conditions": {
         "items": [
           {
-            "items": "botania:rune_fire"
+            "items": "botania:rune_of_fire"
           }
         ]
       },
@@ -215,7 +215,7 @@
       "conditions": {
         "items": [
           {
-            "items": "botania:rune_gluttony"
+            "items": "botania:rune_of_gluttony"
           }
         ]
       },
@@ -225,7 +225,7 @@
       "conditions": {
         "items": [
           {
-            "items": "botania:rune_greed"
+            "items": "botania:rune_of_greed"
           }
         ]
       },
@@ -235,7 +235,7 @@
       "conditions": {
         "items": [
           {
-            "items": "botania:rune_lust"
+            "items": "botania:rune_of_lust"
           }
         ]
       },
@@ -245,7 +245,7 @@
       "conditions": {
         "items": [
           {
-            "items": "botania:rune_mana"
+            "items": "botania:rune_of_mana"
           }
         ]
       },

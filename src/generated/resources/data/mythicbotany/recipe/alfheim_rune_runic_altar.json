@@ -2,13 +2,13 @@
   "type": "botania:runic_altar",
   "catalysts": [
     {
-      "item": "botania:rune_air"
+      "item": "botania:rune_of_air"
     },
     {
-      "item": "botania:rune_summer"
+      "item": "botania:rune_of_summer"
     },
     {
-      "item": "botania:rune_lust"
+      "item": "botania:rune_of_lust"
     }
   ],
   "ingredients": [

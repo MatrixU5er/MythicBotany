@@ -12,16 +12,16 @@
       "tag": "c:ingots/elementium"
     },
     "w": {
-      "item": "botania:rune_spring"
+      "item": "botania:rune_of_spring"
     },
     "x": {
-      "item": "botania:rune_summer"
+      "item": "botania:rune_of_summer"
     },
     "y": {
-      "item": "botania:rune_autumn"
+      "item": "botania:rune_of_autumn"
     },
     "z": {
-      "item": "botania:rune_winter"
+      "item": "botania:rune_of_winter"
     }
   },
   "pattern": [

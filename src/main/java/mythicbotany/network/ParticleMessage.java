@@ -61,9 +61,7 @@ public record ParticleMessage(ResourceLocation particleId, double x, double y, d
 
         @Override
         public void handle(ParticleMessage msg, IPayloadContext ctx) {
-            if (FMLEnvironment.dist == Dist.CLIENT) {
-                ClientNetworkHandlers.handleParticle(msg);
-            }
+            ClientNetworkDispatch.dispatch("handleParticle", msg);
         }
     }
 }
