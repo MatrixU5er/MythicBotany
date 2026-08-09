@@ -39,20 +39,32 @@ public class TileManaCollector extends BlockEntityMana implements ManaCollector,
         return this.maxMana;
     }
 
+    @Override
     public void setRemoved() {
         super.setRemoved();
-        NeoForge.EVENT_BUS.post(new ManaNetworkEvent(this, ManaBlockType.COLLECTOR, ManaNetworkAction.REMOVE));
+        // 增加侧边判断：仅在客户端运行 ManaNetworkEvent
+        if (this.level != null && this.level.isClientSide()) {
+            NeoForge.EVENT_BUS.post(new ManaNetworkEvent(this, ManaBlockType.COLLECTOR, ManaNetworkAction.REMOVE));
+        }
     }
 
+    @Override
     public void onChunkUnloaded() {
         super.onChunkUnloaded();
-        NeoForge.EVENT_BUS.post(new ManaNetworkEvent(this, ManaBlockType.COLLECTOR, ManaNetworkAction.REMOVE));
+        // 增加侧边判断：仅在客户端运行 ManaNetworkEvent
+        if (this.level != null && this.level.isClientSide()) {
+            NeoForge.EVENT_BUS.post(new ManaNetworkEvent(this, ManaBlockType.COLLECTOR, ManaNetworkAction.REMOVE));
+        }
     }
 
+    @Override
     public void tick() {
-        boolean inNetwork = ManaNetworkHandler.instance.isCollectorIn(this.level, this);
-        if (!inNetwork && !this.isRemoved()) {
-            NeoForge.EVENT_BUS.post(new ManaNetworkEvent(this, ManaBlockType.COLLECTOR, ManaNetworkAction.ADD));
+        // 确保只在客户端进行 ManaNetwork 的事件注册
+        if (this.level != null && this.level.isClientSide()) {
+            boolean inNetwork = ManaNetworkHandler.instance.isCollectorIn(this.level, this);
+            if (!inNetwork && !this.isRemoved()) {
+                NeoForge.EVENT_BUS.post(new ManaNetworkEvent(this, ManaBlockType.COLLECTOR, ManaNetworkAction.ADD));
+            }
         }
     }
 }
